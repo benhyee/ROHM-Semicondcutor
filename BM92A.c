@@ -2,10 +2,9 @@
 
 uint16_t TransmitFlag = 0;
 
-void InitBD9954(uint8_t DeviceAddress)
+void InitBM92A(uint8_t DeviceAddress)
 {
-  EUSCI_B0->I2CSA = DeviceAddress;          // Slave address
-
+    EUSCI_B0->I2CSA = DeviceAddress;          // Slave address
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,7 +23,7 @@ void InitBD9954(uint8_t DeviceAddress)
 //      stop
 //
 ////////////////////////////////////////////////////////////////////////////////
-void WriteBD99954(uint16_t MemAddress, uint8_t MemByte)
+void WriteBM92A(uint16_t MemAddress, uint8_t MemByte)
 {
   uint8_t HiAddress;
   uint8_t LoAddress;
@@ -74,7 +73,7 @@ void WriteBD99954(uint16_t MemAddress, uint8_t MemByte)
 //      stop
 //
 ////////////////////////////////////////////////////////////////////////////////
-uint8_t ReadBD99954(uint16_t MemAddress)
+uint8_t ReadBM92A(uint16_t MemAddress)
 {
   uint8_t ReceiveByte;
   uint8_t HiAddress;
