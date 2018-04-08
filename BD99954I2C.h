@@ -9,10 +9,10 @@
 #define BD99954I2C_H_
 
 
-void InitBD9954(uint8_t DeviceAddress);
-void WriteBD99954(uint16_t MemAddress, uint8_t MemByte);
-uint8_t ReadBD99954(uint16_t MemAddress);
-void EUSCIB0_IRQHandler(void);
+void InitBD99954(unsigned char DeviceAddress);
+void WriteBD99954(unsigned short MemAddress, unsigned char MemByte);
+unsigned char ReadBD99954(unsigned short MemAddress);
+void EUSCIB1_IRQHandler(void);
 
 
 

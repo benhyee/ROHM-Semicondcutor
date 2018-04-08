@@ -12,7 +12,7 @@
 #define CURRENT_FREQ FREQ_24_MHZ
 
 void delay_ms(int n, int freq);
-void delay_ns(int n, int freq);
+void delay_us(int n, int freq);
 void set_DCO(int freq);
 
 #endif
