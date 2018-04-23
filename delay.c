@@ -1,4 +1,4 @@
-#include "msp.h"
+#include "msp432.h"
 #include "delay.h"
 
 void delay_ms(int n, int freq)

@@ -1,6 +1,6 @@
 
 #include <BM92AI2C.h>
-#include "msp.h"
+#include "msp432.h"
 #include "delay.h"
 #include <time.h>
 #include <stdint.h>
@@ -11,13 +11,19 @@
 #define CURRENT_FREQ FREQ_24_MHZ
 int main(void)
 {
-    unsigned int i;
-    InitBM92A();
-    __enable_irq();                           // Enable global interrupt
-    unsigned short storeVal = 0;
-    while(1)
-    {
-        WriteBM92A(BM92A_ADDRESS2,0x05);
+    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
 
-    }
+    unsigned int i;
+    set_DCO(CURRENT_FREQ);
+    __enable_irq();                           // Enable global interrupt
+
+    InitBM92A(BM92A_ADDRESS2);
+    unsigned short storeVal = 0;
+
+    WriteBM92A(BM92A_ADDRESS2,0x4C);
+    storeVal = ReadBM92A(BM92A_ADDRESS2);
+
+
+    __sleep();
+
 }

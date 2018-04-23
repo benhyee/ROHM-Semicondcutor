@@ -1,4 +1,4 @@
-#include "msp.h"
+#include "msp432.h"
 #include "delay.h"
 #include <string.h>
 #define RS 1
