@@ -12,7 +12,7 @@
 
 void InitBM92A();
 void WriteBM92A( char MemByte,unsigned char slaveAddr);
-int WriteReadBM92A(char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray);
+int WriteReadBM92A(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray);
 void EUSCIB0_IRQHandler(void);
 
 

@@ -11,8 +11,8 @@
 #define CURRENT_FREQ FREQ_24_MHZ
 int main(void)
 {
-    uint32_t i;
-    uint16_t value;
+    unsigned int i;
+    unsigned int value;
     unsigned char readBack[30];
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
     InitBM92A();

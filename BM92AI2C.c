@@ -1,7 +1,7 @@
 #include "BM92AI2C.h"
 #include "msp.h"
 #include <stdint.h>
-uint16_t TransmitFlag = 0;
+unsigned int TransmitFlag = 0;
 
 
 
@@ -46,11 +46,11 @@ void WriteBM92A(char commandCode,unsigned char slaveAddr)
 }
 
 
-int WriteReadBM92A(char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
+int WriteReadBM92A(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
 {
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
 
-    uint16_t ReceiveByte;
+    unsigned int ReceiveByte;
     char highByte;
     char lowByte;
 
