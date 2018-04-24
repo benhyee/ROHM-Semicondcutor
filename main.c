@@ -11,19 +11,23 @@
 #define CURRENT_FREQ FREQ_24_MHZ
 int main(void)
 {
+    uint32_t i;
+    uint16_t value;
+    unsigned char readBack[30];
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
+    InitBM92A();
 
-    unsigned int i;
-    set_DCO(CURRENT_FREQ);
     __enable_irq();                           // Enable global interrupt
+    while(1)
+    {
+        value = WriteReadBM92A(0x4C,BM92A_ADDRESS2,2,readBack);
+        for(i = 0; i < 100; i++);
+    }
 
-    InitBM92A(BM92A_ADDRESS2);
-    unsigned short storeVal = 0;
-
-    WriteBM92A(BM92A_ADDRESS2,0x4C);
-    storeVal = ReadBM92A(BM92A_ADDRESS2);
 
 
-    __sleep();
+
+
+    __sleep();      // go to lower power mode
 
 }

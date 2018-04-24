@@ -10,13 +10,10 @@
 
 #include "delay.h"
 
-void InitBM92A(unsigned char DeviceAddress);
-void WriteBM92A(unsigned char DeviceAddress,unsigned char commandBytes);
-unsigned short ReadBM92A(unsigned char SlaveAddress);
+void InitBM92A();
+void WriteBM92A( char MemByte,unsigned char slaveAddr);
+int WriteReadBM92A(char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray);
 void EUSCIB0_IRQHandler(void);
-void BM92A_reset();
-void BM92init_Read();
-void BM92init_Write(unsigned char DeviceAddress);
 
 
 
