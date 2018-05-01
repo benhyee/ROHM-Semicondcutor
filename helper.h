@@ -9,6 +9,8 @@
 #define HELPER_H_
 
 
+unsigned short two_byteOrg(unsigned char* dataArray);
+unsigned int four_byteOrg(unsigned char* dataArray);
 
 
 
