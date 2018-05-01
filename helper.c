@@ -10,6 +10,7 @@
 unsigned char char_Hold;
 unsigned short shortData;
 unsigned int intData;
+unsigned int intArray[];
 int i;
 
 unsigned short two_byteOrg(unsigned char* dataArray)
