@@ -1,4 +1,13 @@
-
+/*
+ * ROHM SemiConductor USB-C Project
+ *  BM92AI2C.h -> All the BM92A code as well as a register read function for testing
+ *  BD99954.h -> Not completed
+ *  delay.h -> Frequency set and delay functions
+ *  helper.h -> Functions that are helpful for organization and exception handling
+ *  LCD.h -> Functions for the LCD monitor.
+ *  UART.h -> Functions for terminal use on the computer
+ *
+ */
 #include <BM92AI2C.h>
 #include "msp432.h"
 #include "delay.h"
@@ -17,15 +26,16 @@ int main(void)
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
     InitBM92A();
-    terminal_init();
-    unsigned char *readBack = malloc(sizeof(char)*30);
+    terminal_init();    //SDA -> P1.6 SCL->P1.7
+    unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
     unsigned int i = 0;
     unsigned int maxCurrent = 0, voltage = 0, current = 0;
     unsigned short status_1=0,status_2=0,config_1=0,config_2=0;
     unsigned short sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
-
     unsigned char role = 0, recepticle = 0;
     unsigned int value=0, RDO = 0, PDO = 0;
+
+
     __enable_irq();                           // Enable global interrupt
     while(1)
     {
