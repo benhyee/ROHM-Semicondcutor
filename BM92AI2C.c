@@ -4,7 +4,7 @@
 #include "helper.h"
 unsigned int TransmitFlag = 0;
 #include "helper.h"
-
+#include <stdlib.h>
 
 #define BM92A_ADDRESS1 0x1A
 #define BM92A_ADDRESS2 0x18
@@ -35,7 +35,6 @@ void WriteBM92A(char commandCode,unsigned char slaveAddr)
 {
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
 
-    int i;
 
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
@@ -53,8 +52,7 @@ int WriteReadBM92A(unsigned char commandCode,unsigned char slaveAddr, int dataSi
 {
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
 
-    char highByte;
-    char lowByte;
+
 
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
@@ -90,16 +88,21 @@ unsigned char tempHold;
 unsigned short status_1=0,status_2=0,config_1=0,config_2=0;
 unsigned short sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
 unsigned short Display_alert = 0;
-unsigned char readBack[30];
-
+unsigned char readBack;
+int i;
+unsigned int PDO_SNK_Cons;
 void testReadRegisters()
 {
     value=0, RDO = 0, PDO = 0;  //Reinitialize to 0 to ensure fresh write
     battery = 0, nonBattery = 0;
-    tempHold;
     status_1=0,status_2=0,config_1=0,config_2=0;
     sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
     Display_alert = 0;
+    unsigned char *readBack = malloc(sizeof(char)*30);
+    unsigned int *PDO_SNK_Cons = malloc(sizeof(unsigned int)*4);
+
+    WriteReadBM92A(0x33,BM92A_ADDRESS2,16,readBack);//PDO Snk register
+    transferIntArray(readBack,PDO_SNK_Cons);
 
     WriteReadBM92A(0x02,BM92A_ADDRESS2,2,readBack);//Alert register
     alertStatus = two_byteOrg(readBack);
@@ -139,6 +142,8 @@ void testReadRegisters()
 
     WriteReadBM92A(0x2B,BM92A_ADDRESS2,4,readBack);//RDO register
     RDO = four_byteOrg(readBack);
+    for(i = 0; i<40; i++);
+
 }
 
 

@@ -40,9 +40,8 @@ void terminal_transmitWord(char *word)
     }
 }
 
-void terminal_transmitInt(int input)
+void terminal_transmitInt(unsigned int input)
 {
-    terminal_transmitChar((input / 10000) + 48);
     terminal_transmitChar(((input / 1000) % 10) + 48);
     terminal_transmitChar(((input / 100) % 10) + 48);
     terminal_transmitChar(((input / 10) % 10) + 48);
