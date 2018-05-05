@@ -31,20 +31,29 @@ void InitBM92A()
 }
 
 
-void WriteBM92A(char commandCode,unsigned char slaveAddr)
+void CommandRegister(unsigned short commandCode,unsigned char slaveAddr)
 {
+    unsigned char highByte;
+    unsigned char lowByte;
+    highByte = commandCode >> 8;
+    lowByte = commandCode & 0xFF;
+
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
-
-
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
     while (!TransmitFlag);            // Wait for the transmit to complete
     TransmitFlag = 0;
-    EUSCI_B0 -> TXBUF = commandCode;      // Send the byte to store in BM92A
+    EUSCI_B0 -> TXBUF = 0x05;      // Send the byte to store in BM92A
     while (!TransmitFlag);            // Wait for the transmit to complete
     TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = highByte;      // Send the byte to store in BM92A
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = lowByte;      // Send the byte to store in BM92A
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+    EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
 
-//  EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
 }
 
 

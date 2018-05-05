@@ -28,14 +28,15 @@ int main(void)
     InitBM92A();
     terminal_init();    //SDA -> P1.6 SCL->P1.7
     unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
-    unsigned int i = 0;
+    unsigned int i = 0, battery = 0, nonBattery = 0;
+
     unsigned int maxCurrent = 0, voltage = 0, current = 0;
     unsigned short status_1=0,status_2=0,config_1=0,config_2=0;
     unsigned short sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
     unsigned char role = 0, recepticle = 0;
     unsigned int value=0, RDO = 0, PDO = 0;
 
-
+    CommandRegister(0x0909,BM92A_ADDRESS2);
     __enable_irq();                           // Enable global interrupt
     while(1)
     {
@@ -45,6 +46,7 @@ int main(void)
 
         if(PDO !=0)
         {
+            testReadRegisters();
             WriteReadBM92A(0x03,BM92A_ADDRESS2,2,readBack); //status 1 register
             status_1 = two_byteOrg(readBack);
             WriteReadBM92A(0x26,BM92A_ADDRESS2,2,readBack); //system controller config 1
@@ -61,6 +63,8 @@ int main(void)
             voltage = (voltage & 0x3FF) * 50;   // 50 mV times 10 bits of Voltage
             current = RDO & 0x3FF;          // First 10 register of RDO are operating Current
             recepticle = sys_config_1 & 0xF; // Recepticle Type
+            WriteReadBM92A(0x20,BM92A_ADDRESS2,4,readBack);//Autongtsnk Info non-Battery register
+            nonBattery = four_byteOrg(readBack);
             if(role == 0)
             {
                 terminal_transmitWord("BM92A is Sink\n\r");
