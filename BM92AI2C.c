@@ -5,6 +5,7 @@
 unsigned int TransmitFlag = 0;
 #include "helper.h"
 #include <stdlib.h>
+#include "UART.h"
 
 #define BM92A_ADDRESS1 0x1A
 #define BM92A_ADDRESS2 0x18
@@ -134,10 +135,10 @@ void testReadRegisters()
     WriteReadBM92A(0x19,BM92A_ADDRESS2,2,readBack); //Display port register
     Display_alert = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x20,BM92A_ADDRESS2,4,readBack);//Autongtsnk Info non-Battery register
+    WriteReadBM92A(0x20,BM92A_ADDRESS2,5,readBack);//Autongtsnk Info non-Battery register
     nonBattery = four_byteOrg(readBack);
 
-    WriteReadBM92A(0x23,BM92A_ADDRESS2,4,readBack);//Autongtsnk Info Battery register
+    WriteReadBM92A(0x23,BM92A_ADDRESS2,5,readBack);//Autongtsnk Info Battery register
     battery = four_byteOrg(readBack);
 
     WriteReadBM92A(0x26,BM92A_ADDRESS2,2,readBack); //system controller config 1
@@ -146,17 +147,77 @@ void testReadRegisters()
     WriteReadBM92A(0x27,BM92A_ADDRESS2,2,readBack); //system controller config 2
     sys_config_2 = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x28,BM92A_ADDRESS2,4,readBack);//PDO register
+    WriteReadBM92A(0x28,BM92A_ADDRESS2,5,readBack);//PDO register
     PDO = four_byteOrg(readBack);
 
-    WriteReadBM92A(0x2B,BM92A_ADDRESS2,4,readBack);//RDO register
+    WriteReadBM92A(0x2B,BM92A_ADDRESS2,5,readBack);//RDO register
     RDO = four_byteOrg(readBack);
     for(i = 0; i<40; i++);
 
 }
+unsigned int maxCurrent = 0, voltage = 0, current = 0;
+unsigned char role = 0, recepticle = 0;
+
+void BM92A_Debugger(unsigned int PDO)
+{
+    unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
+
+    testReadRegisters();
+    WriteReadBM92A(0x03,BM92A_ADDRESS2,2,readBack); //status 1 register
+    status_1 = two_byteOrg(readBack);
+    WriteReadBM92A(0x26,BM92A_ADDRESS2,2,readBack); //system controller config 1
+    sys_config_1 = two_byteOrg(readBack);
+    while(RDO == 0)
+    {
+        WriteReadBM92A(0x2B,BM92A_ADDRESS2,5,readBack);//RDO register
+        RDO = four_byteOrg(readBack);
+    }
 
 
+    role = status_1 & 0x1000;
+    role = role >> 12;
 
+    maxCurrent = PDO & 0x3FF;   // BitMask first 10 Bits
+    maxCurrent = maxCurrent * 10;   // Max Current 10 mA
+    voltage = PDO >> 10;    // Shift 10 to accomodate Voltage reading
+    voltage = (voltage & 0x3FF) * 50;   // 50 mV times 10 bits of Voltage
+    current = RDO & 0x3FF;          // First 10 register of RDO are operating Current
+    recepticle = sys_config_1 & 0xF; // Recepticle Type
+    WriteReadBM92A(0x20,BM92A_ADDRESS2,5,readBack);//Autongtsnk Info non-Battery register
+    nonBattery = four_byteOrg(readBack);
+    if(role == 0)
+    {
+        terminal_transmitWord("BM92A is Sink \t");
+    }
+    else
+    {
+        terminal_transmitWord("BM92A is Source \t");
+
+    }
+
+    switch(recepticle){
+    case 0x9:
+        terminal_transmitWord("Type-C \n\r");
+        break;
+
+    case 0xA:
+        terminal_transmitWord("Type-C 3A \n\r");
+        break;
+    case 0xB:
+        terminal_transmitWord("Type=C 5A \n\r");
+        break;
+    default:
+        terminal_transmitWord("Unconfirmed Recepticle Type\n\r");
+        break;
+    }
+    terminal_transmitWord("Max Amps:");
+    terminal_transmitInt(maxCurrent);
+    terminal_transmitWord("\nOperating Amps:");
+    terminal_transmitInt(current);
+    terminal_transmitWord("\nVoltage:");
+    terminal_transmitInt(voltage);
+    terminal_transmitWord("\r\n");
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -177,4 +238,6 @@ void EUSCIB0_IRQHandler(void)
         TransmitFlag = 1;                       // Set global flag
     }
 }
+
+
 

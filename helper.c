@@ -29,6 +29,7 @@ unsigned int four_byteOrg(unsigned char* dataArray)
 {
     i = 0;
     intData = 0;
+    *dataArray++;
     for(i = 0; i < 4; i++)
     {
         char_Hold = *(dataArray)&0xFF;

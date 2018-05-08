@@ -15,6 +15,7 @@ void CommandRegister(unsigned short commandCode,unsigned char slaveAddr);
 int WriteReadBM92A(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray);
 void EUSCIB0_IRQHandler(void);
 void testReadRegisters();
+void BM92A_Debugger(unsigned int PDO);
 
 
 
