@@ -2,10 +2,11 @@
 #include "msp.h"
 #include <stdint.h>
 #include "helper.h"
-unsigned int TransmitFlag = 0;
 #include "helper.h"
 #include <stdlib.h>
 #include "UART.h"
+
+unsigned int TransmitFlag = 0;
 
 #define BM92A_ADDRESS1 0x1A
 #define BM92A_ADDRESS2 0x18
@@ -16,7 +17,8 @@ void InitBM92A()
 
   // Enable eUSCIB0 interrupt in NVIC module
   NVIC->ISER[0] = 1 << ((EUSCIB0_IRQn) & 31);
-
+  NVIC_SetPriority(EUSCIB0_IRQn,3);
+  NVIC_EnableIRQ(EUSCIB0_IRQn);
   // Configure USCI_B0 for I2C mode
   EUSCI_B0->CTLW0 |= EUSCI_A_CTLW0_SWRST;   // Software reset enabled
   EUSCI_B0->CTLW0 = EUSCI_A_CTLW0_SWRST |   // Remain eUSCI in reset mode

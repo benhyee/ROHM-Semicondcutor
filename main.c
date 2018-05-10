@@ -15,37 +15,43 @@
 #include <stdint.h>
 #include "UART.h"
 #include "helper.h"
+#include "interruptPins.h"
+#include <stdlib.h>
+#include "globals.h"
 
 
 #define BD99954_ADDRESS 0x09
 #define CURRENT_FREQ FREQ_24_MHZ
 #define BM92A_ADDRESS1 0x1A
 #define BM92A_ADDRESS2 0x18
+
 int main(void)
 {
+    __disable_irq();
+
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
     InitBM92A();
     terminal_init();    //SDA -> P1.6 SCL->P1.7
-    unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
-
-    unsigned int value=0, RDO = 0, PDO = 0;
+    unsigned char readBack[30];  //Temp Storage of registers
+    interruptPinInit();
+    unsigned int PDO = 0;
     int i;
-    CommandRegister(0x0909,BM92A_ADDRESS2);
+//    CommandRegister(0x0909,BM92A_ADDRESS2);
     __enable_irq();                           // Enable global interrupt
     while(1)
     {
-        WriteReadBM92A(0x28,BM92A_ADDRESS2,5,readBack);//PDO register
-        PDO = four_byteOrg(readBack);
 
-        if(PDO !=0)
+        if(plugAlertFlag !=0)
         {
+            WriteReadBM92A(0x28,BM92A_ADDRESS2,5,readBack);//PDO register
+            PDO = four_byteOrg(readBack);
+
             BM92A_Debugger(PDO);
 
         }
 
 
-        for(i = 0; i<40; i++);
 
 
 
