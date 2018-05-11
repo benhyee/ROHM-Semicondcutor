@@ -42,7 +42,7 @@ int main(void)
     while(1)
     {
 
-        if(plugAlertFlag !=0)
+        if(plugAlertFlag ==1)
         {
             WriteReadBM92A(0x28,BM92A_ADDRESS2,5,readBack);//PDO register
             PDO = four_byteOrg(readBack);

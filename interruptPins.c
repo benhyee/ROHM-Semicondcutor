@@ -28,9 +28,7 @@ void interruptPinInit()
 }
 
 void PORT3_IRQHandler(void){
-    plugAlertFlag ^= 1;
-    P3->IFG &= ~0x40;
-
+    plugAlertFlag = 1;
     P2->OUT ^= 0x02;
     P3->IFG &= ~0x40;
 
