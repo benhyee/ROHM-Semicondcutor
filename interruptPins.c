@@ -13,6 +13,7 @@ void interruptPinInit()
 {
     P3 -> SEL1 &= ~0x40;
     P3 -> SEL0 &= ~0x40;
+    P3 -> REN |= 0x40;
     P3 -> DIR &= ~0x40;
     P3 -> IES = 0x40;
 

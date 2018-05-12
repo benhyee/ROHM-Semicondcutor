@@ -42,11 +42,19 @@ void terminal_transmitWord(char *word)
 
 void terminal_transmitInt(unsigned int input)
 {
-    terminal_transmitChar((input / 10000) + 48);
+    if(input / 10000 != 0)
+    {
+        terminal_transmitChar((input / 10000) + 48);
+    }
     terminal_transmitChar(((input / 1000) % 10) + 48);
-    terminal_transmitChar(((input / 100) % 10) + 48);
-    terminal_transmitChar(((input / 10) % 10) + 48);
-    terminal_transmitChar((input % 10) + 48);
+    terminal_transmitChar('.');
+
+    terminal_transmitChar((input / 100)%10 + 48);
+
+
+//    terminal_transmitChar(((input / 100) % 10) + 48);
+//    terminal_transmitChar(((input / 10) % 10) + 48);
+//    terminal_transmitChar((input % 10) + 48);
     terminal_transmitChar('\r');
     //terminal_transmitChar('\n');
 }
