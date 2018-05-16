@@ -1,15 +1,28 @@
-#include "BM92AI2C.h"
 #include "msp.h"
 #include <stdint.h>
 #include "helper.h"
-#include "helper.h"
 #include <stdlib.h>
 #include "UART.h"
+#include "globals.h"
 
-unsigned int TransmitFlag = 0;
 
+unsigned int value=0, RDO = 0, PDO = 0;
+unsigned int battery = 0, nonBattery = 0;
+unsigned char tempHold;
+unsigned short status_1=0,status_2=0,config_1=0,config_2=0;
+unsigned short sys_config_1=0, sys_config_2=0,sys_config_3 = 0, alertStatus=0,capability=0;
+unsigned short Display_alert = 0;
+unsigned char readBack;
+int i, TransmitFlag = 0;
+unsigned int PDO_SNK_Cons;
+unsigned int maxCurrent = 0, voltage = 0, current = 0;
+unsigned char power_role = 0, recepticle = 0, data_role;
 #define BM92A_ADDRESS 0x18
-void InitBM92A()
+#define BD99954_ADDRESS 0x09
+
+
+
+void InitI2C()
 {
 
   P1->SEL0 |= BIT6 | BIT7;                // Set I2C pins of eUSCI_B0
@@ -33,7 +46,7 @@ void InitBM92A()
 }
 
 
-void CommandRegister(unsigned short commandCode,unsigned char slaveAddr)
+void CommandRegisterBM92A(unsigned short commandCode,unsigned char slaveAddr)
 {
     unsigned char highByte;
     unsigned char lowByte;
@@ -110,11 +123,11 @@ void write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize
     EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
 }
 
-int WriteReadBM92A(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
+
+
+int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
 {
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
-
-
 
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
@@ -144,16 +157,8 @@ int WriteReadBM92A(unsigned char commandCode,unsigned char slaveAddr, int dataSi
     while(EUSCI_B0->CTLW0 & 4);
     return 0;
 }
-unsigned int value=0, RDO = 0, PDO = 0;
-unsigned int battery = 0, nonBattery = 0;
-unsigned char tempHold;
-unsigned short status_1=0,status_2=0,config_1=0,config_2=0;
-unsigned short sys_config_1=0, sys_config_2=0,sys_config_3 = 0, alertStatus=0,capability=0;
-unsigned short Display_alert = 0;
-unsigned char readBack;
-int i;
-unsigned int PDO_SNK_Cons;
-void testReadRegisters()
+
+void testReadRegistersBM92A()
 {
     value=0, RDO = 0, PDO = 0;  //Reinitialize to 0 to ensure fresh write
     battery = 0, nonBattery = 0;
@@ -163,71 +168,70 @@ void testReadRegisters()
     unsigned char *readBack = malloc(sizeof(char)*30);
     unsigned int *PDO_SNK_Cons = malloc(sizeof(unsigned int)*4);
 
-    WriteReadBM92A(0x08,BM92A_ADDRESS,29,readBack);//PDO Snk register
-    WriteReadBM92A(0x33,BM92A_ADDRESS,17,readBack);//PDO Snk register
-    WriteReadBM92A(0x3C,BM92A_ADDRESS,29,readBack);//PDO Snk register
+    WriteRead(0x08,BM92A_ADDRESS,29,readBack);//PDO Snk register
+    WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO Snk register
+    WriteRead(0x3C,BM92A_ADDRESS,29,readBack);//PDO Snk register
 
-    WriteReadBM92A(0x02,BM92A_ADDRESS,2,readBack);//Alert register
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack);//Alert register
     alertStatus = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x03,BM92A_ADDRESS,2,readBack); //status 1 register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); //status 1 register
     status_1 = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x04,BM92A_ADDRESS,2,readBack); //status 2 register
+    WriteRead(0x04,BM92A_ADDRESS,2,readBack); //status 2 register
     status_2 = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x06,BM92A_ADDRESS,2,readBack); //controller config 1
+    WriteRead(0x06,BM92A_ADDRESS,2,readBack); //controller config 1
     config_1 = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x07,BM92A_ADDRESS,2,readBack); //Capability register
+    WriteRead(0x07,BM92A_ADDRESS,2,readBack); //Capability register
     capability = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x17,BM92A_ADDRESS,2,readBack); //controller config 2
+    WriteRead(0x17,BM92A_ADDRESS,2,readBack); //controller config 2
     config_2 = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x19,BM92A_ADDRESS,2,readBack); //Display port register
+    WriteRead(0x19,BM92A_ADDRESS,2,readBack); //Display port register
     Display_alert = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x20,BM92A_ADDRESS,5,readBack);//Autongtsnk Info non-Battery register
+    WriteRead(0x20,BM92A_ADDRESS,5,readBack);//Autongtsnk Info non-Battery register
     nonBattery = four_byteOrg(readBack);
 
-    WriteReadBM92A(0x23,BM92A_ADDRESS,5,readBack);//Autongtsnk Info Battery register
+    WriteRead(0x23,BM92A_ADDRESS,5,readBack);//Autongtsnk Info Battery register
     battery = four_byteOrg(readBack);
 
-    WriteReadBM92A(0x26,BM92A_ADDRESS,2,readBack); //system controller config 1
+    WriteRead(0x26,BM92A_ADDRESS,2,readBack); //system controller config 1
     sys_config_1 = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x27,BM92A_ADDRESS,2,readBack); //system controller config 2
+    WriteRead(0x27,BM92A_ADDRESS,2,readBack); //system controller config 2
     sys_config_2 = two_byteOrg(readBack);
 
-    WriteReadBM92A(0x28,BM92A_ADDRESS,5,readBack);//PDO register
+    WriteRead(0x28,BM92A_ADDRESS,5,readBack);//PDO register
     PDO = four_byteOrg(readBack);
 
-    WriteReadBM92A(0x2B,BM92A_ADDRESS,5,readBack);//RDO register
+    WriteRead(0x2B,BM92A_ADDRESS,5,readBack);//RDO register
     RDO = four_byteOrg(readBack);
-    WriteReadBM92A(0x2F,BM92A_ADDRESS,2,readBack); //system controller config 2
+    WriteRead(0x2F,BM92A_ADDRESS,2,readBack); //system controller config 2
     sys_config_3 = two_byteOrg(readBack);
     for(i = 0; i<40; i++);
 
 }
-unsigned int maxCurrent = 0, voltage = 0, current = 0;
-unsigned char power_role = 0, recepticle = 0, data_role;
+
 
 void BM92A_Debugger()
 {
     unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
-    WriteReadBM92A(0x28,BM92A_ADDRESS,5,readBack);//PDO register
+    WriteRead(0x28,BM92A_ADDRESS,5,readBack);//PDO register
     PDO = four_byteOrg(readBack);
 //    testReadRegisters();
-    WriteReadBM92A(0x03,BM92A_ADDRESS,2,readBack); //status 1 register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); //status 1 register
     status_1 = two_byteOrg(readBack);
     for(i = 0; i < 100; i++);
 
-    WriteReadBM92A(0x26,BM92A_ADDRESS,2,readBack); //system controller config 1
+    WriteRead(0x26,BM92A_ADDRESS,2,readBack); //system controller config 1
     sys_config_1 = two_byteOrg(readBack);
     for(i = 0; i < 100; i++);
 
-    WriteReadBM92A(0x2B,BM92A_ADDRESS,5,readBack);//RDO register
+    WriteRead(0x2B,BM92A_ADDRESS,5,readBack);//RDO register
     RDO = four_byteOrg(readBack);
     for(i = 0; i < 100; i++);
 
@@ -245,7 +249,7 @@ void BM92A_Debugger()
     current = RDO & 0x3FF;          // First 10 register of RDO are operating Current
     current = current * 10;
     recepticle = sys_config_1 & 0xF; // Recepticle Type
-    WriteReadBM92A(0x20,BM92A_ADDRESS,5,readBack);//Autongtsnk Info non-Battery register
+    WriteRead(0x20,BM92A_ADDRESS,5,readBack);//Autongtsnk Info non-Battery register
     nonBattery = four_byteOrg(readBack);
     if(power_role == 0)
     {

@@ -11,5 +11,4 @@
 extern char plugAlertFlag;
 
 
-
 #endif /* GLOBALS_H_ */

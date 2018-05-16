@@ -8,7 +8,7 @@
  *  UART.h -> Functions for terminal use on the computer
  *
  */
-#include <BM92AI2C.h>
+#include <I2C_Helper.h>
 #include "msp432.h"
 #include "delay.h"
 #include <time.h>
@@ -30,7 +30,7 @@ int main(void)
 
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
-    InitBM92A();
+    InitI2C();
     terminal_init();    //SDA -> P1.6 SCL->P1.7
     unsigned char readBack[30];  //Temp Storage of registers
     interruptPinInit();
@@ -38,21 +38,17 @@ int main(void)
     int i;
     unsigned char PDORegisters[28];
 
-//    CommandRegister(0x0909,BM92A_ADDRESS);
     __enable_irq();                           // Enable global interrupt
-//    write_word(0x2F,BM92A_ADDRESS,0xA401);
-//    write_word(0x2F,BM92A_ADDRESS,0xA400);
-
-    testReadRegisters();
+    write_word(0x2F,BM92A_ADDRESS,0xA401);
+    testReadRegistersBM92A();
 
     while(1)
     {
         if(plugAlertFlag ==1)
         {
+            delay_ms(200,CURRENT_FREQ);
+            BM92A_Debugger();
 
-            BM92A_Debugger();
-            for(i = 0; i < 400; i++);
-            BM92A_Debugger();
             plugAlertFlag = 0;
         }
 
