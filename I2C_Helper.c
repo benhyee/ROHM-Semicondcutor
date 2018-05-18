@@ -4,23 +4,28 @@
 #include <stdlib.h>
 #include "UART.h"
 #include "globals.h"
-
-
-unsigned int value=0, RDO = 0, PDO = 0;
-unsigned int battery = 0, nonBattery = 0;
-unsigned char tempHold;
-unsigned short status_1=0,status_2=0,config_1=0,config_2=0;
-unsigned short sys_config_1=0, sys_config_2=0,sys_config_3 = 0, alertStatus=0,capability=0;
-unsigned short Display_alert = 0;
-unsigned char readBack;
-int i, TransmitFlag = 0;
-unsigned int PDO_SNK_Cons;
-unsigned int maxCurrent = 0, voltage = 0, current = 0;
-unsigned char power_role = 0, recepticle = 0, data_role;
+#include "lcd.h"
+#include <stdio.h>
 #define BM92A_ADDRESS 0x18
 #define BD99954_ADDRESS 0x09
 
 
+unsigned char tempHold;
+int i, TransmitFlag = 0;
+
+//BM92A Local Variables Storing the Register Reads
+unsigned int value, RDO, PDO, battery, nonBattery, PDO_SNK_Cons;
+unsigned short status_1,status_2,config_1,config_2,Display_alert ;
+unsigned short sys_config_1, sys_config_2,sys_config_3 , alertStatus,capability;
+//Debugger BM92A Variables
+unsigned int maxCurrent , voltage , current ;
+unsigned char power_role , recepticle , data_role;
+
+//BD99954 Local Variables
+unsigned short IBUS_LIM_SET , ICC_LIM_SET , VRECHG_SET , VBATOVP_SET ;
+unsigned short VSYSREG_SET , VPRECHG_TH_SET , VFASTCHG_REG_SET1;
+unsigned short ITRICH_SET, IPRECH_SET , ICHG_SET, ITERM_SET, BD99id, BD99rev;
+unsigned short VBUS_Average,VSYS_Average, VBAT_Average;
 
 void InitI2C()
 {
@@ -160,11 +165,9 @@ int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, u
 
 void testReadRegistersBM92A()
 {
-    value=0, RDO = 0, PDO = 0;  //Reinitialize to 0 to ensure fresh write
-    battery = 0, nonBattery = 0;
-    status_1=0,status_2=0,config_1=0,config_2=0;
+    value=0, RDO = 0, PDO = 0,battery = 0, nonBattery = 0;  //Reinitialize to 0 to ensure fresh write
+    status_1=0,status_2=0,config_1=0,config_2=0,Display_alert = 0;
     sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
-    Display_alert = 0;
     unsigned char *readBack = malloc(sizeof(char)*30);
     unsigned int *PDO_SNK_Cons = malloc(sizeof(unsigned int)*4);
 
@@ -304,6 +307,71 @@ void BM92A_Debugger()
     terminal_transmitWord("\r\n");
 }
 
+void BD99954ReadRegister()
+{
+    IBUS_LIM_SET = 0 , ICC_LIM_SET = 0, VRECHG_SET = 0, VBATOVP_SET = 0;
+    VSYSREG_SET = 0, VPRECHG_TH_SET = 0, VFASTCHG_REG_SET1 = 0;
+    ITRICH_SET = 0, IPRECH_SET = 0, ICHG_SET = 0, ITERM_SET = 0;
+    BD99id = 0, BD99rev = 0;
+    VBUS_Average = 0,VSYS_Average = 0, VBAT_Average = 0;
+    unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
+
+    WriteRead(0x07,BD99954_ADDRESS,2,readBack);
+    IBUS_LIM_SET = two_byteOrg(readBack);
+
+    WriteRead(0x08,BD99954_ADDRESS,2,readBack);
+    ICC_LIM_SET = two_byteOrg(readBack);
+
+    WriteRead(0x1D,BD99954_ADDRESS,2,readBack);
+    VRECHG_SET = two_byteOrg(readBack);
+
+    WriteRead(0x1E,BD99954_ADDRESS,2,readBack);
+    VBATOVP_SET = two_byteOrg(readBack);
+
+    WriteRead(0x11,BD99954_ADDRESS,2,readBack);
+    VSYSREG_SET = two_byteOrg(readBack);
+
+    WriteRead(0x18,BD99954_ADDRESS,2,readBack);
+    VPRECHG_TH_SET = two_byteOrg(readBack);
+
+    WriteRead(0x1A,BD99954_ADDRESS,2,readBack);
+    VFASTCHG_REG_SET1 = two_byteOrg(readBack);
+
+    WriteRead(0x14,BD99954_ADDRESS,2,readBack);
+    ITRICH_SET = two_byteOrg(readBack);
+
+    WriteRead(0x15,BD99954_ADDRESS,2,readBack);
+    IPRECH_SET = two_byteOrg(readBack);
+
+    WriteRead(0x16,BD99954_ADDRESS,2,readBack);
+    ICHG_SET = two_byteOrg(readBack);
+
+    WriteRead(0x17,BD99954_ADDRESS,2,readBack);
+    ITERM_SET = two_byteOrg(readBack);
+
+    WriteRead(0x38,BD99954_ADDRESS,2,readBack);
+    BD99id = two_byteOrg(readBack);
+
+    WriteRead(0x39,BD99954_ADDRESS,2,readBack);
+    BD99rev = two_byteOrg(readBack);
+
+    WriteRead(0x55,BD99954_ADDRESS,2,readBack);
+    VBAT_Average = two_byteOrg(readBack);
+
+    WriteRead(0x5D,BD99954_ADDRESS,2,readBack);
+    VBUS_Average = two_byteOrg(readBack);
+
+    WriteRead(0x61,BD99954_ADDRESS,2,readBack);
+    VSYS_Average = two_byteOrg(readBack);
+
+//    for(i = 0; i < 200; i++);
+//    LCD_word("Voltage: ");
+//    char voltage[5];
+//    sprintf(voltage, "%d", VBUS_Average);
+//    LCD_word(voltage);
+
+
+}
 ////////////////////////////////////////////////////////////////////////////////
 //
 // I2C Interrupt Service Routine

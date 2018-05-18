@@ -13,7 +13,7 @@ void LCD_nibble_write(unsigned char data, unsigned char control)
     control &= 0x0F; //clear upper nibble for data
     LCDPORT->OUT = data | control; //RS = 0, RW = 0
     LCDPORT->OUT = data | control | EN; //set EN
-    delay_ms(0, CURRENT_FREQ);
+    delay_ms(2, CURRENT_FREQ);
     LCDPORT->OUT = data; //clear EN
     LCDPORT->OUT = 0;
 }
@@ -38,7 +38,7 @@ void LCD_data(unsigned char command)
     LCD_nibble_write(command & 0xF0, RS);
     LCD_nibble_write(command << 4, RS);
 
-    delay_ms(1, CURRENT_FREQ);
+    delay_ms(5, CURRENT_FREQ);
 }
 
 void LCD_enter()
@@ -49,20 +49,21 @@ void LCD_enter()
 void LCD_init()
 {
     LCDPORT->DIR = 0xFF;
+    delay_ms(100, CURRENT_FREQ);
+    LCD_nibble_write(0x30, 0);
     delay_ms(30, CURRENT_FREQ);
     LCD_nibble_write(0x30, 0);
     delay_ms(10, CURRENT_FREQ);
     LCD_nibble_write(0x30, 0);
-    delay_ms(1, CURRENT_FREQ);
-    LCD_nibble_write(0x30, 0);
-    delay_ms(1, CURRENT_FREQ);
+    delay_ms(10, CURRENT_FREQ);
     LCD_nibble_write(0x20, 0);
-    delay_ms(1, CURRENT_FREQ);
+    delay_ms(10, CURRENT_FREQ);
 
     LCD_command(0x28); //set 4-bit data, 2-line, 5x7 font
-    LCD_command(0x06); //move cursor right after each char
-    LCD_command(0x01); // clear screen, move cursor home
+    LCD_command(0x10); // clear screen, move cursor home
     LCD_command(0x0F); // turn on display, cursor blinking
+    LCD_command(0x06); //move cursor right after each char
+
 }
 
 void LCD_word(char *word)

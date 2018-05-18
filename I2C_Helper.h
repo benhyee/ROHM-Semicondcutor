@@ -19,7 +19,7 @@ void write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned shor
 void write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray);
 int WriteReadBD99954(unsigned char commandCode, unsigned char* dataArray);
 void EUSCIB0_IRQHandler(void);
-
+void BD99954ReadRegister();
 
 
 //BM92A Helper I2C Functions
