@@ -364,11 +364,10 @@ void BD99954ReadRegister()
     WriteRead(0x61,BD99954_ADDRESS,2,readBack);
     VSYS_Average = two_byteOrg(readBack);
 
-//    for(i = 0; i < 200; i++);
-//    LCD_word("Voltage: ");
-//    char voltage[5];
-//    sprintf(voltage, "%d", VBUS_Average);
-//    LCD_word(voltage);
+    for(i = 0; i < 200; i++);
+    LCD_Voltage(VSYS_Average);
+
+
 
 
 }

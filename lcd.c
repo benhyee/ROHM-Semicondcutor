@@ -60,9 +60,9 @@ void LCD_init()
     delay_ms(10, CURRENT_FREQ);
 
     LCD_command(0x28); //set 4-bit data, 2-line, 5x7 font
-    LCD_command(0x10); // clear screen, move cursor home
-    LCD_command(0x0F); // turn on display, cursor blinking
     LCD_command(0x06); //move cursor right after each char
+    LCD_command(0x01); // clear screen, move cursor home
+    LCD_command(0x0F); // turn on display, cursor blinking
 
 }
 
@@ -73,4 +73,17 @@ void LCD_word(char *word)
     {
         LCD_data(word[i]);
     }
+}
+
+void LCD_Voltage(unsigned short voltage)
+{
+    LCD_word("Voltage: ");
+
+    LCD_data(((voltage /1000))+48);
+    LCD_data('.');
+
+    LCD_data(((voltage /100)%10)+48);
+    LCD_data(((voltage /10)%10)+48);
+    LCD_data('V');
+
 }
