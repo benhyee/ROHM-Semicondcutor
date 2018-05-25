@@ -7,6 +7,12 @@
  *  LCD.h -> Functions for the LCD monitor.
  *  UART.h -> Functions for terminal use on the computer
  *
+ *  Pin outs:
+ *  P1.6 -> SDA;    P1.7->SCL
+ *  P3.6-> GPIO0(#Alert) BM92A
+ *  P4.4-4.7 -> D4-D7 LCD
+ *  P4.1 -> RS;     P4.2 -> RW;     P4.4->EN (LCD)
+ *
  */
 #include "I2C_Helper.h"
 #include "msp432.h"
