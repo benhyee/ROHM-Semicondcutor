@@ -51,9 +51,19 @@ void InitI2C()
 }
 void BM92Asrc_init()
 {
+    float PDO_SRC_Cons[7];
+    PDO_SRC_Cons[0] = 0x0801912C;
+    PDO_SRC_Cons[1] = 0x080191C8;
+    PDO_SRC_Cons[2] = 0x08019196;
+    PDO_SRC_Cons[3] = 0x00000000;
+    PDO_SRC_Cons[4] = 0x00000000;
+    PDO_SRC_Cons[5] = 0x00000000;
+    PDO_SRC_Cons[6] = 0x00000000;
+    write_block(0x3C,BM92A_ADDRESS,28,PDO_SRC_Cons);
+    write_word(0x26,BM92A_ADDRESS,0x9745);
+    write_word(0x27,BM92A_ADDRESS,0x0646);
+
 }
-
-
 void CommandRegisterBM92A(unsigned short commandCode,unsigned char slaveAddr)
 {
     unsigned char highByte;
@@ -175,9 +185,9 @@ void testReadRegistersBM92A()
     unsigned char *readBack = malloc(sizeof(char)*30);
     unsigned int *PDO_SNK_Cons = malloc(sizeof(unsigned int)*4);
 
-    WriteRead(0x08,BM92A_ADDRESS,29,readBack);//PDO Snk register
-    WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO Snk register
-    WriteRead(0x3C,BM92A_ADDRESS,29,readBack);//PDO Snk register
+//    WriteRead(0x08,BM92A_ADDRESS,29,readBack);//PDO Snk register
+//    WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO Snk register
+    WriteRead(0x3C,BM92A_ADDRESS,29,readBack);//PDO SRC register
 
     WriteRead(0x02,BM92A_ADDRESS,2,readBack);//Alert register
     alertStatus = two_byteOrg(readBack);

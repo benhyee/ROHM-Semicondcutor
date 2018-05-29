@@ -53,9 +53,11 @@ int main(void)
 //    BM92A_Debugger();
     BD99954_Startup_Routine();
     BD99954ReadRegister();
+    BM92Asrc_init();
+    testReadRegistersBM92A();
     while(1)
     {
-        BD99954ReadRegister();
+//        BD99954ReadRegister();
         if(plugAlertFlag ==1)
         {
             delay_ms(200,CURRENT_FREQ);
@@ -64,6 +66,7 @@ int main(void)
 
             plugAlertFlag = 0;
         }
+        write_word(0x05,BM92A_ADDRESS,0x0A0A);
 
 //        __sleep();      // go to lower power mode
 
