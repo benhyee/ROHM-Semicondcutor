@@ -77,6 +77,7 @@ void LCD_word(char *word)
 
 void LCD_Voltage(unsigned short voltage)
 {
+    LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Voltage: ");
 
     LCD_data(((voltage /1000))+48);

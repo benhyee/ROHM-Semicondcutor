@@ -11,7 +11,7 @@
  *  P1.6 -> SDA;    P1.7->SCL
  *  P3.6-> GPIO0(#Alert) BM92A
  *  P4.4-4.7 -> D4-D7 LCD
- *  P4.1 -> RS;     P4.2 -> RW;     P4.4->EN (LCD)
+ *  P4.0 -> RS;     P4.1 -> RW;     P4.2->EN (LCD)
  *
  */
 #include "I2C_Helper.h"
@@ -39,6 +39,7 @@ int main(void)
     set_DCO(CURRENT_FREQ);
     InitI2C();
     LCD_init();
+//    BM92AInitSrc();
     terminal_init();    //SDA -> P1.6 SCL->P1.7
     unsigned char readBack[30];  //Temp Storage of registers
     interruptPinInit();
@@ -50,10 +51,11 @@ int main(void)
 //    write_word(0x2F,BM92A_ADDRESS,0xA401);
 //    testReadRegistersBM92A();
 //    BM92A_Debugger();
-
+    BD99954_Startup_Routine();
     BD99954ReadRegister();
     while(1)
     {
+        BD99954ReadRegister();
         if(plugAlertFlag ==1)
         {
             delay_ms(200,CURRENT_FREQ);
@@ -63,7 +65,7 @@ int main(void)
             plugAlertFlag = 0;
         }
 
-        __sleep();      // go to lower power mode
+//        __sleep();      // go to lower power mode
 
     }
 

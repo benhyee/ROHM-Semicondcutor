@@ -25,7 +25,7 @@ unsigned char power_role , recepticle , data_role;
 unsigned short IBUS_LIM_SET , ICC_LIM_SET , VRECHG_SET , VBATOVP_SET ;
 unsigned short VSYSREG_SET , VPRECHG_TH_SET , VFASTCHG_REG_SET1;
 unsigned short ITRICH_SET, IPRECH_SET , ICHG_SET, ITERM_SET, BD99id, BD99rev;
-unsigned short VBUS_Average,VSYS_Average, VBAT_Average;
+unsigned short VBUS_Average,VSYS_Average, VBAT_Average,otpStatus;
 
 void InitI2C()
 {
@@ -48,6 +48,9 @@ void InitI2C()
 
   EUSCI_B0->IE |= EUSCI_A_IE_RXIE |         // Enable receive interrupt
                   EUSCI_A_IE_TXIE;
+}
+void BM92Asrc_init()
+{
 }
 
 
@@ -162,6 +165,7 @@ int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, u
     while(EUSCI_B0->CTLW0 & 4);
     return 0;
 }
+
 
 void testReadRegistersBM92A()
 {
@@ -363,12 +367,36 @@ void BD99954ReadRegister()
 
     WriteRead(0x61,BD99954_ADDRESS,2,readBack);
     VSYS_Average = two_byteOrg(readBack);
-
-    for(i = 0; i < 200; i++);
     LCD_Voltage(VSYS_Average);
+    WriteRead(0x3C,BD99954_ADDRESS,2,readBack);
+    otpStatus = two_byteOrg(readBack);
+    for(i = 0; i < 200; i++);
 
 
 
+}
+void BD99954_Startup_Routine()
+{
+    unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
+    write_word(0x3E,BD99954_ADDRESS,0x0000);    //Protect set
+    write_word(0x3F,BD99954_ADDRESS,0x0001);    //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
+    write_word(0x3D,BD99954_ADDRESS,0x0001);
+    write_word(0x3D,BD99954_ADDRESS,0x0000);
+
+    for(i=0;i<200;i++);
+
+
+    write_word(0x07,BD99954_ADDRESS,1472);    //IBUS_LIM_SET
+    write_word(0x08,BD99954_ADDRESS,1472);    //ICC_LIM_SET
+    write_word(0x1D,BD99954_ADDRESS,8112);    //VRECHG_SET
+    write_word(0x1E,BD99954_ADDRESS,8912);    //VBATOVP_SET
+    write_word(0x11,BD99954_ADDRESS,8960);    //VSYSREG_SET
+    write_word(0x18,BD99954_ADDRESS,2048);    //VPRECHG_TH_SET
+    write_word(0x1A,BD99954_ADDRESS,8400);    //VFASTCHG_REG_SET
+    write_word(0x14,BD99954_ADDRESS,256);    //ITRICH_SET
+    write_word(0x15,BD99954_ADDRESS,256);    //IPRECH_SET
+    write_word(0x16,BD99954_ADDRESS,960);    //ICHG_SET
+    write_word(0x17,BD99954_ADDRESS,0);    //ITERM_SET
 
 }
 ////////////////////////////////////////////////////////////////////////////////
