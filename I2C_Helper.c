@@ -49,8 +49,8 @@ void InitI2C()
   EUSCI_B0->IE |= EUSCI_A_IE_RXIE |         // Enable receive interrupt
                   EUSCI_A_IE_TXIE;
 }
-void BM92Asrc_init()
-{
+void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
+{                                   //L L -> (60W)  L H -> (45W) H L -> (27W) H H -> (18W)
     float PDO_SRC_Cons[7];
     PDO_SRC_Cons[0] = 0x0801912C;
     PDO_SRC_Cons[1] = 0x080191C8;
@@ -60,8 +60,12 @@ void BM92Asrc_init()
     PDO_SRC_Cons[5] = 0x00000000;
     PDO_SRC_Cons[6] = 0x00000000;
     write_block(0x3C,BM92A_ADDRESS,28,PDO_SRC_Cons);
-    write_word(0x26,BM92A_ADDRESS,0x9745);
-    write_word(0x27,BM92A_ADDRESS,0x0646);
+    write_word(0x06,BM92A_ADDRESS,0x0000);
+    write_word(0x17,BM92A_ADDRESS,0x0280);
+
+    write_word(0x26,BM92A_ADDRESS,0x9109);
+    write_word(0x27,BM92A_ADDRESS,0x0A00);
+    write_word(0x2F,BM92A_ADDRESS,0x0001);
 
 }
 void CommandRegisterBM92A(unsigned short commandCode,unsigned char slaveAddr)
