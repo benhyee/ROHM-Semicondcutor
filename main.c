@@ -39,14 +39,13 @@ int main(void)
     set_DCO(CURRENT_FREQ);
     InitI2C();
     LCD_init();
-//    BM92AInitSrc();
     terminal_init();    //SDA -> P1.6 SCL->P1.7
     unsigned char readBack[30];  //Temp Storage of registers
     interruptPinInit();
     unsigned int PDO = 0, RDO = 0;
     int i;
     unsigned char PDORegisters[28];
-
+    unsigned short alertStatus = 0;
     __enable_irq();                           // Enable global interrupt
 //    write_word(0x2F,BM92A_ADDRESS,0xA401);
 //    testReadRegistersBM92A();
@@ -66,7 +65,16 @@ int main(void)
 
             plugAlertFlag = 0;
         }
-        write_word(0x05,BM92A_ADDRESS,0x0A0A);
+        write_word(0x05,BM92A_ADDRESS,0x0303);
+        WriteRead(0x02,BM92A_ADDRESS,2,readBack);//Alert register
+        alertStatus = two_byteOrg(readBack);
+        if(alertStatus != 0)
+        {
+            write_word(0x05,BM92A_ADDRESS,0x1010);
+            write_word(0x05,BM92A_ADDRESS,0x0505);
+
+        }
+
 
 //        __sleep();      // go to lower power mode
 

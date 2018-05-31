@@ -15,7 +15,7 @@ int i, TransmitFlag = 0;
 
 //BM92A Local Variables Storing the Register Reads
 unsigned int value, RDO, PDO, battery, nonBattery, PDO_SNK_Cons;
-unsigned short status_1,status_2,config_1,config_2,Display_alert ;
+unsigned short status_1,status_2,config_1,config_2,Display_alert, vendorConfig;
 unsigned short sys_config_1, sys_config_2,sys_config_3 , alertStatus,capability;
 //Debugger BM92A Variables
 unsigned int maxCurrent , voltage , current ;
@@ -49,25 +49,7 @@ void InitI2C()
   EUSCI_B0->IE |= EUSCI_A_IE_RXIE |         // Enable receive interrupt
                   EUSCI_A_IE_TXIE;
 }
-void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
-{                                   //L L -> (60W)  L H -> (45W) H L -> (27W) H H -> (18W)
-    float PDO_SRC_Cons[7];
-    PDO_SRC_Cons[0] = 0x0801912C;
-    PDO_SRC_Cons[1] = 0x080191C8;
-    PDO_SRC_Cons[2] = 0x08019196;
-    PDO_SRC_Cons[3] = 0x00000000;
-    PDO_SRC_Cons[4] = 0x00000000;
-    PDO_SRC_Cons[5] = 0x00000000;
-    PDO_SRC_Cons[6] = 0x00000000;
-    write_block(0x3C,BM92A_ADDRESS,28,PDO_SRC_Cons);
-    write_word(0x06,BM92A_ADDRESS,0x0000);
-    write_word(0x17,BM92A_ADDRESS,0x0280);
 
-    write_word(0x26,BM92A_ADDRESS,0x9109);
-    write_word(0x27,BM92A_ADDRESS,0x0A00);
-    write_word(0x2F,BM92A_ADDRESS,0x0001);
-
-}
 void CommandRegisterBM92A(unsigned short commandCode,unsigned char slaveAddr)
 {
     unsigned char highByte;
@@ -184,7 +166,7 @@ int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, u
 void testReadRegistersBM92A()
 {
     value=0, RDO = 0, PDO = 0,battery = 0, nonBattery = 0;  //Reinitialize to 0 to ensure fresh write
-    status_1=0,status_2=0,config_1=0,config_2=0,Display_alert = 0;
+    status_1=0,status_2=0,config_1=0,config_2=0,Display_alert = 0, vendorConfig= 0;
     sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
     unsigned char *readBack = malloc(sizeof(char)*30);
     unsigned int *PDO_SNK_Cons = malloc(sizeof(unsigned int)*4);
@@ -192,6 +174,7 @@ void testReadRegistersBM92A()
 //    WriteRead(0x08,BM92A_ADDRESS,29,readBack);//PDO Snk register
 //    WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO Snk register
     WriteRead(0x3C,BM92A_ADDRESS,29,readBack);//PDO SRC register
+    WriteRead(0x08,BM92A_ADDRESS,29,readBack);//PDO SRC register
 
     WriteRead(0x02,BM92A_ADDRESS,2,readBack);//Alert register
     alertStatus = two_byteOrg(readBack);
@@ -213,6 +196,9 @@ void testReadRegistersBM92A()
 
     WriteRead(0x19,BM92A_ADDRESS,2,readBack); //Display port register
     Display_alert = two_byteOrg(readBack);
+
+    WriteRead(0x1A,BM92A_ADDRESS,2,readBack); //Vendor Config register
+    vendorConfig = two_byteOrg(readBack);
 
     WriteRead(0x20,BM92A_ADDRESS,5,readBack);//Autongtsnk Info non-Battery register
     nonBattery = four_byteOrg(readBack);
@@ -325,6 +311,26 @@ void BM92A_Debugger()
     terminal_transmitWord("\r\n");
 }
 
+void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
+{                                   //L L -> (60W)  L H -> (45W) H L -> (27W) H H -> (18W)
+    float PDO_SRC_Cons[7];
+    PDO_SRC_Cons[0] = 0x0801912C;
+    PDO_SRC_Cons[1] = 0x0002D0C8;
+    PDO_SRC_Cons[2] = 0x0003C096;
+    PDO_SRC_Cons[3] = 0x0004B078;
+    PDO_SRC_Cons[4] = 0x0006405A;
+    write_block(0x3C,BM92A_ADDRESS,28,PDO_SRC_Cons);
+    write_word(0x2E,BM92A_ADDRESS,0xFFFF);
+    write_word(0x06,BM92A_ADDRESS,0x0000);
+    write_word(0x17,BM92A_ADDRESS,0x0280);
+    write_word(0x1A,BM92A_ADDRESS,0x2001);
+    write_word(0x26,BM92A_ADDRESS,0x9109);
+    write_word(0x27,BM92A_ADDRESS,0x0A00);
+    write_word(0x2F,BM92A_ADDRESS,0x0001);
+    write_word(0x05,BM92A_ADDRESS,0x0A0A);
+
+
+}
 void BD99954ReadRegister()
 {
     IBUS_LIM_SET = 0 , ICC_LIM_SET = 0, VRECHG_SET = 0, VBATOVP_SET = 0;
