@@ -56,6 +56,8 @@ int main(void)
     testReadRegistersBM92A();
     while(1)
     {
+        testReadRegistersBM92A();
+
 //        BD99954ReadRegister();
         if(plugAlertFlag ==1)
         {
@@ -65,12 +67,16 @@ int main(void)
 
             plugAlertFlag = 0;
         }
-        write_word(0x05,BM92A_ADDRESS,0x0303);
+//        write_word(0x05,BM92A_ADDRESS,0x0303);
+        write_word(0x05,BM92A_ADDRESS,0x0A0A);
+        testReadRegistersBM92A();
+
+        write_word(0x05,BM92A_ADDRESS,0x0B0B);
+
         WriteRead(0x02,BM92A_ADDRESS,2,readBack);//Alert register
         alertStatus = two_byteOrg(readBack);
         if(alertStatus != 0)
         {
-            write_word(0x05,BM92A_ADDRESS,0x1010);
             write_word(0x05,BM92A_ADDRESS,0x0505);
 
         }
