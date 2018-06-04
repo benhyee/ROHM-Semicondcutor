@@ -50,8 +50,8 @@ int main(void)
 //    write_word(0x2F,BM92A_ADDRESS,0xA401);
 //    testReadRegistersBM92A();
 //    BM92A_Debugger();
-    BD99954_Startup_Routine();
-    BD99954ReadRegister();
+//    BD99954_Startup_Routine();
+//    BD99954ReadRegister();
     BM92Asrc_init();
     testReadRegistersBM92A();
     while(1)

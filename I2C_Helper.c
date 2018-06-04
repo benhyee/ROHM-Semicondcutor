@@ -103,6 +103,31 @@ void write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned shor
     TransmitFlag = 0;
     EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
 }
+
+void clear_register(unsigned char commandCode,unsigned char slaveAddr, int dataSize)
+{
+   EUSCI_B0->I2CSA = slaveAddr;          // Slave address
+   EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
+   EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
+   while (!TransmitFlag);            // Wait for the transmit to complete
+   TransmitFlag = 0;
+   EUSCI_B0 -> TXBUF = commandCode;      // Send the command byte
+   while (!TransmitFlag);            // Wait for the transmit to complete
+   TransmitFlag = 0;
+   EUSCI_B0 -> TXBUF = 0x00;      // Send the dataSize
+   do {
+           while (!TransmitFlag);            // Wait for the transmit to complete
+           TransmitFlag = 0;
+           EUSCI_B0 -> TXBUF = 0x00;      //increment through the dataArray
+           dataSize--;
+       } while(dataSize > 0);
+
+   while (!TransmitFlag);            // Wait for the transmit to complete
+   TransmitFlag = 0;
+   EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
+
+}
+
 void write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
 {
 
@@ -117,6 +142,7 @@ void write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize
     TransmitFlag = 0;
     EUSCI_B0 -> TXBUF = dataSize;      // Send the dataSize
     do {
+
         while (!TransmitFlag);            // Wait for the transmit to complete
         TransmitFlag = 0;
         EUSCI_B0 -> TXBUF = *dataArray++;      //increment through the dataArray
@@ -126,9 +152,9 @@ void write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize
     while (!TransmitFlag);            // Wait for the transmit to complete
     TransmitFlag = 0;
     EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
+
+
 }
-
-
 
 int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
 {
@@ -145,7 +171,7 @@ int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, u
     EUSCI_B0->CTLW0 &= ~EUSCI_B_CTLW0_TR;   // Set receive mode (read)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT; // I2C start condition (restart)
 
-    // Wait for start to be transmitted
+//     Wait for start to be transmitted
     while ((EUSCI_B0->CTLW0 & EUSCI_B_CTLW0_TXSTT));
     do{
         if (dataSize == 1)
@@ -157,12 +183,14 @@ int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, u
         while (!TransmitFlag);            // Wait to receive a byte
         TransmitFlag = 0;
         *dataArray++ = EUSCI_B0->RXBUF;    // Read byte from the buffer
+        while(EUSCI_B0->CTLW0 & 5);
+
         dataSize--;
     }while(dataSize);
+
     while(EUSCI_B0->CTLW0 & 4);
     return 0;
 }
-
 
 void testReadRegistersBM92A()
 {
@@ -178,8 +206,7 @@ void testReadRegistersBM92A()
 //    WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO Snk register
     WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO SRC register
 
-    WriteRead(0x3C,BM92A_ADDRESS,29,readBack);//PDO SRC register
-    WriteRead(0x08,BM92A_ADDRESS,29,readBack);//PDO SRC register
+    WriteRead(0x08,BM92A_ADDRESS,21,readBack);//PDO SRC register
 
     WriteRead(0x02,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//Alert register
     WriteRead(0x03,BM92A_ADDRESS,2,readBack); status_1 = two_byteOrg(readBack); //status 1 register
@@ -211,7 +238,6 @@ void testReadRegistersBM92A()
     for(i = 0; i<40; i++);
 
 }
-
 
 void BM92A_Debugger()
 {
@@ -302,52 +328,77 @@ void BM92A_Debugger()
 
 void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
 {                                   //L L -> (60W)  L H -> (45W) H L -> (27W) H H -> (18W)
-    unsigned char PDO_SRC_Cons[28];
-    PDO_SRC_Cons[0] = 0x14;
-    PDO_SRC_Cons[1] = 0x08;
-    PDO_SRC_Cons[2] = 0x01;
-    PDO_SRC_Cons[3] = 0x91;
-    PDO_SRC_Cons[4] = 0x2C;
-    PDO_SRC_Cons[5] = 0x00;
-    PDO_SRC_Cons[6] = 0x02;
-    PDO_SRC_Cons[7] = 0xD1;
-    PDO_SRC_Cons[8] = 0x2C;
-    PDO_SRC_Cons[9] = 0x00;
-    PDO_SRC_Cons[10] = 0x02;
-    PDO_SRC_Cons[11] = 0xD1;
-    PDO_SRC_Cons[12] = 0x2C;
-    PDO_SRC_Cons[13] = 0x00;
-    PDO_SRC_Cons[14] = 0x03;
-    PDO_SRC_Cons[15] = 0xC1;
-    PDO_SRC_Cons[16] = 0x2C;
-    PDO_SRC_Cons[17] = 0x00;
-    PDO_SRC_Cons[18] = 0x04;
-    PDO_SRC_Cons[19] = 0xB1;
-    PDO_SRC_Cons[20] = 0x2C;
-    PDO_SRC_Cons[21] = 0x00;
-    PDO_SRC_Cons[22] = 0x06;
-    PDO_SRC_Cons[23] = 0x41;
-    PDO_SRC_Cons[24] = 0x2C;
-    PDO_SRC_Cons[25] = 0x00;
-    PDO_SRC_Cons[26] = 0x00;
-    PDO_SRC_Cons[27] = 0x00;
 
-    write_block(0x3C,BM92A_ADDRESS,28,PDO_SRC_Cons);
+
+
+
+    unsigned char PDO_SRC_Cons[28];
+    unsigned char PDO_Snk_Cons[16];
+
+    PDO_SRC_Cons[3] = 0x08;
+    PDO_SRC_Cons[2] = 0x01;
+    PDO_SRC_Cons[1] = 0x91;
+    PDO_SRC_Cons[0] = 0x2C; //PDO1
+    PDO_SRC_Cons[7] = 0x00;
+    PDO_SRC_Cons[6] = 0x02;
+    PDO_SRC_Cons[5] = 0xD1;
+    PDO_SRC_Cons[4] = 0x2C; //PDO2
+    PDO_SRC_Cons[11] = 0x00;
+    PDO_SRC_Cons[10] = 0x02;
+    PDO_SRC_Cons[9] = 0xD1;
+    PDO_SRC_Cons[8] = 0x2C; // PDO3
+    PDO_SRC_Cons[15] = 0x00;
+    PDO_SRC_Cons[14] = 0x03;
+    PDO_SRC_Cons[13] = 0xC1;
+    PDO_SRC_Cons[12] = 0x2C; //PDO4
+    PDO_SRC_Cons[19] = 0x00;
+    PDO_SRC_Cons[18] = 0x04;
+    PDO_SRC_Cons[17] = 0xB1;
+    PDO_SRC_Cons[16] = 0x2C; //PDO5
+    PDO_SRC_Cons[23] = 0x00;
+    PDO_SRC_Cons[22] = 0x00;
+    PDO_SRC_Cons[21] = 0x00;
+    PDO_SRC_Cons[20] = 0x00;
+    PDO_SRC_Cons[27] = 0x00;
+    PDO_SRC_Cons[26] = 0x00;
+    PDO_SRC_Cons[25] = 0x00;
+    PDO_SRC_Cons[24] = 0x00;
+
+    write_block(0x08,BM92A_ADDRESS,28,PDO_SRC_Cons);
+    for(i=0;i<80;i++);
+
+    PDO_Snk_Cons[0] = 0x00;
+    PDO_Snk_Cons[1] = 0x00;
+    PDO_Snk_Cons[2] = 0x00;
+    PDO_Snk_Cons[3] = 0x00; //PDO1
+    PDO_Snk_Cons[4] = 0x00;
+    PDO_Snk_Cons[5] = 0x00;
+    PDO_Snk_Cons[6] = 0x00;
+    PDO_Snk_Cons[7] = 0x00; //PDO2
+    PDO_Snk_Cons[8] = 0x00;
+    PDO_Snk_Cons[9] = 0x00;
+    PDO_Snk_Cons[10] = 0x00;
+    PDO_Snk_Cons[11] = 0x00; // PDO3
+    PDO_Snk_Cons[12] = 0x00;
+    PDO_Snk_Cons[13] = 0x00;
+    PDO_Snk_Cons[14] = 0x00;
+    PDO_Snk_Cons[15] = 0x00; //PDO4
+
+    write_block(0x33,BM92A_ADDRESS,16,PDO_Snk_Cons);
     write_word(0x2E,BM92A_ADDRESS,0xFFFF);  //Alert Enable
     write_block(0x20,BM92A_ADDRESS,4,0x00000000);  //NonBattery ngt
     write_block(0x23,BM92A_ADDRESS,4,0x00000000);  //Battery ngt
 
     for(i=0;i<50;i++);
     write_word(0x06,BM92A_ADDRESS,0x0000);  //Config 1
-    write_word(0x17,BM92A_ADDRESS,0x0280);  //config 2
-    write_word(0x1A,BM92A_ADDRESS,0x2001);  //Vendor Config
-    write_word(0x26,BM92A_ADDRESS,0x9109);  // SysConfig1
-    write_word(0x27,BM92A_ADDRESS,0x0A00);  // SysConfig2
-    write_word(0x2F,BM92A_ADDRESS,0x0001);  // SysConfig3
-//    write_word(0x05,BM92A_ADDRESS,0x0A0A);  // Set Command
-
-
+    write_word(0x17,BM92A_ADDRESS,0x8002);  //config 2
+    write_word(0x1A,BM92A_ADDRESS,0x0120);  //Vendor Config
+    write_word(0x26,BM92A_ADDRESS,0x0991);  // SysConfig1
+    write_word(0x27,BM92A_ADDRESS,0x000A);  // SysConfig2
+    write_word(0x2F,BM92A_ADDRESS,0x0100);  // SysConfig3
+    write_word(0x05,BM92A_ADDRESS,0x0A0A);  // Set Command
 }
+
 void BD99954ReadRegister()
 {
     IBUS_LIM_SET = 0 , ICC_LIM_SET = 0, VRECHG_SET = 0, VBATOVP_SET = 0;
