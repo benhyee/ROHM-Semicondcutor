@@ -32,6 +32,9 @@ void InitI2C()
 {
 
   P1->SEL0 |= BIT6 | BIT7;                // Set I2C pins of eUSCI_B0
+  PJ->SEL1 &= ~0x0C;
+  PJ->SEL0 &= ~0x0C;
+  PJ -> DIR |= 0x0C;
 
   // Enable eUSCIB0 interrupt in NVIC module
   NVIC->ISER[0] = 1 << ((EUSCIB0_IRQn) & 31);
@@ -204,38 +207,40 @@ void testReadRegistersBM92A()
 
 //    WriteRead(0x08,BM92A_ADDRESS,29,readBack);//PDO Snk register
 //    WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO Snk register
-    WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO SRC register
-
-    WriteRead(0x08,BM92A_ADDRESS,21,readBack);//PDO SRC register
-
     WriteRead(0x02,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//Alert register
-    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status_1 = two_byteOrg(readBack); //status 1 register
-    WriteRead(0x04,BM92A_ADDRESS,2,readBack); status_2 = two_byteOrg(readBack);//status 2 register
-    WriteRead(0x06,BM92A_ADDRESS,2,readBack); config_1 = two_byteOrg(readBack);//controller config 1
-    WriteRead(0x07,BM92A_ADDRESS,2,readBack); capability = two_byteOrg(readBack);//Capability register
-    WriteRead(0x17,BM92A_ADDRESS,2,readBack); config_2 = two_byteOrg(readBack);//controller config 2
-    WriteRead(0x19,BM92A_ADDRESS,2,readBack); Display_alert = two_byteOrg(readBack);//Display port register
-    WriteRead(0x1A,BM92A_ADDRESS,2,readBack); vendorConfig = two_byteOrg(readBack);//Vendor Config register
-    WriteRead(0x20,BM92A_ADDRESS,5,readBack); nonBattery = four_byteOrg(readBack);//Autongtsnk Info non-Battery register
-    WriteRead(0x23,BM92A_ADDRESS,5,readBack); battery = four_byteOrg(readBack);//Autongtsnk Info Battery register
 
-    WriteRead(0x26,BM92A_ADDRESS,2,readBack); sys_config_1 = two_byteOrg(readBack);//system controller config 1
-    WriteRead(0x27,BM92A_ADDRESS,2,readBack); sys_config_2 = two_byteOrg(readBack);//system controller config 2
-    WriteRead(0x28,BM92A_ADDRESS,5,readBack); PDO = four_byteOrg(readBack);//PDO register
-    WriteRead(0x2B,BM92A_ADDRESS,5,readBack); RDO = four_byteOrg(readBack);//RDO register
-    WriteRead(0x2F,BM92A_ADDRESS,2,readBack); sys_config_3 = two_byteOrg(readBack); //system controller config 2
+//    WriteRead(0x33,BM92A_ADDRESS,17,readBack);//PDO SRC register
 
-    ALERTEN=0, SETRDO=0,FirmType=0,FirmRev=0, ManuID=0,DeviceID=0,RevID=0;
-
-    WriteRead(0x2E,BM92A_ADDRESS,2,readBack); ALERTEN = two_byteOrg(readBack);
-    WriteRead(0x30,BM92A_ADDRESS,4,readBack); SETRDO = four_byteOrg(readBack);
-    WriteRead(0x4B,BM92A_ADDRESS,2,readBack); FirmType = two_byteOrg(readBack);
-    WriteRead(0x4C,BM92A_ADDRESS,2,readBack); FirmRev = two_byteOrg(readBack);
-    WriteRead(0x4D,BM92A_ADDRESS,2,readBack); ManuID = two_byteOrg(readBack);
-    WriteRead(0x4E,BM92A_ADDRESS,2,readBack); DeviceID = two_byteOrg(readBack);
-    WriteRead(0x4F,BM92A_ADDRESS,2,readBack); RevID = two_byteOrg(readBack);
-
-    for(i = 0; i<40; i++);
+//    WriteRead(0x08,BM92A_ADDRESS,21,readBack);//PDO SRC register
+//
+//    WriteRead(0x02,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//Alert register
+//    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status_1 = two_byteOrg(readBack); //status 1 register
+//    WriteRead(0x04,BM92A_ADDRESS,2,readBack); status_2 = two_byteOrg(readBack);//status 2 register
+//    WriteRead(0x06,BM92A_ADDRESS,2,readBack); config_1 = two_byteOrg(readBack);//controller config 1
+//    WriteRead(0x07,BM92A_ADDRESS,2,readBack); capability = two_byteOrg(readBack);//Capability register
+//    WriteRead(0x17,BM92A_ADDRESS,2,readBack); config_2 = two_byteOrg(readBack);//controller config 2
+//    WriteRead(0x19,BM92A_ADDRESS,2,readBack); Display_alert = two_byteOrg(readBack);//Display port register
+//    WriteRead(0x1A,BM92A_ADDRESS,2,readBack); vendorConfig = two_byteOrg(readBack);//Vendor Config register
+//    WriteRead(0x20,BM92A_ADDRESS,5,readBack); nonBattery = four_byteOrg(readBack);//Autongtsnk Info non-Battery register
+//    WriteRead(0x23,BM92A_ADDRESS,5,readBack); battery = four_byteOrg(readBack);//Autongtsnk Info Battery register
+//
+//    WriteRead(0x26,BM92A_ADDRESS,2,readBack); sys_config_1 = two_byteOrg(readBack);//system controller config 1
+//    WriteRead(0x27,BM92A_ADDRESS,2,readBack); sys_config_2 = two_byteOrg(readBack);//system controller config 2
+//    WriteRead(0x28,BM92A_ADDRESS,5,readBack); PDO = four_byteOrg(readBack);//PDO register
+//    WriteRead(0x2B,BM92A_ADDRESS,5,readBack); RDO = four_byteOrg(readBack);//RDO register
+//    WriteRead(0x2F,BM92A_ADDRESS,2,readBack); sys_config_3 = two_byteOrg(readBack); //system controller config 2
+//
+//    ALERTEN=0, SETRDO=0,FirmType=0,FirmRev=0, ManuID=0,DeviceID=0,RevID=0;
+//
+//    WriteRead(0x2E,BM92A_ADDRESS,2,readBack); ALERTEN = two_byteOrg(readBack);
+//    WriteRead(0x30,BM92A_ADDRESS,4,readBack); SETRDO = four_byteOrg(readBack);
+//    WriteRead(0x4B,BM92A_ADDRESS,2,readBack); FirmType = two_byteOrg(readBack);
+//    WriteRead(0x4C,BM92A_ADDRESS,2,readBack); FirmRev = two_byteOrg(readBack);
+//    WriteRead(0x4D,BM92A_ADDRESS,2,readBack); ManuID = two_byteOrg(readBack);
+//    WriteRead(0x4E,BM92A_ADDRESS,2,readBack); DeviceID = two_byteOrg(readBack);
+//    WriteRead(0x4F,BM92A_ADDRESS,2,readBack); RevID = two_byteOrg(readBack);
+//
+//    for(i = 0; i<40; i++);
 
 }
 

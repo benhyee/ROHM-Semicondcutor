@@ -12,7 +12,7 @@
 unsigned short two_byteOrg(unsigned char* dataArray);
 unsigned int four_byteOrg(unsigned char* dataArray);
 int transferIntArray(unsigned char* tempArray, unsigned int* PDO);
-
+void blinkLED();
 
 
 #endif /* HELPER_H_ */

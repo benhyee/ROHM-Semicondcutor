@@ -6,7 +6,7 @@
  */
 
 
-
+#include "msp.h"
 unsigned char char_Hold;
 unsigned short shortData;
 unsigned int intData;
@@ -54,4 +54,12 @@ int transferIntArray( unsigned char* tempArray, unsigned int* PDO_array)
     return 0;
 }
 
+void blinkLED()
+{
 
+    P2->OUT |= 1;
+    for(i = 0; i< 50000; i++);
+    P2->OUT &= ~1;
+    for(i = 0; i< 50000; i++);
+
+}

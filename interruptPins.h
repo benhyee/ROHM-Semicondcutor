@@ -11,7 +11,12 @@
 
 
 void interruptPinInit();
+void displayMode();
+void voltageDisplay();
+void batteryDisplay();
+void PORT1_IRQHandler(void);
 void PORT3_IRQHandler(void);
+void PORT6_IRQHandler(void);
 
 
 #endif /* INTERRUPTPINS_H_ */

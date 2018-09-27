@@ -8,7 +8,13 @@
 #ifndef GLOBALS_H_
 #define GLOBALS_H_
 
-extern char plugAlertFlag;
-
+#define TRUE 1
+#define FALSE 0
+extern volatile char plugAlertFlag;
+extern char cursorFlag;
+extern char volt_set_cnt;
+extern char settings_menu_Count;
+extern char bat_setting;
+extern char sysToggle;
 
 #endif /* GLOBALS_H_ */
