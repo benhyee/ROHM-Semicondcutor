@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "lcd.h"
+#include "BD99954_Funcs.h"
+#include "BM92A_Funcs.h"
 
 #define BD99954_ADDRESS 0x09
 #define CURRENT_FREQ FREQ_12_MHZ
@@ -41,8 +43,7 @@ int main(void)
     LCD_init();
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Select Mode");
-    LCD_enter();
-    LCD_word("Snk Mode   5V->");
+    displayMode();
 
     terminal_init();    //SDA -> P1.6 SCL->P1.7
     unsigned char readBack[30];  //Temp Storage of registers
@@ -65,6 +66,7 @@ int main(void)
 
     while(1)
     {
+       /*
         PJ -> OUT &= ~0x0C;
 
         if(plugAlertFlag == 1)
@@ -96,9 +98,14 @@ int main(void)
             plugAlertFlag = 0;
 
         }
+        */
+        if(cursorFlag == 1)
+        {
+            displayMode();
+
+        }
 //        testReadRegistersBM92A();
 //        BM92A_Debugger();
-//        BD99954ReadRegister();
 //        if(plugAlertFlag ==1)
 //        {
 //            delay_ms(200,CURRENT_FREQ);

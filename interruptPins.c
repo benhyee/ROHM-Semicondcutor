@@ -20,11 +20,9 @@
 #define CURRENT_FREQ FREQ_12_MHZ
 
 volatile char plugAlertFlag = 0;
-char upFlag = 0, downFlag = 0, cursorFlag = 0;
-char volt_set_cnt = 0;
-char settings_menu_Count = 0;
-char bat_setting = 1;
-char sysToggle = FALSE;
+char upFlag = 0, downFlag = 0, cursorFlag = 0, volt_set_cnt = 0;
+char settings_menu_Count = 0,bat_setting = 1,sysToggle = FALSE;
+char select = 0;
 unsigned char readback;
 void interruptPinInit()
 {
@@ -91,32 +89,24 @@ void displayMode()
     switch(settings_menu_Count)
     {
         case 0:
-            LCD_word("Snk Mode");
-            voltageDisplay();
-
+            LCD_word("Battery Config");
+            if(select == 1)
+            {
+                voltageDisplay();
+            }
             break;
         case 1:
-            LCD_word("Src Mode");
-            voltageDisplay();
+            LCD_word("Current Setting");
             break;
         case 2:
-            LCD_word("Bat Config");
-            batteryDisplay();
+            LCD_word("Mode");
             break;
 
         case 3:
-            if(sysToggle == TRUE)
-            {
-                LCD_word("Enable");
-            }
-            if(sysToggle == FALSE)
-            {
-                LCD_word("Disabled");
-            }
-            break;
-
-        case 4:
             LCD_word("Diagnostic");
+            break;
+        case 4:
+            LCD_word("System toggle");
             break;
 
 
@@ -128,6 +118,10 @@ void displayMode()
 }
 void voltageDisplay()
 {
+    LCD_clearLine();
+    LCD_word("Battery Config");
+    LCD_enter();
+    LCD_clearLine();
     switch(volt_set_cnt)
     {
         case 0:
@@ -148,6 +142,11 @@ void voltageDisplay()
         default:
             break;
     }
+    if(select == 0)
+    {
+        displayMode();
+    }
+
 }
 void batteryDisplay()
 {
@@ -172,24 +171,24 @@ void batteryDisplay()
 void PORT1_IRQHandler(void){
     if (JOYCON1->IFG & 0x10)
     {
-        settings_menu_Count += 1;
-        terminal_transmitWord("UP");
-        if(settings_menu_Count > 4)
+        terminal_transmitWord("Up");
+        if(settings_menu_Count == 0)
         {
-            settings_menu_Count = 4;
+            settings_menu_Count = 1;
         }
+        settings_menu_Count -= 1;
+
         JOYCON1->IFG &= ~0xFF;
 
     }
     else if(JOYCON1->IFG & 0x20)
     {
-        settings_menu_Count -= 1;
-        terminal_transmitWord("LEFT");
-
-        if(settings_menu_Count <= 0)
+        terminal_transmitWord("Left");
+        if(volt_set_cnt == 0)
         {
-            settings_menu_Count = 0;
+            volt_set_cnt = 1;
         }
+        volt_set_cnt -= 1;
 
         JOYCON1->IFG &= ~0xFF;
     }
@@ -198,43 +197,46 @@ void PORT1_IRQHandler(void){
 
 }
 void PORT6_IRQHandler(void){
-    if (JOYCON2->IFG & 0x80)
+   if (JOYCON2->IFG & 0x80)
+   {
+       terminal_transmitWord("Right");
+       if(volt_set_cnt == 4)
        {
-           settings_menu_Count += 1;
-           terminal_transmitWord("RIGHT");
-
-           if(settings_menu_Count > 4)
-           {
-               settings_menu_Count = 4;
-           }
-           JOYCON2->IFG &= ~0xFF;
-
+           volt_set_cnt = 3;
        }
-    else if (JOYCON2->IFG & 0x40)
+       volt_set_cnt += 1;
+
+       JOYCON2->IFG &= ~0xFF;
+
+   }
+   else if (JOYCON2->IFG & 0x40)
+   {
+       terminal_transmitWord("Down");
+       if(settings_menu_Count == 4)
        {
-           settings_menu_Count -= 1;
-           terminal_transmitWord("DOWN");
-
-           if(settings_menu_Count > 4)
-           {
-               settings_menu_Count = 4;
-           }
-           JOYCON2->IFG &= ~0xFF;
-
+           settings_menu_Count = 3;
        }
+       settings_menu_Count += 1;
+
+       JOYCON2->IFG &= ~0xFF;
+   }
+    cursorFlag = 1;
+
 }
 
 void PORT3_IRQHandler(void){
     if (JOYCONPB->IFG & 0x20)
     {
         terminal_transmitWord("Push\r\n");
-
+        select ^= 1;
     }
-    else if (JOYCONPB->IFG & 0x01)
-    {
-          terminal_transmitWord("Plug Insert\r\n");
-    }
+//    else if (JOYCONPB->IFG & 0x01)
+//    {
+//          terminal_transmitWord("Plug Insert\r\n");
+//    }
     plugAlertFlag = 1;
+    cursorFlag = 1;
+
 
     JOYCONPB->IFG &= ~0xFF;
 
