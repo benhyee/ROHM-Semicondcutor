@@ -27,6 +27,7 @@
 #include "lcd.h"
 #include "BD99954_Funcs.h"
 #include "BM92A_Funcs.h"
+#include "menu.h"
 
 #define BD99954_ADDRESS 0x09
 #define CURRENT_FREQ FREQ_12_MHZ
@@ -66,7 +67,7 @@ int main(void)
 
     while(1)
     {
-       /*
+
         PJ -> OUT &= ~0x0C;
 
         if(plugAlertFlag == 1)
@@ -98,7 +99,7 @@ int main(void)
             plugAlertFlag = 0;
 
         }
-        */
+
         if(cursorFlag == 1)
         {
             displayMode();

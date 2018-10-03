@@ -16,5 +16,5 @@ extern char volt_set_cnt;
 extern char settings_menu_Count;
 extern char bat_setting;
 extern char sysToggle;
-
+extern char select;
 #endif /* GLOBALS_H_ */

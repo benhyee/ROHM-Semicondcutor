@@ -20,9 +20,7 @@
 #define CURRENT_FREQ FREQ_12_MHZ
 
 volatile char plugAlertFlag = 0;
-char upFlag = 0, downFlag = 0, cursorFlag = 0, volt_set_cnt = 0;
-char settings_menu_Count = 0,bat_setting = 1,sysToggle = FALSE;
-char select = 0;
+
 unsigned char readback;
 void interruptPinInit()
 {
@@ -81,92 +79,6 @@ void interruptPinInit()
 //    NVIC_SetPriority(PORT3_IRQn, 7);
 //    NVIC_EnableIRQ(PORT3_IRQn);
 
-}
-void displayMode()
-{
-    LCD_enter();
-    LCD_clearLine();
-    switch(settings_menu_Count)
-    {
-        case 0:
-            LCD_word("Battery Config");
-            if(select == 1)
-            {
-                voltageDisplay();
-            }
-            break;
-        case 1:
-            LCD_word("Current Setting");
-            break;
-        case 2:
-            LCD_word("Mode");
-            break;
-
-        case 3:
-            LCD_word("Diagnostic");
-            break;
-        case 4:
-            LCD_word("System toggle");
-            break;
-
-
-        default:
-            break;
-
-    }
-    cursorFlag = 0;
-}
-void voltageDisplay()
-{
-    LCD_clearLine();
-    LCD_word("Battery Config");
-    LCD_enter();
-    LCD_clearLine();
-    switch(volt_set_cnt)
-    {
-        case 0:
-            LCD_word("   5V->");
-            break;
-        case 1:
-            LCD_word("<- 9V->");
-            break;
-        case 2:
-            LCD_word("<-12V->");
-            break;
-        case 3:
-            LCD_word("<-15V->");
-            break;
-        case 4:
-            LCD_word("<-20V  ");
-            break;
-        default:
-            break;
-    }
-    if(select == 0)
-    {
-        displayMode();
-    }
-
-}
-void batteryDisplay()
-{
-    switch(bat_setting)
-    {
-    case 1:
-        LCD_word("  1s->");
-        break;
-    case 2:
-        LCD_word("<-2s->");
-
-        break;
-    case 3:
-        LCD_word("<-3s->");
-
-        break;
-    case 4:
-        LCD_word("  4s->");
-        break;
-    }
 }
 void PORT1_IRQHandler(void){
     if (JOYCON1->IFG & 0x10)
@@ -229,13 +141,15 @@ void PORT3_IRQHandler(void){
     {
         terminal_transmitWord("Push\r\n");
         select ^= 1;
+        cursorFlag = 1;
+
     }
-//    else if (JOYCONPB->IFG & 0x01)
-//    {
-//          terminal_transmitWord("Plug Insert\r\n");
-//    }
-    plugAlertFlag = 1;
-    cursorFlag = 1;
+    else if (JOYCONPB->IFG & 0x01)
+    {
+          terminal_transmitWord("Plug Insert\r\n");
+          plugAlertFlag = 1;
+
+    }
 
 
     JOYCONPB->IFG &= ~0xFF;
