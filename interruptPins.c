@@ -17,7 +17,6 @@
 #define JOYCON1 P1
 #define JOYCONPB P3
 #define JOYCON2 P6
-#define CURRENT_FREQ FREQ_12_MHZ
 
 volatile char plugAlertFlag = 0;
 
@@ -81,27 +80,43 @@ void interruptPinInit()
 
 }
 void PORT1_IRQHandler(void){
-    if (JOYCON1->IFG & 0x10)
+    if (JOYCON1->IFG & 0x10)    //Up
     {
         terminal_transmitWord("Up");
-        if(settings_menu_Count == 0)
+        if(select == 0)
         {
-            settings_menu_Count = 1;
+            settings_menu_Count -= 1;
         }
-        settings_menu_Count -= 1;
-
+        else if(select == 1)
+        {
+            switch(settings_menu_Count)
+            {
+            case 1:
+                mode_set ^= 1;
+               break;
+           case 2:
+               volt_set_cnt += 1;
+               break;
+           case 3:
+               diagnosticToggle ^= 1;
+               break;
+           case 4:
+               sysToggle ^= 1;
+               break;
+           default:
+               break;
+            }
+        }
         JOYCON1->IFG &= ~0xFF;
 
     }
-    else if(JOYCON1->IFG & 0x20)
+    else if(JOYCON1->IFG & 0x20)//Left
     {
         terminal_transmitWord("Left");
-        if(volt_set_cnt == 0)
+        if(select == 1 && settings_menu_Count == 2)
         {
-            volt_set_cnt = 1;
+            curr_set_cnt -= 1;
         }
-        volt_set_cnt -= 1;
-
         JOYCON1->IFG &= ~0xFF;
     }
     cursorFlag = 1;
@@ -109,26 +124,45 @@ void PORT1_IRQHandler(void){
 
 }
 void PORT6_IRQHandler(void){
-   if (JOYCON2->IFG & 0x80)
+   if (JOYCON2->IFG & 0x80)//Right
    {
        terminal_transmitWord("Right");
-       if(volt_set_cnt == 4)
+       if(select == 1 && settings_menu_Count == 2)
        {
-           volt_set_cnt = 3;
+           curr_set_cnt += 1;
        }
-       volt_set_cnt += 1;
-
        JOYCON2->IFG &= ~0xFF;
 
    }
-   else if (JOYCON2->IFG & 0x40)
+   else if (JOYCON2->IFG & 0x40)//Down
    {
        terminal_transmitWord("Down");
-       if(settings_menu_Count == 4)
+       if(select == 0)  //Main menu
        {
-           settings_menu_Count = 3;
+
+           settings_menu_Count += 1;
        }
-       settings_menu_Count += 1;
+       else if(select == 1)
+       {
+           switch(settings_menu_Count)
+           {
+           case 1:
+               mode_set ^= 1;
+              break;
+          case 2:
+              volt_set_cnt -= 1;
+              break;
+          case 3:
+              diagnosticToggle ^= 1;
+              break;
+          case 4:
+              sysToggle ^= 1;
+              break;
+          default:
+              break;
+           }
+       }
+
 
        JOYCON2->IFG &= ~0xFF;
    }

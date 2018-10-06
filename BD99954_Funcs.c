@@ -4,7 +4,9 @@
  *  Created on: Sep 30, 2018
  *      Author: User
  */
-
+/*
+ * BD99954 Functions
+ */
 #include "msp.h"
 #include <stdint.h>
 #include "helper.h"

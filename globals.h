@@ -13,8 +13,10 @@
 extern volatile char plugAlertFlag;
 extern char cursorFlag;
 extern char volt_set_cnt;
+extern char curr_set_cnt;
+extern char mode_set;
 extern char settings_menu_Count;
-extern char bat_setting;
 extern char sysToggle;
 extern char select;
+extern char diagnosticToggle;
 #endif /* GLOBALS_H_ */

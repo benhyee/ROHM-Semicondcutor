@@ -30,7 +30,6 @@
 #include "menu.h"
 
 #define BD99954_ADDRESS 0x09
-#define CURRENT_FREQ FREQ_12_MHZ
 #define BM92A_ADDRESS 0x18
 
 int main(void)
@@ -50,9 +49,9 @@ int main(void)
     unsigned char readBack[30];  //Temp Storage of registers
     interruptPinInit();
 
-    unsigned int PDO = 0, RDO = 0;
     int i;
-    unsigned char PDORegisters[28];
+//    unsigned int PDO = 0, RDO = 0;
+//    unsigned char PDORegisters[28];
     unsigned short alertStatus = 0;
     __enable_irq();                           // Enable global interrupt
 //    write_word(0x2F,BM92A_ADDRESS,0xA401);

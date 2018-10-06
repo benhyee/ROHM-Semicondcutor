@@ -10,9 +10,9 @@
 
 
 void displayMode();
-void voltageDisplay();
-void batteryDisplay();
-void currentDisplay();
+void PDDisplay();
+void PowerDisplay();
+void onOffDisplay(char toggle);
 
 
 #endif /* MENU_H_ */

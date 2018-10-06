@@ -8,7 +8,6 @@
 #define FREQ_6_MHZ 60
 #define FREQ_12_MHZ 120
 #define FREQ_24_MHZ 240
-
 #define CURRENT_FREQ FREQ_24_MHZ
 
 void delay_ms(int n, int freq);
