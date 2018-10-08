@@ -49,7 +49,7 @@ int main(void)
 //    unsigned char readBack[30];  //Temp Storage of registers
     interruptPinInit();
 
-//    unsigned int PDO = 0, RDO = 0;
+    unsigned int PDO = 0, RDO = 0;
 //    unsigned char PDORegisters[28];
     unsigned short alertStatus = 0;
     __enable_irq();                           // Enable global interrupt
