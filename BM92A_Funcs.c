@@ -19,21 +19,22 @@
 int i;
 //BM92A Local Variables Storing the Register Reads
 unsigned int value, RDO, PDO, battery, nonBattery, PDO_SNK_Cons;
-unsigned short status_1,status_2,config_1,config_2,Display_alert, vendorConfig;
+unsigned short status,config_1,config_2,Display_alert, vendorConfig;
 unsigned short sys_config_1, sys_config_2,sys_config_3 , alertStatus,capability;
 unsigned short ALERTEN, SETRDO,FirmType,FirmRev, ManuID,DeviceID,RevID;
 //Debugger BM92A Variables
-unsigned int maxCurrent , voltage , current ;
-unsigned char power_role , recepticle , data_role;
-
+unsigned int maxCurrent, voltage, current ;
+unsigned char generalPurpose;
+unsigned char SPDSRC, SPDSNK,command ,power_role , plug_orient, data_role;   //status 1 variables
+unsigned char recepticle;
 
 
 void testReadRegistersBM92A()
 {
-    value=0, RDO = 0, PDO = 0,battery = 0, nonBattery = 0;  //Reinitialize to 0 to ensure fresh write
-    status_1=0,status_2=0,config_1=0,config_2=0,Display_alert = 0, vendorConfig= 0;
-    sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
-    ALERTEN=0, SETRDO=0,FirmType=0,FirmRev=0, ManuID=0,DeviceID=0,RevID=0;
+//    value=0, RDO = 0, PDO = 0,battery = 0, nonBattery = 0;  //Reinitialize to 0 to ensure fresh write
+//    status_1=0,status_2=0,config_1=0,config_2=0,Display_alert = 0, vendorConfig= 0;
+//    sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
+//    ALERTEN=0, SETRDO=0,FirmType=0,FirmRev=0, ManuID=0,DeviceID=0,RevID=0;
 
     unsigned char *readBack = malloc(sizeof(char)*30);
     unsigned int *PDO_SNK_Cons = malloc(sizeof(unsigned int)*4);
@@ -77,98 +78,183 @@ void testReadRegistersBM92A()
 
 }
 
-void BM92A_Debugger()
+
+void status1_Debug(unsigned short status_1)
 {
-    unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
-    WriteRead(0x28,BM92A_ADDRESS,5,readBack);//PDO register
-    PDO = four_byteOrg(readBack);
-//    testReadRegisters();
-    WriteRead(0x03,BM92A_ADDRESS,2,readBack); //status 1 register
-    status_1 = two_byteOrg(readBack);
-    for(i = 0; i < 100; i++);
+    terminal_transmitWord("Status 1 States \r\n");
+    terminal_transmitWord("------------------------------\r\n");
+    SPDSRC = (status_1 & 0x8000)>>15;
+    SPDSNK = (status_1 & 0x4000)>>14;
 
-    WriteRead(0x26,BM92A_ADDRESS,2,readBack); //system controller config 1
-    sys_config_1 = two_byteOrg(readBack);
-    for(i = 0; i < 100; i++);
-
-    WriteRead(0x2B,BM92A_ADDRESS,5,readBack);//RDO register
-    RDO = four_byteOrg(readBack);
-    for(i = 0; i < 100; i++);
-
-
-
-    power_role = status_1 & 0x1000;
-    power_role = power_role >> 12;
-    data_role = status_1 >> 8;
-    data_role = data_role & 0x3;
-    maxCurrent = PDO & 0x3FF;   // BitMask first 10 Bits
-    maxCurrent = maxCurrent * 10;   // Max Current 10 mA
-    voltage = PDO >> 10;    // Shift 10 to accomodate Voltage reading
-    voltage = (voltage & 0x3FF) * 50;   // 50 mV times 10 bits of Voltage
-    RDO = RDO >> 10;
-    current = RDO & 0x3FF;          // First 10 register of RDO are operating Current
-    current = current * 10;
-    recepticle = sys_config_1 & 0xF; // Recepticle Type
-    WriteRead(0x20,BM92A_ADDRESS,5,readBack);//Autongtsnk Info non-Battery register
-    nonBattery = four_byteOrg(readBack);
-    if(power_role == 0)
+    switch(SPDSRC)
     {
-        terminal_transmitWord("BM92A is Sink \t");
-    }
-    else
-    {
-        terminal_transmitWord("BM92A is Source \t");
-
-    }
-    if(data_role == 0)
-    {
-        terminal_transmitWord("No plug inserted \t");
-    }
-    else if(data_role == 1)
-    {
-        terminal_transmitWord("UFP (Device) \t");
-
-    }
-    else if(data_role == 2)
-    {
-        terminal_transmitWord("DFP (Host) \t");
-
-    }
-    else
-    {
-        terminal_transmitWord("In Accessory Mode \t");
-
-    }
-
-    switch(recepticle){
-    case 0x9:
-        terminal_transmitWord("Type-C \n\r");
+    case 0:
+        terminal_transmitWord("SPDSRC1 Off \t");
         break;
-
-    case 0xA:
-        terminal_transmitWord("Type-C 3A \n\r");
-        break;
-    case 0xB:
-        terminal_transmitWord("Type=C 5A \n\r");
+    case 1:
+        terminal_transmitWord("SPDSRC1 On \t");
         break;
     default:
-        terminal_transmitWord("Unconfirmed Recepticle Type\n\r");
         break;
     }
-    terminal_transmitWord("Max Amps:");
-    terminal_transmitInt(maxCurrent);
-    terminal_transmitWord("\nOperating Amps:");
-    terminal_transmitInt(current);
-    terminal_transmitWord("\nVoltage:");
-    terminal_transmitInt(voltage);
-    terminal_transmitWord("\r\n");
+    switch(SPDSNK)
+    {
+    case 0:
+        terminal_transmitWord("SPDSNK Off \t");
+        break;
+    case 1:
+        terminal_transmitWord("SPDSNK On \t");
+        break;
+    default:
+        break;
+    }
+    SPDSRC = (status_1 & 0x8)>>3;
+    switch(SPDSRC)
+    {
+    case 0:
+        terminal_transmitWord("SPDSRC2 Off \r\n");
+        break;
+    case 1:
+        terminal_transmitWord("SPDSRC2 On \r\n");
+        break;
+    default:
+        break;
+    }
+    generalPurpose = (status_1 & 0x800)>>11;
+    switch(generalPurpose)
+    {
+    case 0:
+       terminal_transmitWord("CC1 Side Valid \t");
+       break;
+    case 1:
+       terminal_transmitWord("CC2 Side Valid \t");
+       break;
+    default:
+       break;
+    }
+    generalPurpose = (status_1 &0x2000)>>13;
+    switch(generalPurpose)
+    {
+    case 0:
+        terminal_transmitWord("No Command in Progress \r\n");
+        break;
+    case 1:
+        terminal_transmitWord("Command in Progress \r\n");
+        break;
+    default:
+        break;
+    }
+    generalPurpose = (status_1 & 0x1000)>>12;
+
+
+    switch(generalPurpose)
+    {
+    case 0:
+       terminal_transmitWord("BM92A is Sink \t");
+       break;
+    case 1:
+       terminal_transmitWord("BM92A is Source \t");
+       break;
+    default:
+       break;
+    }
+
+    generalPurpose = (status_1 & 0xC0) >> 8;
+    switch(generalPurpose)
+    {
+    case 1:
+        terminal_transmitWord("UFP (Device) \t");
+        break;
+    case 2:
+        terminal_transmitWord("DFP (Host) \t");
+        break;
+    case 3:
+        terminal_transmitWord("In Accessory Mode \t");
+        break;
+    default:
+        terminal_transmitWord("No plug inserted \t");
+        break;
+    }
+    generalPurpose = (status_1 & 0x400) >> 10;
+    switch(generalPurpose)
+    {
+    case 0:
+        terminal_transmitWord("Unpowered or vSafe0V\r\n\n");
+        break;
+    case 1:
+        terminal_transmitWord("vSafe5V or negotiated Power Level\r\n");
+        break;
+    default:
+        break;
+    }
+
+    terminal_transmitWord("------------------------------\r\n");
+
+}
+void status2_Debug(unsigned short status_2)
+{
+    terminal_transmitWord("Status 2 States \r\n");
+    terminal_transmitWord("------------------------------\r\n");
+    generalPurpose = (status_2 & 0x1000)>>12;
+
+    switch(generalPurpose)
+    {
+    case 0:
+       terminal_transmitWord("Not Electronically Marked Cable \r\n");
+       break;
+    case 1:
+       terminal_transmitWord("Electronically Marked Cable\r\n");
+       break;
+    default:
+       break;
+    }
+    generalPurpose = (status_2 & 0xC00)>>10;
+    switch(generalPurpose)
+    {
+    case 1:
+        terminal_transmitWord("Audio Accessory \r\n");
+        break;
+    case 2:
+        terminal_transmitWord("Debug Accessory \r\n");
+        break;
+    case 3:
+        terminal_transmitWord("VCONN Powered Accessory \r\n");
+        break;
+    default:
+        terminal_transmitWord("Not in accessory Mode) \r\n");
+        break;
+    }
+
+    generalPurpose = (status_2 & 0x200) >> 9;
+    switch(generalPurpose)
+    {
+    case 0:
+        terminal_transmitWord("VCONN Off\t");
+        break;
+    case 1:
+        terminal_transmitWord("VCONN On\t");
+        break;
+    default:
+        break;
+    }
+    generalPurpose = (status_2 & 0x8) >> 3;
+    switch(generalPurpose)
+    {
+    case 0:
+        terminal_transmitWord("Source PDO or no PDO\r\n");
+        break;
+    case 1:
+        terminal_transmitWord("Sink PDO\r\n");
+        break;
+    default:
+        break;
+    }
+    terminal_transmitWord("------------------------------\r\n");
+
 }
 
 void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
 {                                   //L L -> (60W)  L H -> (45W) H L -> (27W) H H -> (18W)
-
-
-
 
     unsigned char PDO_SRC_Cons[28];
     unsigned char PDO_Snk_Cons[16];
@@ -236,3 +322,60 @@ void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
     write_word(0x2F,BM92A_ADDRESS,0x0100);  // SysConfig3
     write_word(0x05,BM92A_ADDRESS,0x0A0A);  // Set Command
 }
+
+void BM92A_Debugger()
+{
+    terminal_transmitWord("------------------------------\r\n");
+    unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
+    WriteRead(0x28,BM92A_ADDRESS,5,readBack);//PDO register
+    PDO = four_byteOrg(readBack);
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); //status 1 register
+    status = two_byteOrg(readBack);
+    status1_Debug(status);
+
+    WriteRead(0x04,BM92A_ADDRESS,2,readBack); //status 2 register
+    status = two_byteOrg(readBack);
+    status2_Debug(status);
+
+
+    WriteRead(0x26,BM92A_ADDRESS,2,readBack); //system controller config 1
+    sys_config_1 = two_byteOrg(readBack);
+
+    WriteRead(0x2B,BM92A_ADDRESS,5,readBack);//RDO register
+    RDO = four_byteOrg(readBack);
+
+
+    maxCurrent = PDO & 0x3FF;   // BitMask first 10 Bits
+    maxCurrent = maxCurrent * 10;   // Max Current 10 mA
+    voltage = PDO >> 10;    // Shift 10 to accomodate Voltage reading
+    voltage = (voltage & 0x3FF) * 50;   // 50 mV times 10 bits of Voltage
+    RDO = RDO >> 10;
+    current = RDO & 0x3FF;          // First 10 register of RDO are operating Current
+    current = current * 10;
+    recepticle = sys_config_1 & 0xF; // Recepticle Type
+    WriteRead(0x20,BM92A_ADDRESS,5,readBack);//Autongtsnk Info non-Battery register
+    nonBattery = four_byteOrg(readBack);
+    switch(recepticle){
+    case 0x9:
+        terminal_transmitWord("Type-C \n\r");
+        break;
+
+    case 0xA:
+        terminal_transmitWord("Type-C 3A \n\r");
+        break;
+    case 0xB:
+        terminal_transmitWord("Type=C 5A \n\r");
+        break;
+    default:
+        terminal_transmitWord("Unconfirmed Recepticle Type\n\r");
+        break;
+    }
+    terminal_transmitWord("Max Amps:");
+    terminal_transmitInt(maxCurrent);
+    terminal_transmitWord("\nOperating Amps:");
+    terminal_transmitInt(current);
+    terminal_transmitWord("\nVoltage:");
+    terminal_transmitInt(voltage);
+    terminal_transmitWord("\r\n");
+}
+

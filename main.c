@@ -5,7 +5,7 @@
  *  delay.h -> Frequency set and delay functions
  *  helper.h -> Functions that are helpful for organization and exception handling
  *  LCD.h -> Functions for the LCD monitor.
- *  UART.h -> Functions for terminal use on the computer
+ *  UART.h -> Functions for terminal use on the computer COM4 19200
  *
  *  Pin outs:
  *  P1.6 -> SDA;    P1.7->SCL
@@ -46,29 +46,20 @@ int main(void)
     displayMode();
 
     terminal_init();    //SDA -> P1.6 SCL->P1.7
-    unsigned char readBack[30];  //Temp Storage of registers
+//    unsigned char readBack[30];  //Temp Storage of registers
     interruptPinInit();
 
-    int i;
 //    unsigned int PDO = 0, RDO = 0;
 //    unsigned char PDORegisters[28];
     unsigned short alertStatus = 0;
     __enable_irq();                           // Enable global interrupt
-//    write_word(0x2F,BM92A_ADDRESS,0xA401);
-//    testReadRegistersBM92A();
-//    BD99954_Startup_Routine();
-//    BD99954ReadRegister();
-//    BM92A_Debugger();
-
-//    BM92Asrc_init();
-//    testReadRegistersBM92A();
     write_word(0x2E,BM92A_ADDRESS,0x0800);  //Alert Enable
 
     while(1)
     {
 
         PJ -> OUT &= ~0x0C;
-
+/*
         if(plugAlertFlag == 1)
         {
 //            InitI2C();
@@ -98,10 +89,11 @@ int main(void)
             plugAlertFlag = 0;
 
         }
-
+*/
         if(cursorFlag == 1)
         {
             displayMode();
+            BM92A_Debugger();
 
         }
 //        testReadRegistersBM92A();
