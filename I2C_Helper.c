@@ -12,7 +12,6 @@ unsigned char tempHold;
 int i, TransmitFlag = 0;
 
 
-
 void InitI2C()
 {
 
@@ -77,10 +76,9 @@ void write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned shor
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
-    while (!TransmitFlag);            // Wait for the transmit to complete
+    while (!TransmitFlag);
     TransmitFlag = 0;
     EUSCI_B0 -> TXBUF = commandCode;      // Send the byte to store in BM9
-
     while (!TransmitFlag);            // Wait for the transmit to complete
     TransmitFlag = 0;
     EUSCI_B0 -> TXBUF = lowByte;      // Send the byte to store in BM92A
@@ -150,7 +148,15 @@ int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, u
 
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
-    while (!TransmitFlag);            // Wait for the transmit to complete
+    int timer = 0;
+    while (!TransmitFlag)
+    {
+        timer += 1;
+        if(timer > 2147483647)
+        {
+            return 1;
+        }
+    }
     TransmitFlag = 0;
     EUSCI_B0 -> TXBUF = commandCode;      // Send the byte to store in BM92A
     while (!TransmitFlag);            // Wait for the transmit to complete

@@ -51,7 +51,6 @@ int main(void)
 
     unsigned int PDO = 0, RDO = 0;
 //    unsigned char PDORegisters[28];
-    unsigned short alertStatus = 0;
     __enable_irq();                           // Enable global interrupt
     write_word(0x2E,BM92A_ADDRESS,0x0800);  //Alert Enable
 
@@ -92,40 +91,10 @@ int main(void)
 */
         if(cursorFlag == 1)
         {
+            testReadRegistersBM92A();
             displayMode();
-            BM92A_Debugger();
 
         }
-//        testReadRegistersBM92A();
-//        BM92A_Debugger();
-//        if(plugAlertFlag ==1)
-//        {
-//            delay_ms(200,CURRENT_FREQ);
-//            BM92A_Debugger();
-//            BM92A_Debugger();
-//            BD99954_Startup_Routine();
-//            BD99954ReadRegister();
-//            plugAlertFlag = 0;
-//        }
-//        if(cursorFlag == 1)
-//        {
-//            displayMode();
-//
-//        }
-
-//        write_word(0x05,BM92A_ADDRESS,0x0303);
-//        write_word(0x05,BM92A_ADDRESS,0x0A0A);
-//        testReadRegistersBM92A();
-//
-//        write_word(0x05,BM92A_ADDRESS,0x0B0B);
-//
-//        WriteRead(0x02,BM92A_ADDRESS,2,readBack);//Alert register
-//        alertStatus = two_byteOrg(readBack);
-//        if(alertStatus != 0)
-//        {
-//            write_word(0x05,BM92A_ADDRESS,0x0505);
-//
-//        }
 
         delay_ms(10,CURRENT_FREQ);
         __sleep();      // go to lower power mode

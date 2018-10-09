@@ -43,16 +43,7 @@ void interruptPinInit()
     JOYCONPB -> OUT |= 0x21;
     JOYCONPB -> REN |= 0x21;
     JOYCONPB -> IES |= 0x21;
-//    P2-> SEL1 &= ~7;
-//    P2-> SEL0 &= ~7;
-//    P2->DIR |= 7;
-//    P2->OUT &= ~7;
 
-//    P3 -> SEL1 &= ~0x60;
-//    P3 -> SEL0 &= ~0x60;
-//    P3 -> REN |= 0x60;
-//    P3 -> DIR &= ~0x60;
-//    P3 -> IES = 0x60;
 
     JOYCON1 -> IFG = 0;
     JOYCON1 -> IE |= 0x30;
@@ -60,10 +51,7 @@ void interruptPinInit()
     JOYCON2 -> IE |= 0xC0;
     JOYCONPB -> IFG = 0;
     JOYCONPB -> IE |= 0x21;
-//    P2 -> IFG = 0;
-//    P2 -> IE |= 0x07;
-//    P3 -> IFG = 0;
-//    P3 -> IE |= 0x60;
+
 
     NVIC_SetPriority(PORT1_IRQn, 5);
     NVIC_EnableIRQ(PORT1_IRQn);
@@ -72,11 +60,6 @@ void interruptPinInit()
     NVIC_SetPriority(PORT6_IRQn, 5);
     NVIC_EnableIRQ(PORT6_IRQn);
 
-//    NVIC_SetPriority(PORT2_IRQn, 6);
-//    NVIC_EnableIRQ(PORT2_IRQn);
-
-//    NVIC_SetPriority(PORT3_IRQn, 7);
-//    NVIC_EnableIRQ(PORT3_IRQn);
 
 }
 void PORT1_IRQHandler(void){
