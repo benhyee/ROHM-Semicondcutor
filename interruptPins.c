@@ -181,7 +181,7 @@ void PORT3_IRQHandler(void){
     else if (JOYCONPB->IFG & 0x01)
     {
           terminal_transmitWord("Plug Insert\r\n");
-          plugAlertFlag = 1;
+          cursorFlag = 1;
 
     }
 
