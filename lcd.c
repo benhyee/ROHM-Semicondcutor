@@ -1,5 +1,4 @@
 #include "msp432.h"
-#include "delay.h"
 #include <string.h>
 #define RS 0x01
 #define RW 0x02
@@ -17,22 +16,22 @@
 //    LCDPORT->OUT = data; //clear EN
 //    LCDPORT->OUT = 0;
 //}
-
+int i;
 void LCD_command(unsigned char command)
 {
     LCDCNTRL->OUT &= ~(RS|RW);
     LCDPORT->OUT = command;
     LCDCNTRL->OUT |= EN;
-    delay_ms(1,CURRENT_FREQ);
+    for(i = 0;i<100;i++);
     LCDCNTRL->OUT &= ~EN;
 
     if (command < 4)
     {
-        delay_ms(5, CURRENT_FREQ);
+        for(i = 0;i<500;i++);
     }
     else
     {
-        delay_us(50, CURRENT_FREQ);
+        for(i = 0;i<50;i++);
     }
 
 //    LCD_nibble_write(command & 0xF0, 0);
@@ -56,9 +55,9 @@ void LCD_data(unsigned char command)
     LCDCNTRL->OUT &= ~RW;
     LCDPORT->OUT = command;
     LCDCNTRL->OUT |= EN;
-    delay_ms(0,CURRENT_FREQ);
+    for(i = 0;i<3;i++);
     LCDCNTRL->OUT &= ~EN;
-    delay_ms(1, CURRENT_FREQ);
+    for(i = 0;i<300;i++);
 }
 
 void LCD_enter()
@@ -80,17 +79,17 @@ void LCD_init()
 //    delay_ms(10, CURRENT_FREQ);
     LCDCNTRL->DIR |= RS| EN | RW;
     LCDPORT->DIR = 0xFF;
-    delay_ms(30,CURRENT_FREQ);
+    for(i = 0;i<5000;i++);
 
 //        delay_ms(100, CURRENT_FREQ);
     LCD_command(0x30);
-    delay_ms(30, CURRENT_FREQ);
+    for(i = 0;i<5000;i++);
     LCD_command(0x30);
-    delay_ms(10, CURRENT_FREQ);
+    for(i = 0;i<5000;i++);
     LCD_command(0x30);
-    delay_ms(10, CURRENT_FREQ);
+    for(i = 0;i<5000;i++);
     LCD_command(0x30);
-    delay_ms(10, CURRENT_FREQ);
+    for(i = 0;i<5000;i++);
     LCD_command(0x38); //set 8-bit data, 2-line, 5x7 font
     LCD_command(0x06); //move cursor right after each char
     LCD_command(0x01); // clear screen, move cursor home

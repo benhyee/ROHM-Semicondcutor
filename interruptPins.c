@@ -7,7 +7,6 @@
 #include "msp.h"
 #include "globals.h"
 #include "lcd.h"
-#include "delay.h"
 #include "UART.h"
 #include "I2C_Helper.h"
 
@@ -164,7 +163,7 @@ void PORT3_IRQHandler(void){
     else if (JOYCONPB->IFG & 0x01)
     {
           terminal_transmitWord("Plug Insert\r\n");
-          cursorFlag = 1;
+          plugAlertFlag = 1;
 
     }
 

@@ -16,7 +16,6 @@
  */
 #include "I2C_Helper.h"
 #include "msp432.h"
-#include "delay.h"
 #include <time.h>
 #include <stdint.h>
 #include "UART.h"
@@ -38,7 +37,6 @@ int main(void)
 
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
-    set_DCO(CURRENT_FREQ);
     InitI2C();
     LCD_init();
     LCD_command(0x01); // clear screen, move cursor home
@@ -46,18 +44,24 @@ int main(void)
     displayMode();
 
     terminal_init();    //SDA -> P1.6 SCL->P1.7
-//    unsigned char readBack[30];  //Temp Storage of registers
+    unsigned char readBack[30];  //Temp Storage of registers
     interruptPinInit();
-
+    unsigned short alertStatus;
     unsigned int PDO = 0, RDO = 0;
+    int i;
 //    unsigned char PDORegisters[28];
     __enable_irq();                           // Enable global interrupt
-    write_word(0x2E,BM92A_ADDRESS,0x0800);  //Alert Enable
+//    write_word(0x2E,BM92A_ADDRESS,0xFFFF);
+//    WriteRead(0x2E,BM92A_ADDRESS,2,readBack);  //Alert Enable
+//    alertStatus = two_byteOrg(readBack);
+//    WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
+//    alertStatus = two_byteOrg(readBack);
+
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
+
 
     while(1)
     {
-
-        PJ -> OUT &= ~0x0C;
 /*
         if(plugAlertFlag == 1)
         {
@@ -89,14 +93,15 @@ int main(void)
 
         }
 */
-        if(cursorFlag == 1)
+        if(cursorFlag ==1)
         {
-            testReadRegistersBM92A();
             displayMode();
+        }
+        if(plugAlertFlag == 1)
+        {
+            WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
 
         }
-
-        delay_ms(10,CURRENT_FREQ);
         __sleep();      // go to lower power mode
 
     }

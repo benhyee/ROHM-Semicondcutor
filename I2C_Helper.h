@@ -8,7 +8,6 @@
 #ifndef I2C_HELPER_H_
 #define I2C_HELPER_H_
 
-#include "delay.h"
 
 
 

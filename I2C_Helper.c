@@ -152,7 +152,7 @@ int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, u
     while (!TransmitFlag)
     {
         timer += 1;
-        if(timer > 2147483647)
+        if(timer > 2147499)
         {
             return 1;
         }
