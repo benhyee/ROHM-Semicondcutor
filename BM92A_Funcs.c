@@ -974,35 +974,35 @@ void BM92A_Debugger()
     WriteRead(0x28,BM92A_ADDRESS,5,readBack);//PDO register
     PDO = four_byteOrg(readBack);
     WriteRead(0x03,BM92A_ADDRESS,2,readBack); //status 1 register
-        status = two_byteOrg(readBack);
-        status1_Debug(status);
+    status = two_byteOrg(readBack);
+    status1_Debug(status);
 
-//        WriteRead(0x04,BM92A_ADDRESS,2,readBack); //status 2 register
-//        status = two_byteOrg(readBack);
-//        status2_Debug(status);
-//
-//        WriteRead(0x06,BM92A_ADDRESS,2,readBack); //controller config 1
-//        ctrl_config_1 = two_byteOrg(readBack);
-//        control_config1(ctrl_config_1);
-//
-//        WriteRead(0x07,BM92A_ADDRESS,2,readBack); //device capability
-//        capability = two_byteOrg(readBack);
-//        device_capability(capability);
-//
-//        WriteRead(0x17,BM92A_ADDRESS,2,readBack); //controller config 2
-//        ctrl_config_2 = two_byteOrg(readBack);
-//        control_config2(ctrl_config_2);
-//
-//        WriteRead(0x26,BM92A_ADDRESS,2,readBack); //system controller config 1
-//        sys_config_1 = two_byteOrg(readBack);
-//        system_config1(sys_config_1);
-//
-//        WriteRead(0x27,BM92A_ADDRESS,2,readBack); //system controller config 2
-//        sys_config_2 = two_byteOrg(readBack);
-//        system_config2(sys_config_2);
+    WriteRead(0x04,BM92A_ADDRESS,2,readBack); //status 2 register
+    status = two_byteOrg(readBack);
+    status2_Debug(status);
 
-        WriteRead(0x2B,BM92A_ADDRESS,5,readBack);//RDO register
-        RDO = four_byteOrg(readBack);
+    WriteRead(0x06,BM92A_ADDRESS,2,readBack); //controller config 1
+    ctrl_config_1 = two_byteOrg(readBack);
+    control_config1(ctrl_config_1);
+
+    WriteRead(0x07,BM92A_ADDRESS,2,readBack); //device capability
+    capability = two_byteOrg(readBack);
+    device_capability(capability);
+
+    WriteRead(0x17,BM92A_ADDRESS,2,readBack); //controller config 2
+    ctrl_config_2 = two_byteOrg(readBack);
+    control_config2(ctrl_config_2);
+
+    WriteRead(0x26,BM92A_ADDRESS,2,readBack); //system controller config 1
+    sys_config_1 = two_byteOrg(readBack);
+    system_config1(sys_config_1);
+
+    WriteRead(0x27,BM92A_ADDRESS,2,readBack); //system controller config 2
+    sys_config_2 = two_byteOrg(readBack);
+    system_config2(sys_config_2);
+
+    WriteRead(0x2B,BM92A_ADDRESS,5,readBack);//RDO register
+    RDO = four_byteOrg(readBack);
 
 
     maxCurrent = PDO & 0x3FF;   // BitMask first 10 Bits

@@ -27,15 +27,17 @@
 #include "BD99954_Funcs.h"
 #include "BM92A_Funcs.h"
 #include "menu.h"
+#include "delay.h"
 
 #define BD99954_ADDRESS 0x09
 #define BM92A_ADDRESS 0x18
+#define CURRENT_FREQ FREQ_24_MHZ
 
 int main(void)
 {
     __disable_irq();
 
-
+    set_DCO(CURRENT_FREQ);
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
     InitI2C();
     LCD_init();
@@ -51,51 +53,18 @@ int main(void)
     int i;
 //    unsigned char PDORegisters[28];
     __enable_irq();                           // Enable global interrupt
-//    write_word(0x2E,BM92A_ADDRESS,0xFFFF);
-//    WriteRead(0x2E,BM92A_ADDRESS,2,readBack);  //Alert Enable
-//    alertStatus = two_byteOrg(readBack);
-//    WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
-//    alertStatus = two_byteOrg(readBack);
+
 
     WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
 
 
     while(1)
     {
-/*
-        if(plugAlertFlag == 1)
-        {
-//            InitI2C();
-            delay_ms(260,CURRENT_FREQ);
 
-            terminal_transmitWord("Start read\r\n");
-            PJ -> OUT |= 0x0C;
-
-            WriteRead(0x02,BM92A_ADDRESS,2,readBack);
-            PJ -> OUT &= ~0x0C;
-
-            alertStatus = two_byteOrg(readBack);
-            for(i=0; i<=16; i++)
-            {
-                if(alertStatus & 0x1)
-                {
-                    terminal_transmitChar('1');
-                }
-                else
-                {
-                    terminal_transmitChar('0');
-                }
-                alertStatus = alertStatus >> 1;
-            }
-            terminal_transmitWord("\r\n");
-            terminal_transmitWord("End read \r\n");
-            plugAlertFlag = 0;
-
-        }
-*/
         if(cursorFlag ==1)
         {
             displayMode();
+            BM92A_Debugger();
         }
         if(plugAlertFlag == 1)
         {
