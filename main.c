@@ -56,7 +56,7 @@ int main(void)
 
 
     WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
-
+    BD99954_Startup_Routine();
 
     while(1)
     {
@@ -65,6 +65,7 @@ int main(void)
         {
             displayMode();
             BM92A_Debugger();
+
         }
         if(plugAlertFlag == 1)
         {
