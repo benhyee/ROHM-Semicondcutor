@@ -55,16 +55,22 @@ int main(void)
     __enable_irq();                           // Enable global interrupt
 
 
-    WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
-    BD99954_Startup_Routine();
-
+//    BD99954_Startup_Routine();
+//    BM92Asrc_init();
     while(1)
     {
 
         if(cursorFlag ==1)
         {
             displayMode();
-            BM92A_Debugger();
+//            BM92A_Debugger();
+            WriteRead(0x17,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//system controller config 1
+            write_word(0x17,BM92A_ADDRESS,0x8000);  //config 2
+            WriteRead(0x17,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//system controller config 1
+            write_word(0x17,BM92A_ADDRESS,0x8F00);  //config 2
+            WriteRead(0x17,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//system controller config 1
+
+            for(i = 0; i<40; i++);
 
         }
         if(plugAlertFlag == 1)

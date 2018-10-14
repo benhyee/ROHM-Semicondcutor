@@ -74,7 +74,8 @@ void testReadRegistersBM92A()
     WriteRead(0x4F,BM92A_ADDRESS,2,readBack); RevID = two_byteOrg(readBack);
 
     for(i = 0; i<40; i++);
-
+    free(readBack);
+    free(PDO_SNK_Cons);
 }
 
 
@@ -900,71 +901,27 @@ void device_capability(unsigned short cap_config)
 void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
 {                                   //L L -> (60W)  L H -> (45W) H L -> (27W) H H -> (18W)
 
-    unsigned char PDO_SRC_Cons[28];
-    unsigned char PDO_Snk_Cons[16];
 
-    PDO_SRC_Cons[3] = 0x08;
-    PDO_SRC_Cons[2] = 0x01;
-    PDO_SRC_Cons[1] = 0x91;
-    PDO_SRC_Cons[0] = 0x2C; //PDO1
-    PDO_SRC_Cons[7] = 0x00;
-    PDO_SRC_Cons[6] = 0x02;
-    PDO_SRC_Cons[5] = 0xD1;
-    PDO_SRC_Cons[4] = 0x2C; //PDO2
-    PDO_SRC_Cons[11] = 0x00;
-    PDO_SRC_Cons[10] = 0x02;
-    PDO_SRC_Cons[9] = 0xD1;
-    PDO_SRC_Cons[8] = 0x2C; // PDO3
-    PDO_SRC_Cons[15] = 0x00;
-    PDO_SRC_Cons[14] = 0x03;
-    PDO_SRC_Cons[13] = 0xC1;
-    PDO_SRC_Cons[12] = 0x2C; //PDO4
-    PDO_SRC_Cons[19] = 0x00;
-    PDO_SRC_Cons[18] = 0x04;
-    PDO_SRC_Cons[17] = 0xB1;
-    PDO_SRC_Cons[16] = 0x2C; //PDO5
-    PDO_SRC_Cons[23] = 0x00;
-    PDO_SRC_Cons[22] = 0x00;
-    PDO_SRC_Cons[21] = 0x00;
-    PDO_SRC_Cons[20] = 0x00;
-    PDO_SRC_Cons[27] = 0x00;
-    PDO_SRC_Cons[26] = 0x00;
-    PDO_SRC_Cons[25] = 0x00;
-    PDO_SRC_Cons[24] = 0x00;
+    unsigned char *readBack = malloc(sizeof(char)*30);
+    unsigned char *PDO = malloc(sizeof(char)*6);
+    PDO[0] = 0x08;
+    PDO[1] = 0x01;
+    PDO[2] = 0x90;
+    PDO[3] = 0x32;
 
-    write_block(0x08,BM92A_ADDRESS,28,PDO_SRC_Cons);
-    for(i=0;i<80;i++);
-
-    PDO_Snk_Cons[0] = 0x00;
-    PDO_Snk_Cons[1] = 0x00;
-    PDO_Snk_Cons[2] = 0x00;
-    PDO_Snk_Cons[3] = 0x00; //PDO1
-    PDO_Snk_Cons[4] = 0x00;
-    PDO_Snk_Cons[5] = 0x00;
-    PDO_Snk_Cons[6] = 0x00;
-    PDO_Snk_Cons[7] = 0x00; //PDO2
-    PDO_Snk_Cons[8] = 0x00;
-    PDO_Snk_Cons[9] = 0x00;
-    PDO_Snk_Cons[10] = 0x00;
-    PDO_Snk_Cons[11] = 0x00; // PDO3
-    PDO_Snk_Cons[12] = 0x00;
-    PDO_Snk_Cons[13] = 0x00;
-    PDO_Snk_Cons[14] = 0x00;
-    PDO_Snk_Cons[15] = 0x00; //PDO4
-
-    write_block(0x33,BM92A_ADDRESS,16,PDO_Snk_Cons);
-    write_word(0x2E,BM92A_ADDRESS,0xFFFF);  //Alert Enable
-    write_block(0x20,BM92A_ADDRESS,4,0x00000000);  //NonBattery ngt
-    write_block(0x23,BM92A_ADDRESS,4,0x00000000);  //Battery ngt
-
-    for(i=0;i<50;i++);
-    write_word(0x06,BM92A_ADDRESS,0x0000);  //Config 1
-    write_word(0x17,BM92A_ADDRESS,0x8002);  //config 2
-    write_word(0x1A,BM92A_ADDRESS,0x0120);  //Vendor Config
+    write_word(0x17,BM92A_ADDRESS,0x8000);  //config 2
     write_word(0x26,BM92A_ADDRESS,0x0991);  // SysConfig1
     write_word(0x27,BM92A_ADDRESS,0x000A);  // SysConfig2
     write_word(0x2F,BM92A_ADDRESS,0x0100);  // SysConfig3
-    write_word(0x05,BM92A_ADDRESS,0x0A0A);  // Set Command
+    write_block(0x3C,BM92A_ADDRESS,4,PDO);
+    write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//Alert register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status = two_byteOrg(readBack); //status 1 register
+
+
+    write_word(0x06,BM92A_ADDRESS,0x0000);  // Set Command
+    free(readBack);
+
 }
 
 void BM92A_Debugger()

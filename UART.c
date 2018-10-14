@@ -9,6 +9,7 @@ char readCount = 0;
 
 char terminalbufferReady;
 int  terminalbuffer;
+unsigned int byte;
 
 void terminal_init()
 {
@@ -48,15 +49,69 @@ void terminal_transmitInt(unsigned int input)
     }
     terminal_transmitChar(((input / 1000) % 10) + 48);
     terminal_transmitChar('.');
-
     terminal_transmitChar((input / 100)%10 + 48);
-
-
-//    terminal_transmitChar(((input / 100) % 10) + 48);
-//    terminal_transmitChar(((input / 10) % 10) + 48);
-//    terminal_transmitChar((input % 10) + 48);
-    terminal_transmitChar('\r');
+    terminal_transmitChar(((input / 10) % 10) + 48);
+    terminal_transmitChar((input % 10) + 48);
+    //terminal_transmitChar('\r');
     //terminal_transmitChar('\n');
+}
+
+void terminal_transmitByte(unsigned int byte_value)
+{
+
+    switch(byte_value)
+    {
+    case 0:
+       terminal_transmitWord("0");
+       break;
+    case 1:
+       terminal_transmitWord("1");
+       break;
+    case 2:
+       terminal_transmitWord("2");
+       break;
+    case 3:
+       terminal_transmitWord("3");
+       break;
+    case 4:
+       terminal_transmitWord("4");
+       break;
+    case 5:
+       terminal_transmitWord("5");
+       break;
+    case 6:
+       terminal_transmitWord("6");
+       break;
+    case 7:
+       terminal_transmitWord("7");
+       break;
+    case 8:
+       terminal_transmitWord("8");
+       break;
+    case 9:
+       terminal_transmitWord("9");
+       break;
+    case 10:
+       terminal_transmitWord("A");
+       break;
+    case 11:
+       terminal_transmitWord("B");
+       break;
+    case 12:
+       terminal_transmitWord("C");
+       break;
+    case 13:
+       terminal_transmitWord("D");
+       break;
+    case 14:
+       terminal_transmitWord("E");
+       break;
+    case 15:
+       terminal_transmitWord("F");
+       break;
+    default:
+       break;
+    }
 }
 
 void terminal_transmitDouble(double input)
