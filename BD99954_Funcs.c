@@ -135,7 +135,6 @@ void ITERM_Debug(unsigned short ITERM)
 void BD99ID_Debug(unsigned short CHIP_ID)
 {
     terminal_transmitWord("CHIP_ID = 0x");
-
     generalPurpose = ((CHIP_ID & 0xF000) >> 12);
     terminal_transmitByte(generalPurpose);
 
@@ -283,73 +282,58 @@ void BD99954ReadRegister()
 
     WriteRead(0x07,BD99954_ADDRESS,2,readBack);
     IBUS_LIM_SET = two_byteOrg(readBack);
-    IBUS_LIM_Debug(IBUS_LIM_SET);
-
     WriteRead(0x08,BD99954_ADDRESS,2,readBack);
     ICC_LIM_SET = two_byteOrg(readBack);
-    ICC_LIM_Debug(ICC_LIM_SET);
-
     WriteRead(0x1D,BD99954_ADDRESS,2,readBack);
     VRECHG_SET = two_byteOrg(readBack);
-    VRECHG_Debug(VRECHG_SET);
-
     WriteRead(0x1E,BD99954_ADDRESS,2,readBack);
     VBATOVP_SET = two_byteOrg(readBack);
-    VBATOVP_Debug(VBATOVP_SET);
-
     WriteRead(0x11,BD99954_ADDRESS,2,readBack);
     VSYSREG_SET = two_byteOrg(readBack);
-    VSYSREG_Debug(VSYSREG_SET);
-
     WriteRead(0x18,BD99954_ADDRESS,2,readBack);
     VPRECHG_TH_SET = two_byteOrg(readBack);
-    VPRECHG_TH_Debug(VPRECHG_TH_SET);
-
     WriteRead(0x1A,BD99954_ADDRESS,2,readBack);
     VFASTCHG_REG_SET1 = two_byteOrg(readBack);
-    VFASTCHG_REG_Debug(VFASTCHG_REG_SET1);
-
     WriteRead(0x14,BD99954_ADDRESS,2,readBack);
     ITRICH_SET = two_byteOrg(readBack);
-    ITRICH_Debug(ITRICH_SET);
-
     WriteRead(0x15,BD99954_ADDRESS,2,readBack);
     IPRECH_SET = two_byteOrg(readBack);
-    IPRECH_Debug(IPRECH_SET);
-
     WriteRead(0x16,BD99954_ADDRESS,2,readBack);
     ICHG_SET = two_byteOrg(readBack);
-    ICHG_Debug(ICHG_SET);
-
     WriteRead(0x17,BD99954_ADDRESS,2,readBack);
     ITERM_SET = two_byteOrg(readBack);
-    ITERM_Debug(ITERM_SET);
-
     WriteRead(0x38,BD99954_ADDRESS,2,readBack);
     BD99id = two_byteOrg(readBack);
-    BD99ID_Debug(BD99id);
-
     WriteRead(0x39,BD99954_ADDRESS,2,readBack);
     BD99rev = two_byteOrg(readBack);
-    BD99REV_Debug(BD99rev);
-
     WriteRead(0x55,BD99954_ADDRESS,2,readBack);
     VBAT_Average = two_byteOrg(readBack);
-    VBAT_AVE_Debug(VBAT_Average);
-
     WriteRead(0x5D,BD99954_ADDRESS,2,readBack);
     VBUS_Average = two_byteOrg(readBack);
-    VBUS_AVE_Debug(VBUS_Average);
-
     WriteRead(0x61,BD99954_ADDRESS,2,readBack);
     VSYS_Average = two_byteOrg(readBack);
-    VSYS_AVE_Debug(VSYS_Average);
-
-  //  LCD_Voltage(VSYS_Average);
-
     WriteRead(0x3C,BD99954_ADDRESS,2,readBack);
     otpStatus = two_byteOrg(readBack);
+
+    IBUS_LIM_Debug(IBUS_LIM_SET);
+    ICC_LIM_Debug(ICC_LIM_SET);
+    VRECHG_Debug(VRECHG_SET);
+    VBATOVP_Debug(VBATOVP_SET);
+    VSYSREG_Debug(VSYSREG_SET);
+    VPRECHG_TH_Debug(VPRECHG_TH_SET);
+    VFASTCHG_REG_Debug(VFASTCHG_REG_SET1);
+    ITRICH_Debug(ITRICH_SET);
+    IPRECH_Debug(IPRECH_SET);
+    ICHG_Debug(ICHG_SET);
+    ITERM_Debug(ITERM_SET);
+    BD99ID_Debug(BD99id);
+    BD99REV_Debug(BD99rev);
+    VBAT_AVE_Debug(VBAT_Average);
+    VBUS_AVE_Debug(VBUS_Average);
+    VSYS_AVE_Debug(VSYS_Average);
     SYS_STATUS_Debug(otpStatus);
+
+  //  LCD_Voltage(VSYS_Average);
 
     terminal_transmitWord("\r\n");
     terminal_transmitWord("------------------------------\r\n");

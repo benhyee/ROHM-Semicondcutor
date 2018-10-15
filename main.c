@@ -54,25 +54,31 @@ int main(void)
 //    unsigned char PDORegisters[28];
     __enable_irq();                           // Enable global interrupt
 
+    BD99954ReadRegister();
 
-//    BD99954_Startup_Routine();
+    BD99954_Startup_Routine();
 //    BM92Asrc_init();
+//    BD99954ReadRegister();
+//    testReadRegistersBM92A();
+//    BM92Asnk_init();
+    BD99954ReadRegister();
     while(1)
     {
 
         if(cursorFlag ==1)
         {
-            displayMode();
-//            BM92A_Debugger();
-            WriteRead(0x17,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//system controller config 1
-            write_word(0x17,BM92A_ADDRESS,0x8000);  //config 2
-            WriteRead(0x17,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//system controller config 1
-            write_word(0x17,BM92A_ADDRESS,0x8F00);  //config 2
-            WriteRead(0x17,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//system controller config 1
+            BM92A_Debugger();
 
-            for(i = 0; i<40; i++);
+            BD99954ReadRegister();
 
+//            BM92Asnk_init();
+//            testReadRegistersBM92A();
+//            BM92Asrc_init();
+//            testReadRegistersBM92A();
+//            BM92Asnk_init();
+//            testReadRegistersBM92A();
         }
+
         if(plugAlertFlag == 1)
         {
             WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable

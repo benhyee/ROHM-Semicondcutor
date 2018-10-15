@@ -14,6 +14,8 @@
 void testReadRegistersBM92A();
 void BM92A_Debugger();
 void BM92Asrc_init();
+void BM92Asnk_init();
+
 //debugger functions
 void status1_Debug(unsigned short status_1);
 void status2_Debug(unsigned short status_2);

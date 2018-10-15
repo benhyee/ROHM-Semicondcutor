@@ -19,7 +19,7 @@
 int i;
 //BM92A Local Variables Storing the Register Reads
 unsigned int value, RDO, PDO, battery, nonBattery, PDO_SNK_Cons;
-unsigned short status,config_1,config_2,Display_alert, vendorConfig;
+unsigned short status1,status2,config_1,config_2,Display_alert, vendorConfig;
 unsigned short ctrl_config_1, ctrl_config_2;
 unsigned short sys_config_1, sys_config_2,sys_config_3 , alertStatus, capability;
 unsigned short ALERTEN, SETRDO,FirmType,FirmRev, ManuID,DeviceID,RevID;
@@ -33,7 +33,7 @@ unsigned char recepticle;
 void testReadRegistersBM92A()
 {
     value=0, RDO = 0, PDO = 0,battery = 0, nonBattery = 0;  //Reinitialize to 0 to ensure fresh write
-    status=0,config_1=0,config_2=0,Display_alert = 0, vendorConfig= 0;
+    status1=0,status2=0,config_1=0,config_2=0,Display_alert = 0, vendorConfig= 0;
     sys_config_1=0, sys_config_2=0, alertStatus=0,capability=0;
     ALERTEN=0, SETRDO=0,FirmType=0,FirmRev=0, ManuID=0,DeviceID=0,RevID=0;
 
@@ -48,8 +48,8 @@ void testReadRegistersBM92A()
 //    WriteRead(0x08,BM92A_ADDRESS,21,readBack);//PDO SRC register
 
     WriteRead(0x02,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//Alert register
-    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status = two_byteOrg(readBack); //status 1 register
-    WriteRead(0x04,BM92A_ADDRESS,2,readBack); status = two_byteOrg(readBack);//status 2 register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status1 = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x04,BM92A_ADDRESS,2,readBack); status2 = two_byteOrg(readBack);//status 2 register
     WriteRead(0x06,BM92A_ADDRESS,2,readBack); config_1 = two_byteOrg(readBack);//controller config 1
     WriteRead(0x07,BM92A_ADDRESS,2,readBack); capability = two_byteOrg(readBack);//Capability register
     WriteRead(0x17,BM92A_ADDRESS,2,readBack); config_2 = two_byteOrg(readBack);//controller config 2
@@ -904,22 +904,49 @@ void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
 
     unsigned char *readBack = malloc(sizeof(char)*30);
     unsigned char *PDO = malloc(sizeof(char)*6);
-    PDO[0] = 0x08;
-    PDO[1] = 0x01;
-    PDO[2] = 0x90;
-    PDO[3] = 0x32;
+    PDO[0] = 0x32;
+    PDO[1] = 0x90;
+    PDO[2] = 0x01;
+    PDO[3] = 0x08;
 
     write_word(0x17,BM92A_ADDRESS,0x8000);  //config 2
     write_word(0x26,BM92A_ADDRESS,0x0991);  // SysConfig1
     write_word(0x27,BM92A_ADDRESS,0x000A);  // SysConfig2
     write_word(0x2F,BM92A_ADDRESS,0x0100);  // SysConfig3
     write_block(0x3C,BM92A_ADDRESS,4,PDO);
+
     write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
     WriteRead(0x02,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//Alert register
-    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status1 = two_byteOrg(readBack); //status 1 register
+
+    write_word(0x06,BM92A_ADDRESS,0x0000);  //
+    free(readBack);
+
+}
+void BM92Asnk_init()                //GPIO2 and GPIO3 set the Src Prov Table
+{
 
 
-    write_word(0x06,BM92A_ADDRESS,0x0000);  // Set Command
+    unsigned char *readBack = malloc(sizeof(char)*30);
+    unsigned char *PDO = malloc(sizeof(char)*6);
+    PDO[0] = 0x00;
+    PDO[1] = 0x00;
+    PDO[2] = 0x00;
+    PDO[3] = 0x00;
+
+
+    write_word(0x03,BM92A_ADDRESS,0x0000);
+    write_word(0x04,BM92A_ADDRESS,0x0000);
+    write_word(0x06,BM92A_ADDRESS,0xCCE0);
+
+    write_word(0x17,BM92A_ADDRESS,0x0000);  //config 2
+    write_word(0x26,BM92A_ADDRESS,0x8749);  // SysConfig1
+    write_word(0x27,BM92A_ADDRESS,0x0046);  // SysConfig2
+    write_word(0x2F,BM92A_ADDRESS,0xA400);  // SysConfig3
+    write_block(0x3C,BM92A_ADDRESS,4,PDO);
+    write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
+    write_word(0x06,BM92A_ADDRESS,0x0000);  //
+
     free(readBack);
 
 }
@@ -931,12 +958,12 @@ void BM92A_Debugger()
     WriteRead(0x28,BM92A_ADDRESS,5,readBack);//PDO register
     PDO = four_byteOrg(readBack);
     WriteRead(0x03,BM92A_ADDRESS,2,readBack); //status 1 register
-    status = two_byteOrg(readBack);
-    status1_Debug(status);
+    status1 = two_byteOrg(readBack);
+    status1_Debug(status1);
 
     WriteRead(0x04,BM92A_ADDRESS,2,readBack); //status 2 register
-    status = two_byteOrg(readBack);
-    status2_Debug(status);
+    status2 = two_byteOrg(readBack);
+    status2_Debug(status2);
 
     WriteRead(0x06,BM92A_ADDRESS,2,readBack); //controller config 1
     ctrl_config_1 = two_byteOrg(readBack);
