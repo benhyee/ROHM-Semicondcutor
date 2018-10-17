@@ -66,30 +66,6 @@ void CommandRegisterBM92A(unsigned short commandCode,unsigned char slaveAddr)
     EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
 
 }
-
-void write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned short content)
-{
-    unsigned char highByte;
-    unsigned char lowByte;
-    highByte = content >> 8;
-    lowByte = content & 0xFF;
-    EUSCI_B0->I2CSA = slaveAddr;          // Slave address
-    EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
-    EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
-    while (!TransmitFlag);
-    TransmitFlag = 0;
-    EUSCI_B0 -> TXBUF = commandCode;      // Send the byte to store in BM9
-    while (!TransmitFlag);            // Wait for the transmit to complete
-    TransmitFlag = 0;
-    EUSCI_B0 -> TXBUF = lowByte;      // Send the byte to store in BM92A
-    while (!TransmitFlag);            // Wait for the transmit to complete
-    TransmitFlag = 0;
-    EUSCI_B0 -> TXBUF = highByte;      // Send the byte to store in BM92A
-    while (!TransmitFlag);            // Wait for the transmit to complete
-    TransmitFlag = 0;
-    EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
-}
-
 void clear_register(unsigned char commandCode,unsigned char slaveAddr, int dataSize)
 {
    EUSCI_B0->I2CSA = slaveAddr;          // Slave address
@@ -113,8 +89,37 @@ void clear_register(unsigned char commandCode,unsigned char slaveAddr, int dataS
    EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
 
 }
+int write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned short content)
+{
+    unsigned char highByte;
+    unsigned char lowByte;
+    highByte = content >> 8;
+    lowByte = content & 0xFF;
+    EUSCI_B0->I2CSA = slaveAddr;          // Slave address
+    EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
+    EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
+    while (!TransmitFlag);
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = commandCode;      // Send the byte to store in BM9
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = lowByte;      // Send the byte to store in BM92A
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = highByte;      // Send the byte to store in BM92A
 
-void write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+
+    EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
+    while(EUSCI_B0->CTLW0 & 4);
+    return 0;
+
+}
+
+
+
+int write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
 {
 
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
@@ -123,22 +128,29 @@ void write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize
     while (!TransmitFlag);            // Wait for the transmit to complete
     TransmitFlag = 0;
     EUSCI_B0 -> TXBUF = commandCode;      // Send the command byte
-
     while (!TransmitFlag);            // Wait for the transmit to complete
     TransmitFlag = 0;
-    EUSCI_B0 -> TXBUF = dataSize;      // Send the dataSize
-    do {
+    if(dataSize > 2)
+    {
+        EUSCI_B0 -> TXBUF = dataSize;      // Send the dataSize
+        while (!TransmitFlag);            // Wait for the transmit to complete
+        TransmitFlag = 0;
+    }
 
+    do {
+        if (dataSize == 1)
+        {
+            EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTP;    // set stop bit to trigger after byte
+
+        }
         while (!TransmitFlag);            // Wait for the transmit to complete
         TransmitFlag = 0;
         EUSCI_B0 -> TXBUF = *dataArray++;      //increment through the dataArray
         dataSize--;
-    } while(dataSize > 0);
+    } while(dataSize);
 
-    while (!TransmitFlag);            // Wait for the transmit to complete
-    TransmitFlag = 0;
-    EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
-
+    while (EUSCI_B0->CTLW0 & 4);            // Wait for the transmit to complete
+    return 0;
 
 }
 

@@ -54,22 +54,22 @@ int main(void)
 //    unsigned char PDORegisters[28];
     __enable_irq();                           // Enable global interrupt
 
-    BD99954ReadRegister();
 
-    BD99954_Startup_Routine();
-//    BM92Asrc_init();
+//    BD99954_Startup_Routine();
 //    BD99954ReadRegister();
-//    testReadRegistersBM92A();
-//    BM92Asnk_init();
-    BD99954ReadRegister();
     while(1)
     {
 
         if(cursorFlag ==1)
         {
-            BM92A_Debugger();
+            displayMode();
+            BM92Asrc_init();
+//            testReadRegistersBM92A();
+//            BM92A_Debugger();
+//            BM92Asnk_init();
+//            testReadRegistersBM92A();
 
-            BD99954ReadRegister();
+//            BD99954ReadRegister();
 
 //            BM92Asnk_init();
 //            testReadRegistersBM92A();

@@ -14,11 +14,12 @@
 
 void InitI2C();
 int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray);
-void write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned short content);
-void write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray);
+int write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned short content);
+int write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray);
 int WriteReadBD99954(unsigned char commandCode, unsigned char* dataArray);
 void EUSCIB0_IRQHandler(void);
 void clear_register(unsigned char commandCode,unsigned char slaveAddr, int dataSize);
+void CommandRegisterBM92A(unsigned short commandCode,unsigned char slaveAddr);
 
 
 
