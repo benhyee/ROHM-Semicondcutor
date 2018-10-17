@@ -905,19 +905,9 @@ void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
 
     unsigned char *readBack = malloc(sizeof(char)*30);
     unsigned char *PDO = malloc(sizeof(char)*6);
-    PDO[0] = 0x09;
-    PDO[1] = 0x91;
-
-
-//    PDO[0] = 0x32;
-//    PDO[1] = 0x90;
-//    PDO[2] = 0x01;
-//    PDO[3] = 0x08;
-
-//    WriteRead(0x17,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
-//    write_word(0x17,BM92A_ADDRESS,0x8000);  //config 2
-//    WriteRead(0x17,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
-
+//    PDO[0] = 0x09;
+//    PDO[1] = 0x91;
+/*
     WriteRead(0x26,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
     WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
     WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
@@ -932,18 +922,26 @@ void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
     WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
     WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
     WriteRead(0x03,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    */
+    PDO[0] = 0x32;
+    PDO[1] = 0x90;
+    PDO[2] = 0x01;
+    PDO[3] = 0x08;
 
-//    WriteRead(0x27,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
-//    write_word(0x27,BM92A_ADDRESS,0x000A);  // SysConfig2
-//    WriteRead(0x27,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+
+
+    write_word(0x17,BM92A_ADDRESS,0x0080);  // SysConfig2
+    write_word(0x26,BM92A_ADDRESS,0x9109);  // SysConfig2
+    write_word(0x27,BM92A_ADDRESS,0x0200);  // SysConfig2
+    write_word(0x2F,BM92A_ADDRESS,0x0001);  // SysConfig2
+    write_block(0x27,BM92A_ADDRESS,4,PDO);  // SysConfig2
+    write_word(0x05,BM92A_ADDRESS,0x0909);  // SysConfig2
+
 //
-//    WriteRead(0x2F,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
-//    write_word(0x2F,BM92A_ADDRESS,0x0100);  // SysConfig3
-//    WriteRead(0x2F,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
-//
-//
-//    WriteRead(0x02,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//Alert register
-//    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status1 = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack); alertStatus = two_byteOrg(readBack);//Alert register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); status1 = two_byteOrg(readBack); //status 1 register
+    write_word(0x06,BM92A_ADDRESS,0x0000);  // SysConfig2
+
 //    status1 = (status1 & 0x0070)>>4;
 //    if(status1 == 4)
 //    {

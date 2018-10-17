@@ -62,14 +62,18 @@ int main(void)
 
         if(cursorFlag ==1)
         {
-            displayMode();
-            BM92Asrc_init();
+//            displayMode();
 //            testReadRegistersBM92A();
-//            BM92A_Debugger();
+//            BM92Asrc_init();
+//            testReadRegistersBM92A();
 //            BM92Asnk_init();
 //            testReadRegistersBM92A();
 
-//            BD99954ReadRegister();
+            BM92A_Debugger();
+//            BM92Asnk_init();
+//            testReadRegistersBM92A();
+
+            BD99954ReadRegister();
 
 //            BM92Asnk_init();
 //            testReadRegistersBM92A();
