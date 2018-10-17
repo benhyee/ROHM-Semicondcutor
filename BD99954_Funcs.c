@@ -361,12 +361,12 @@ void BD99954_Startup_Routine()
     write_word(0x08,BD99954_ADDRESS,1472);    //ICC_LIM_SET
     write_word(0x1D,BD99954_ADDRESS,8112);    //VRECHG_SET
     write_word(0x1E,BD99954_ADDRESS,8912);    //VBATOVP_SET
-    write_word(0x11,BD99954_ADDRESS,8960);    //VSYSREG_SET
-    write_word(0x18,BD99954_ADDRESS,2048);    //VPRECHG_TH_SET
-    write_word(0x1A,BD99954_ADDRESS,8400);    //VFASTCHG_REG_SET
+    write_word(0x11,BD99954_ADDRESS,6976);    //VSYSREG_SET
+    write_word(0x18,BD99954_ADDRESS,6080);    //VPRECHG_TH_SET
+    write_word(0x1A,BD99954_ADDRESS,8000);    //VFASTCHG_REG_SET
     write_word(0x14,BD99954_ADDRESS,256);    //ITRICH_SET
-    write_word(0x15,BD99954_ADDRESS,256);    //IPRECH_SET
-    write_word(0x16,BD99954_ADDRESS,960);    //ICHG_SET
+    write_word(0x15,BD99954_ADDRESS,512);    //IPRECH_SET
+    write_word(0x16,BD99954_ADDRESS,704);    //ICHG_SET
     write_word(0x17,BD99954_ADDRESS,0);    //ITERM_SET
 
 }

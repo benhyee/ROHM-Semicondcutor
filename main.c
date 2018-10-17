@@ -63,6 +63,7 @@ int main(void)
         if(cursorFlag ==1)
         {
             displayMode();
+
 //            testReadRegistersBM92A();
 //            BM92Asrc_init();
 //            testReadRegistersBM92A();
@@ -82,7 +83,18 @@ int main(void)
 //            BM92Asnk_init();
 //            testReadRegistersBM92A();
         }
+        if(charge_enable == 1 && select == 0)
+        {
+            terminal_transmitWord("\r\n enabled\n\r");
 
+            write_word(0x0C,BD99954_ADDRESS,0x4080);    //ICHG_SET
+        }
+        else if(charge_enable == 0 && select == 0)
+        {
+            terminal_transmitWord("\r\n Disabled \n\r");
+            write_word(0x0C,BD99954_ADDRESS,0x4000);    //ICHG_SET
+
+        }
         if(plugAlertFlag == 1)
         {
             WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
