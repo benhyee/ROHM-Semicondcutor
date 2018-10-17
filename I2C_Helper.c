@@ -31,7 +31,7 @@ void InitI2C()
           EUSCI_B_CTLW0_MST |               // Master mode
           EUSCI_B_CTLW0_SYNC |              // Sync mode
           EUSCI_B_CTLW0_SSEL__SMCLK;        // SMCLK
-  EUSCI_B0->BRW =30;                       // baudrate = SMCLK / 30 = 100kHz
+  EUSCI_B0->BRW =29;                       // baudrate = SMCLK / 26 = 400kHz
   EUSCI_B0->CTLW0 &= ~EUSCI_A_CTLW0_SWRST;  // Release eUSCI from reset
 
   EUSCI_B0->IE |= EUSCI_A_IE_RXIE |         // Enable receive interrupt
@@ -93,8 +93,8 @@ int write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned short
 {
     unsigned char highByte;
     unsigned char lowByte;
-    highByte = content >> 8;
-    lowByte = content & 0xFF;
+    lowByte = content >> 8;
+    highByte = content & 0x00FF;
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition

@@ -31,7 +31,7 @@
 
 #define BD99954_ADDRESS 0x09
 #define BM92A_ADDRESS 0x18
-#define CURRENT_FREQ FREQ_24_MHZ
+#define CURRENT_FREQ FREQ_3_MHZ
 
 int main(void)
 {
