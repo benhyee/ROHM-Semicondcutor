@@ -13,7 +13,7 @@
 char cursorFlag = 0;
 char volt_set_cnt = 1, curr_set_cnt = 1, mode_set = FALSE;
 char settings_menu_Count = 0,sysToggle = FALSE, diagnosticToggle = FALSE;
-char select = 0;
+char select = 0, charge_enable = FALSE;
 
 void PDDisplay();
 void PowerDisplay();
@@ -31,10 +31,10 @@ void displayMode()
         settings_menu_Count  = 1;
     }
 
-    else if(settings_menu_Count > 4)
+    else if(settings_menu_Count > 5)
 
     {
-        settings_menu_Count = 4;
+        settings_menu_Count = 5;
     }
     switch(settings_menu_Count)
     {
@@ -65,6 +65,13 @@ void displayMode()
             {
                 onOffDisplay(sysToggle);
 
+            }
+            break;
+        case 5:
+            LCD_word("Charge Enable");
+            if(select == 1)
+            {
+                onOffDisplay(charge_enable);
             }
             break;
         default:

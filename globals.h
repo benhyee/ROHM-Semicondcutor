@@ -19,4 +19,5 @@ extern char settings_menu_Count;
 extern char sysToggle;
 extern char select;
 extern char diagnosticToggle;
+extern char charge_enable;
 #endif /* GLOBALS_H_ */

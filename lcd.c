@@ -97,13 +97,6 @@ void LCD_init()
     LCD_command(0x0F); // turn on display, cursor blinking
 
 }
-
-void LCD_clearLine()
-{
-    LCD_enter();
-    LCD_word("                ");
-    LCD_enter();
-}
 void LCD_word(char *word)
 {
     int i;
@@ -112,6 +105,13 @@ void LCD_word(char *word)
         LCD_data(word[i]);
     }
 }
+void LCD_clearLine()
+{
+    LCD_enter();
+    LCD_word("                ");
+    LCD_enter();
+}
+
 
 void LCD_Voltage(unsigned short voltage)
 {

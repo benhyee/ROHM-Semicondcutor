@@ -85,6 +85,9 @@ void PORT1_IRQHandler(void){
            case 4:
                sysToggle ^= 1;
                break;
+           case 5:
+               charge_enable ^= 1;
+               break;
            default:
                break;
             }
@@ -139,6 +142,9 @@ void PORT6_IRQHandler(void){
               break;
           case 4:
               sysToggle ^= 1;
+              break;
+          case 5:
+              charge_enable ^= 1;
               break;
           default:
               break;

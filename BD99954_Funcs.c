@@ -26,7 +26,7 @@ int i;
 unsigned short IBUS_LIM_SET , ICC_LIM_SET , VRECHG_SET , VBATOVP_SET ;
 unsigned short VSYSREG_SET , VPRECHG_TH_SET , VFASTCHG_REG_SET1;
 unsigned short ITRICH_SET, IPRECH_SET , ICHG_SET, ITERM_SET, BD99id, BD99rev;
-unsigned short VBUS_Average, VSYS_Average, VBAT_Average, otpStatus;
+unsigned short VBUS_Average, VSYS_Average, VBAT_Average, otpStatus,CHGOP_SET2;
 
 unsigned int setValue;
 unsigned char generalPurpose;
@@ -271,7 +271,7 @@ void BD99954ReadRegister()
     IBUS_LIM_SET = 0 , ICC_LIM_SET = 0, VRECHG_SET = 0, VBATOVP_SET = 0;
     VSYSREG_SET = 0, VPRECHG_TH_SET = 0, VFASTCHG_REG_SET1 = 0;
     ITRICH_SET = 0, IPRECH_SET = 0, ICHG_SET = 0, ITERM_SET = 0;
-    BD99id = 0, BD99rev = 0;
+    BD99id = 0, BD99rev = 0, CHGOP_SET2 = 0;
     VBUS_Average = 0,VSYS_Average = 0, VBAT_Average = 0;
     unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
 
@@ -284,6 +284,8 @@ void BD99954ReadRegister()
     IBUS_LIM_SET = two_byteOrg(readBack);
     WriteRead(0x08,BD99954_ADDRESS,2,readBack);
     ICC_LIM_SET = two_byteOrg(readBack);
+    WriteRead(0x0C,BD99954_ADDRESS,2,readBack);
+    CHGOP_SET2 = two_byteOrg(readBack);
     WriteRead(0x1D,BD99954_ADDRESS,2,readBack);
     VRECHG_SET = two_byteOrg(readBack);
     WriteRead(0x1E,BD99954_ADDRESS,2,readBack);

@@ -40,19 +40,19 @@ unsigned int four_byteOrg(unsigned char* dataArray)
     return intData;
 }
 
-int transferIntArray( unsigned char* tempArray, unsigned int* PDO_array)
-{
-    unsigned int temp;
-    for(i = 0; i < 3; i++)
-    {
-        temp = four_byteOrg(&tempArray);
-        *tempArray++;
-        *PDO_array = temp;
-        *PDO_array++;
-
-    }
-    return 0;
-}
+//int transferIntArray( unsigned char* tempArray, unsigned int* PDO_array)
+//{
+//    unsigned int temp;
+//    for(i = 0; i < 3; i++)
+//    {
+//        temp = four_byteOrg(&tempArray);
+//        *tempArray++;
+//        *PDO_array = temp;
+//        *PDO_array++;
+//
+//    }
+//    return 0;
+//}
 
 void blinkLED()
 {
