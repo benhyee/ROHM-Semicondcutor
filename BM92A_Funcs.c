@@ -919,14 +919,18 @@ void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
 //    WriteRead(0x17,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
 
     WriteRead(0x26,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
-    for(i=0; i< 50; i++);
-    write_block(0x26,BM92A_ADDRESS,2,PDO);  // SysConfig1
-    for(i = 0; i<50;i++);
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    write_word(0x26,BM92A_ADDRESS,0x0991);  // SysConfig1
     WriteRead(0x26,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
-    for(i = 0; i<50;i++);
-    write_block(0x26,BM92A_ADDRESS,2,PDO);  // SysConfig1
-    for(i = 0; i<50;i++);
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    write_word(0x26,BM92A_ADDRESS,0x8749);  // SysConfig1
     WriteRead(0x26,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x02,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
+    WriteRead(0x03,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
 
 //    WriteRead(0x27,BM92A_ADDRESS,2,readBack); generalShort = two_byteOrg(readBack); //status 1 register
 //    write_word(0x27,BM92A_ADDRESS,0x000A);  // SysConfig2
