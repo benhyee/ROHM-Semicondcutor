@@ -28,6 +28,7 @@
 #include "BM92A_Funcs.h"
 #include "menu.h"
 #include "delay.h"
+#include "debugFunctions.h"
 
 #define BD99954_ADDRESS 0x09
 #define BM92A_ADDRESS 0x18
@@ -63,6 +64,11 @@ int main(void)
         if(cursorFlag ==1)
         {
             displayMode();
+            if(diagnosticToggle == 1 && select == 0)
+            {
+                BM92A_Debugger();
+                BD99954ReadRegister();
+            }
 
 //            testReadRegistersBM92A();
 //            BM92Asrc_init();
@@ -70,11 +76,9 @@ int main(void)
 //            BM92Asnk_init();
 //            testReadRegistersBM92A();
 
-//            BM92A_Debugger();
 //            BM92Asnk_init();
 //            testReadRegistersBM92A();
 
-//            BD99954ReadRegister();
 
 //            BM92Asnk_init();
 //            testReadRegistersBM92A();
@@ -89,6 +93,7 @@ int main(void)
 
             write_word(0x0C,BD99954_ADDRESS,0x4080);    //ICHG_SET
         }
+
         else if(charge_enable == 0 && select == 0)
         {
             terminal_transmitWord("\r\n Disabled \n\r");
