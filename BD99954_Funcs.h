@@ -13,5 +13,10 @@
 void BD99954_Startup_Routine();
 void default_BDSettings();
 void reverseBuckBoost();
+void reverseEnable(char channel);
+void reverseDisable();
+void chgEnable();
+void chgDisable();
+
 
 #endif /* BD99954_FUNCS_H_ */

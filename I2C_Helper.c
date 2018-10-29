@@ -146,7 +146,55 @@ int write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize,
        return 0;
 
 }
+int write_fourByte(unsigned char commandCode,unsigned char slaveAddr, unsigned int content)
+{
+    unsigned char highByte;
+    unsigned char midHigh;
+    unsigned char midLow;
+    unsigned char lowByte;
+    content = content;
+    highByte = content >> 24;
+    midHigh = content >> 16;
+    midHigh = midHigh & 0x000000FF;
+    midLow = content >> 8;
+    midLow = midLow  & 0x000000FF;
+    lowByte = content & 0x000000FF;
+    EUSCI_B0->I2CSA = slaveAddr;          // Slave address
+    EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
+    EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
 
+    while (!TransmitFlag);
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = commandCode;      // Send the byte to store in BM9
+
+    while (!TransmitFlag);
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = 4;          // Send data size Byte
+
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = lowByte;
+
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = midLow;
+
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = midHigh;
+
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+    EUSCI_B0 -> TXBUF = highByte;
+
+    while (!TransmitFlag);            // Wait for the transmit to complete
+    TransmitFlag = 0;
+
+    EUSCI_B0 -> CTLW0 |= EUSCI_B_CTLW0_TXSTP;   // I2C stop condition
+    while(EUSCI_B0->CTLW0 & 4);
+    return 0;
+
+}
 int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
 {
     EUSCI_B0->I2CSA = slaveAddr;          // Slave address
@@ -190,8 +238,22 @@ int WriteRead(unsigned char commandCode,unsigned char slaveAddr, int dataSize, u
     while(EUSCI_B0->CTLW0 & 4);
     return 0;
 }
-
-
+unsigned short readTwoByte(unsigned char commandCode,unsigned char slaveAddr)
+{
+    unsigned char *readBack = malloc(sizeof(char)*5);
+    WriteRead(commandCode,slaveAddr,2,readBack);
+    unsigned short temp = two_byteOrg(readBack);
+    free(readBack);
+    return temp;
+}
+unsigned int readFourByte(unsigned char commandCode,unsigned char slaveAddr)
+{
+    unsigned char *readBack = malloc(sizeof(char)*5);
+    WriteRead(commandCode,slaveAddr,5,readBack);
+    unsigned int temp = four_byteOrg(readBack);
+    free(readBack);
+    return temp;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //

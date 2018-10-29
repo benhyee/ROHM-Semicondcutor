@@ -292,6 +292,8 @@ void BD99954ReadRegister()
     IBUS_LIM_SET = two_byteOrg(readBack);
     WriteRead(0x08,BD99954_ADDRESS,2,readBack);
     ICC_LIM_SET = two_byteOrg(readBack);
+    WriteRead(0x0A,BD99954_ADDRESS,2,readBack);
+    BD99id = two_byteOrg(readBack);
     WriteRead(0x0C,BD99954_ADDRESS,2,readBack);
     CHGOP_SET2 = two_byteOrg(readBack);
     WriteRead(0x1D,BD99954_ADDRESS,2,readBack);

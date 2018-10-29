@@ -26,10 +26,10 @@ void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
     unsigned char *readBack = malloc(sizeof(char)*30);
     unsigned char *PDO = malloc(sizeof(char)*6);
 
-    PDO[0] = 0x32;
-    PDO[1] = 0x90;
-    PDO[2] = 0x01;
-    PDO[3] = 0x08;
+    PDO[3] = 0x32;
+    PDO[2] = 0x90;
+    PDO[1] = 0x01;
+    PDO[0] = 0x08;
     write_word(0x17,BM92A_ADDRESS,0x0080);  // SysConfig2
     write_word(0x26,BM92A_ADDRESS,0x9109);  // SysConfig2
     write_word(0x27,BM92A_ADDRESS,0x0200);  // SysConfig2

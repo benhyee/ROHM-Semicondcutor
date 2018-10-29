@@ -18,9 +18,9 @@
 #include "I2C_Helper.h"
 #include <string.h>
 
+void default_BDSettings();
 
 #define BD99954_ADDRESS 0x09
-
 int i;
 //BD99954 Local Variables
 
@@ -47,21 +47,35 @@ void BD99954_Startup_Routine()
 
 
 }
-void reverseBuckBoost(char channel)
+void chgEnable()
+{
+    write_word(0x0C,BD99954_ADDRESS,0x4080);    //ICHG_SET
+
+}
+void chgDisable()
+{
+    write_word(0x0C,BD99954_ADDRESS,0x4000);
+}
+void reverseBuckBoost()
 {
     write_word(0x19,BD99954_ADDRESS,5056);
     write_word(0x09,BD99954_ADDRESS,1472);
+
+}
+void reverseEnable(char channel)
+{
     if(channel == 1){ //Select VBus
-        write_word(0x0A,BD99954_ADDRESS,0x05);
+        write_word(0x0A,BD99954_ADDRESS,0x5060);
 
     }
     else{  // Select VCC
-        write_word(0x0A,BD99954_ADDRESS,0x06);
-
+        write_word(0x0A,BD99954_ADDRESS,0x6060);
     }
 }
-
-
+void reverseDisable()
+{
+    write_word(0x0A,BD99954_ADDRESS,0x0060);
+}
 void default_BDSettings()
 {
     write_word(0x07,BD99954_ADDRESS,1472);    //IBUS_LIM_SET

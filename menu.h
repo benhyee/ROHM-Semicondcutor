@@ -9,10 +9,19 @@
 #define MENU_H_
 
 
-void displayMode();
-void PDDisplay();
-void PowerDisplay();
-void onOffDisplay(char toggle);
+#include "I2C_Helper.h"
 
+void displayMode();
+void fastSetMenu();
+void standardMenu();
+void advancedMenu();
+void sinkPDOMenu();
+void sourcePDOMenu();
+void sleepMenu();
+void enableMenu(char mode, char enable);
+void batterySelectMenu();
+
+void sideCheck(int value);
+void menuScroll(char value);
 
 #endif /* MENU_H_ */

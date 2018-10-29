@@ -9,7 +9,7 @@
 #include "lcd.h"
 #include "UART.h"
 #include "I2C_Helper.h"
-
+#include "menu.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -18,7 +18,7 @@
 #define JOYCON2 P6
 
 volatile char plugAlertFlag = 0;
-
+char select = 0, rightFlag = 0, leftFlag = 0;
 unsigned char readback;
 void interruptPinInit()
 {
@@ -65,32 +65,10 @@ void PORT1_IRQHandler(void){
     if (JOYCON1->IFG & 0x10)    //Up
     {
         terminal_transmitWord("Up");
-        if(select == 0)
+        settings_menu -= 1;
+        if(select == 1)
         {
-            settings_menu_Count -= 1;
-        }
-        else if(select == 1)
-        {
-            switch(settings_menu_Count)
-            {
-            case 1:
-                mode_set ^= 1;
-               break;
-           case 2:
-               volt_set_cnt += 1;
-               break;
-           case 3:
-               diagnosticToggle ^= 1;
-               break;
-           case 4:
-               sysToggle ^= 1;
-               break;
-           case 5:
-               charge_enable ^= 1;
-               break;
-           default:
-               break;
-            }
+            settings_menu += 1;
         }
         JOYCON1->IFG &= ~0xFF;
 
@@ -98,13 +76,10 @@ void PORT1_IRQHandler(void){
     else if(JOYCON1->IFG & 0x20)//Left
     {
         terminal_transmitWord("Left");
-        if(select == 1 && settings_menu_Count == 2)
-        {
-            curr_set_cnt -= 1;
-        }
         JOYCON1->IFG &= ~0xFF;
+        leftFlag = TRUE;
     }
-    cursorFlag = 1;
+    cursorFlag = TRUE;
 
 
 }
@@ -112,49 +87,21 @@ void PORT6_IRQHandler(void){
    if (JOYCON2->IFG & 0x80)//Right
    {
        terminal_transmitWord("Right");
-       if(select == 1 && settings_menu_Count == 2)
-       {
-           curr_set_cnt += 1;
-       }
        JOYCON2->IFG &= ~0xFF;
+       rightFlag = TRUE;
 
    }
    else if (JOYCON2->IFG & 0x40)//Down
    {
        terminal_transmitWord("Down");
-       if(select == 0)  //Main menu
+       settings_menu += 1;
+       if(select == 1)
        {
-
-           settings_menu_Count += 1;
+           settings_menu -= 1;
        }
-       else if(select == 1)
-       {
-           switch(settings_menu_Count)
-           {
-           case 1:
-               mode_set ^= 1;
-              break;
-          case 2:
-              volt_set_cnt -= 1;
-              break;
-          case 3:
-              diagnosticToggle ^= 1;
-              break;
-          case 4:
-              sysToggle ^= 1;
-              break;
-          case 5:
-              charge_enable ^= 1;
-              break;
-          default:
-              break;
-           }
-       }
-
-
        JOYCON2->IFG &= ~0xFF;
    }
-    cursorFlag = 1;
+   cursorFlag = TRUE;
 
 }
 
@@ -162,15 +109,15 @@ void PORT3_IRQHandler(void){
     if (JOYCONPB->IFG & 0x20)
     {
         terminal_transmitWord("Push\r\n");
-        select ^= 1;
+        select += 1;
         cursorFlag = 1;
+
 
     }
     else if (JOYCONPB->IFG & 0x01)
     {
           terminal_transmitWord("Plug Insert\r\n");
-          plugAlertFlag = 1;
-
+          plugAlertFlag = TRUE;
     }
 
 

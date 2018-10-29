@@ -43,75 +43,33 @@ int main(void)
     InitI2C();
     LCD_init();
     LCD_command(0x01); // clear screen, move cursor home
-    LCD_word("Select Mode");
-    displayMode();
+
+    displayMode();  //Display Text on screen
 
     terminal_init();    //SDA -> P1.6 SCL->P1.7
-    unsigned char readBack[30];  //Temp Storage of registers
+
     interruptPinInit();
-//    unsigned short alertStatus;
-//    unsigned int PDO = 0, RDO = 0;
-//    int i;
-//    unsigned char PDORegisters[28];
     __enable_irq();                           // Enable global interrupt
-
-
-    BD99954_Startup_Routine();
-//    BD99954ReadRegister();
+    unsigned char readBack[30];  //Temp Storage of registers
+    unsigned short alertRead;
     while(1)
     {
-
-        if(cursorFlag ==1)
+        if(cursorFlag == TRUE)
         {
+            if(rightFlag == TRUE)menuScroll(1);
+            if(leftFlag == TRUE)menuScroll(-1);
             displayMode();
-            if(diagnosticToggle == 1 && select == 0)
-            {
-                BM92A_Debugger();
-                BD99954ReadRegister();
-            }
-
-//            testReadRegistersBM92A();
-//            BM92Asrc_init();
-//            testReadRegistersBM92A();
-//            BM92Asnk_init();
-//            testReadRegistersBM92A();
-
-//            BM92Asnk_init();
-//            testReadRegistersBM92A();
-
-
-//            BM92Asnk_init();
-//            testReadRegistersBM92A();
-//            BM92Asrc_init();
-//            testReadRegistersBM92A();
-//            BM92Asnk_init();
-//            testReadRegistersBM92A();
-        }
-        if(charge_enable == 1 && select == 0)
-        {
-            terminal_transmitWord("\r\n enabled\n\r");
-
-            write_word(0x0C,BD99954_ADDRESS,0x4080);    //ICHG_SET
-        }
-
-        else if(charge_enable == 0 && select == 0)
-        {
-            terminal_transmitWord("\r\n Disabled \n\r");
-            write_word(0x0C,BD99954_ADDRESS,0x4000);    //ICHG_SET
 
         }
-        if(plugAlertFlag == 1)
+        if(plugAlertFlag)
         {
-            WriteRead(0x02,BM92A_ADDRESS,2,readBack);  //Alert Enable
-
+            alertRead = readTwoByte(0x02,BM92A_ADDRESS);
+            terminal_transmitWord("Ngt");
+            plugAlertFlag = FALSE;
         }
         __sleep();      // go to lower power mode
 
     }
-
-
-
-
 
 
 }
