@@ -13,6 +13,6 @@
 //BM92A Helper I2C Functions
 void BM92Asrc_init();
 void BM92Asnk_init();
-
+void BM92A_sink_PDO();
 
 #endif /* BM92A_FUNCS_H_ */

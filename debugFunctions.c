@@ -52,7 +52,6 @@ void IBUS_LIM_Debug(unsigned short IBUS_LIM)
     terminal_transmitInt(setValue);
     terminal_transmitWord("A \r\n");
 }
-
 void ICC_LIM_Debug(unsigned short ICC_LIM)
 {
     terminal_transmitWord("VCC input current limit = ");
@@ -61,7 +60,6 @@ void ICC_LIM_Debug(unsigned short ICC_LIM)
     terminal_transmitInt(setValue);
     terminal_transmitWord("A \r\n");
 }
-
 void VRECHG_Debug(unsigned short VRECHG)
 {
     terminal_transmitWord("Re-charge Battery Voltage = ");
@@ -70,7 +68,6 @@ void VRECHG_Debug(unsigned short VRECHG)
     terminal_transmitInt(setValue);
     terminal_transmitWord("V \r\n");
 }
-
 void VBATOVP_Debug(unsigned short VBATOVP)
 {
     terminal_transmitWord("Battery over-voltage detection threshold = ");
@@ -79,7 +76,6 @@ void VBATOVP_Debug(unsigned short VBATOVP)
     terminal_transmitInt(setValue);
     terminal_transmitWord("V \r\n");
 }
-
 void VSYSREG_Debug(unsigned short VSYSREG)
 {
     terminal_transmitWord("VSYS regulation voltage : "); //threshold voltage from Pre-charging to Fast-charging.
@@ -88,7 +84,6 @@ void VSYSREG_Debug(unsigned short VSYSREG)
     terminal_transmitInt(setValue);
     terminal_transmitWord("V \r\n");
 }
-
 void VPRECHG_TH_Debug(unsigned short VPRECHG_TH)
 {
     terminal_transmitWord("Pre-charge voltage threshold = "); //Threshold voltage from Trickle-charging to Pre-charging
@@ -97,7 +92,6 @@ void VPRECHG_TH_Debug(unsigned short VPRECHG_TH)
     terminal_transmitInt(setValue);
     terminal_transmitWord("V \r\n");
 }
-
 void VFASTCHG_REG_Debug(unsigned short VFASTCHG_REG)
 {
     terminal_transmitWord("Fast Charging Regulation = ");
@@ -106,7 +100,6 @@ void VFASTCHG_REG_Debug(unsigned short VFASTCHG_REG)
     terminal_transmitInt(setValue);
     terminal_transmitWord("V \r\n");
 }
-
 void ITRICH_Debug(unsigned short ITRICH)
 {
     terminal_transmitWord("Trickle-charging current = ");
@@ -115,7 +108,6 @@ void ITRICH_Debug(unsigned short ITRICH)
     terminal_transmitInt(setValue);
     terminal_transmitWord("A \r\n");
 }
-
 void IPRECH_Debug(unsigned short IPRECH)
 {
     terminal_transmitWord("Pre-charging current = ");
@@ -124,7 +116,6 @@ void IPRECH_Debug(unsigned short IPRECH)
     terminal_transmitInt(setValue);
     terminal_transmitWord("A \r\n");
 }
-
 void ICHG_Debug(unsigned short ICHG)
 {
     terminal_transmitWord("Fast-charging current = ");
@@ -133,7 +124,6 @@ void ICHG_Debug(unsigned short ICHG)
     terminal_transmitInt(setValue);
     terminal_transmitWord("A \r\n");
 }
-
 void ITERM_Debug(unsigned short ITERM)
 {
     terminal_transmitWord("Charging Termination Current = ");
@@ -142,7 +132,6 @@ void ITERM_Debug(unsigned short ITERM)
     terminal_transmitInt(setValue);
     terminal_transmitWord("A \r\n");
 }
-
 void BD99ID_Debug(unsigned short CHIP_ID)
 {
     terminal_transmitWord("CHIP_ID = 0x");
@@ -159,7 +148,6 @@ void BD99ID_Debug(unsigned short CHIP_ID)
     terminal_transmitByte(generalPurpose);
     terminal_transmitWord("\r\n");
 }
-
 void BD99REV_Debug(unsigned short CHIP_REV)
 {
     terminal_transmitWord("CHIP_REV = 0x");
@@ -178,7 +166,6 @@ void BD99REV_Debug(unsigned short CHIP_REV)
 
     terminal_transmitWord("\r\n");
 }
-
 void VBAT_AVE_Debug(unsigned short VBAT_AVE)
 {
     terminal_transmitWord("Battery Voltage Average = ");
@@ -186,7 +173,6 @@ void VBAT_AVE_Debug(unsigned short VBAT_AVE)
     terminal_transmitInt(setValue);
     terminal_transmitWord("V \r\n");
 }
-
 void VBUS_AVE_Debug(unsigned short VBUS_AVE)
 {
     terminal_transmitWord("VBUS Voltage Average = ");
@@ -194,7 +180,6 @@ void VBUS_AVE_Debug(unsigned short VBUS_AVE)
     terminal_transmitInt(setValue);
     terminal_transmitWord("V \r\n");
 }
-
 void VSYS_AVE_Debug(unsigned short VSYS_AVE)
 {
     terminal_transmitWord("VSYS Voltage Average = ");
@@ -202,7 +187,6 @@ void VSYS_AVE_Debug(unsigned short VSYS_AVE)
     terminal_transmitInt(setValue);
     terminal_transmitWord("V \r\n");
 }
-
 void SYS_STATUS_Debug(unsigned short SYS_STATUS)
 {
     terminal_transmitWord("\r\n");
@@ -338,14 +322,13 @@ void BD99954ReadRegister()
     IPRECH_Debug(IPRECH_SET);
     ICHG_Debug(ICHG_SET);
     ITERM_Debug(ITERM_SET);
-    BD99ID_Debug(BD99id);
-    BD99REV_Debug(BD99rev);
+//    BD99ID_Debug(BD99id);
+//    BD99REV_Debug(BD99rev);
     VBAT_AVE_Debug(VBAT_Average);
     VBUS_AVE_Debug(VBUS_Average);
     VSYS_AVE_Debug(VSYS_Average);
     SYS_STATUS_Debug(otpStatus);
-
-  //  LCD_Voltage(VSYS_Average);
+    LCD_Voltage(VSYS_Average);
 
     terminal_transmitWord("\r\n");
     terminal_transmitWord("------------------------------\r\n");

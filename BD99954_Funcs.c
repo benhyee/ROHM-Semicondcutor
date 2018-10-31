@@ -36,10 +36,8 @@ void BD99954_Startup_Routine()
     unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
     write_word(0x3E,BD99954_ADDRESS,0x0000);    //Protect set
     write_word(0x3F,BD99954_ADDRESS,0x0001);    //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
-    write_word(0x3D,BD99954_ADDRESS,0x0001);    //All reset
-    write_word(0x3D,BD99954_ADDRESS,0x0000);    //Release all reset
-
-
+//    write_word(0x3D,BD99954_ADDRESS,0x0001);    //All reset
+//    write_word(0x3D,BD99954_ADDRESS,0x0000);    //Release all reset
 
     for(i=0;i<200;i++);
     default_BDSettings();
@@ -49,12 +47,16 @@ void BD99954_Startup_Routine()
 }
 void chgEnable()
 {
-    write_word(0x0C,BD99954_ADDRESS,0x4080);    //ICHG_SET
+    unsigned short tempCHG = readTwoByte(0x0C, BD99954_ADDRESS);
+    tempCHG |= 0x0080;
+    write_word(0x0C,BD99954_ADDRESS,tempCHG);
 
 }
 void chgDisable()
 {
-    write_word(0x0C,BD99954_ADDRESS,0x4000);
+    unsigned short tempCHG = readTwoByte(0x0C, BD99954_ADDRESS);
+    tempCHG &= 0xFF7F;
+    write_word(0x0C,BD99954_ADDRESS,tempCHG);
 }
 void reverseBuckBoost()
 {

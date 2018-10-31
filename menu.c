@@ -11,6 +11,8 @@
 #include "menu.h"
 #include "I2C_Helper.h"
 #include "debugFunctions.h"
+#include "BD99954_Funcs.h"
+#include "BM92A_Funcs.h"
 #define TRUE 1
 #define FALSE 0
 #define BD99954_ADDRESS 0x09
@@ -127,7 +129,7 @@ void sinkPDOMenu(){
             LCD_word("        12V (3A)");
             break;
         case 4:
-            LCD_word("        15V (3A)");
+            LCD_word("        15V (2A)");
             break;
         case 5:
             LCD_word("        20V (3A)");
@@ -139,15 +141,8 @@ void sinkPDOMenu(){
             break;
     }
     if(select == 2){
+        BM92A_sink_PDO();
         select = 0;
-        generalInt = readFourByte(0x20,BM92A_ADDRESS);
-        generalInt = generalInt & 0xC03FFC00;
-        temp = generalInt;
-        generalInt = generalInt | 0x0640012C;
-        write_fourByte(0x20,BM92A_ADDRESS,generalInt);
-        generalInt = readFourByte(0x20,BM92A_ADDRESS);
-        generalShort = readTwoByte(0x02,BM92A_ADDRESS);
-
         displayMode();
     }
 
@@ -249,7 +244,19 @@ void enableMenu(char mode, char enable){
     else if(enable == 1)LCD_word("        Enabled");
     if(select == 2){
         select = 0;
+        if(mode == 2 && enable == 1){
+        generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
+        chgEnable();
+        generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
+        BD99954ReadRegister();
+        }
+        else if(mode == 2 && enable == 0){
+        generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
+        chgDisable();
+        BD99954ReadRegister();
+        }
         displayMode();
+
     }
 
 }

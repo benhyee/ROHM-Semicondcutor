@@ -10,6 +10,7 @@
 
 unsigned char tempHold;
 int i, TransmitFlag = 0;
+#define BM92A_ADDRESS 0x18
 
 
 void InitI2C()
@@ -38,14 +39,14 @@ void InitI2C()
                   EUSCI_A_IE_TXIE;
 }
 
-void CommandRegisterBM92A(unsigned short commandCode,unsigned char slaveAddr)
+void CommandRegisterBM92A(unsigned short commandCode)
 {
     unsigned char highByte;
     unsigned char lowByte;
     highByte = commandCode >> 8;
     lowByte = commandCode & 0xFF;
 
-    EUSCI_B0->I2CSA = slaveAddr;          // Slave address
+    EUSCI_B0->I2CSA = BM92A_ADDRESS;          // Slave address
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TR;          // Set transmit mode (write)
     EUSCI_B0->CTLW0 |= EUSCI_B_CTLW0_TXSTT;       // I2C start condition
     while (!TransmitFlag);            // Wait for the transmit to complete

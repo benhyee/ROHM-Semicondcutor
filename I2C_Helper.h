@@ -21,7 +21,7 @@ int write_fourByte(unsigned char commandCode,unsigned char slaveAddr, unsigned i
 int WriteReadBD99954(unsigned char commandCode, unsigned char* dataArray);
 void EUSCIB0_IRQHandler(void);
 void clear_register(unsigned char commandCode,unsigned char slaveAddr, int dataSize);
-void CommandRegisterBM92A(unsigned short commandCode,unsigned char slaveAddr);
+void CommandRegisterBM92A(unsigned short commandCode);
 unsigned short readTwoByte(unsigned char commandCode,unsigned char slaveAddr);
 unsigned int readFourByte(unsigned char commandCode,unsigned char slaveAddr);
 

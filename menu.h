@@ -10,7 +10,7 @@
 
 
 #include "I2C_Helper.h"
-
+#include "BD99954_Funcs.h"
 void displayMode();
 void fastSetMenu();
 void standardMenu();

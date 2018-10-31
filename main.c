@@ -52,12 +52,15 @@ int main(void)
     __enable_irq();                           // Enable global interrupt
     unsigned char readBack[30];  //Temp Storage of registers
     unsigned short alertRead;
+
+    BD99954_Startup_Routine();
+
     while(1)
     {
         if(cursorFlag == TRUE)
         {
             if(rightFlag == TRUE)menuScroll(1);
-            if(leftFlag == TRUE)menuScroll(-1);
+            if(leftFlag == TRUE) menuScroll(-1);
             displayMode();
 
         }
