@@ -69,9 +69,11 @@ void fastSetMenu()
        LCD_word("5V-20V (3A)");
    }
 
+
    if(select)
    {
        lock_fast = fast_set;
+       if(lock_fast == 1)defaultAllRangeMode();
        select = 0;
    }
 
@@ -245,15 +247,21 @@ void enableMenu(char mode, char enable){
     if(select == 2){
         select = 0;
         if(mode == 2 && enable == 1){
-        generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-        chgEnable();
-        generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-        BD99954ReadRegister();
+            generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
+            chgEnable();
+            generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
+            BD99954ReadRegister();
         }
         else if(mode == 2 && enable == 0){
-        generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-        chgDisable();
-        BD99954ReadRegister();
+            generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
+            chgDisable();
+            BD99954ReadRegister();
+        }
+        else if(mode == 1 && enable == 1){
+            pdo100WMode();
+        }
+        else if(mode == 1 && enable == 0){
+            defaultAllRangeMode();
         }
         displayMode();
 

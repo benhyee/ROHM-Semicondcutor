@@ -50,13 +50,10 @@ int main(void)
 
     interruptPinInit();
     __enable_irq();                           // Enable global interrupt
-    unsigned char readBack[30];  //Temp Storage of registers
     unsigned short alertRead;
-
 //    BD99954_Startup_Routine();
     readTwoByte(0x02,BM92A_ADDRESS);
-    WriteRead(0x33,BM92A_ADDRESS,13,readBack);
-    printPDO(readBack);
+
 
     while(1)
     {
@@ -69,16 +66,23 @@ int main(void)
         }
         if(plugAlertFlag)
         {
-            if((readTwoByte(0x03,BM92A_ADDRESS)|0x0080)>>7)
+            if((readTwoByte(0x03,BM92A_ADDRESS)&0x0080)>>7) //If plug detected
             {
-                alertRead = readTwoByte(0x02,BM92A_ADDRESS);
-                terminal_transmitWord("Ngt");
+                terminal_transmitWord("Ngt\t");
                 LCD_clearLine();
-//                LCD_command(0x01); // clear screen, move cursor home
-//                LCD_word("Negotiated");
-//                LCD_enter();
-//                currentPDO();
-//                plugAlertFlag = FALSE;
+                LCD_command(0x01); // clear screen, move cursor home
+                LCD_word("Negotiated");
+                LCD_enter();
+                currentPDO();
+                alertRead = readTwoByte(0x02,BM92A_ADDRESS);
+
+                plugAlertFlag = FALSE;
+            }
+            else{   //if its just a register update
+                alertRead = readTwoByte(0x02,BM92A_ADDRESS);
+                displayMode();
+                plugAlertFlag = FALSE;
+
             }
 
         }

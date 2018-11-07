@@ -249,7 +249,7 @@ unsigned short readTwoByte(unsigned char commandCode,unsigned char slaveAddr)
 }
 unsigned int readFourByte(unsigned char commandCode,unsigned char slaveAddr)
 {
-    unsigned char *readBack = malloc(sizeof(char)*5);
+    unsigned char *readBack = malloc(sizeof(char)*8);
     WriteRead(commandCode,slaveAddr,5,readBack);
     unsigned int temp = four_byteOrg(readBack);
     free(readBack);

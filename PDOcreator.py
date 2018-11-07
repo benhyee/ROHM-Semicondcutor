@@ -35,8 +35,8 @@ def autoNgt(maxVolt,minVolt,current):
 	hexcurrent = int(current/.01)
 	minVolt = int(minVolt/.200)
 	maxVolt = int(maxVolt/.2)
-	minVolt = minVolt << 10;
-	maxVolt = maxVolt << 20;
+	minVolt = minVolt << 12;
+	maxVolt = maxVolt << 22;
 	final = maxVolt | minVolt | hexcurrent
 	finalString = hex(final)
 	if(len(finalString)<10):
@@ -104,7 +104,7 @@ def PDOdecode(pdo):
 # 		print(volt,current);
 # 		createPDO(volt,current)
 
-createPDO(5,3)
-# createVariablePDO(5,15,3)
-# autoNgt(5,5,1.5); 
-PDOdecode(0x009001140)
+# createPDO(5,3)
+# createVariablePDO(5,20,5)
+autoNgt(20,5,5); 
+PDOdecode(   0x2C910199)

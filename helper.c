@@ -42,10 +42,12 @@ unsigned int four_byteOrg(unsigned char* dataArray)
 }
 void printPDO(unsigned char* dataArray)
 {
+    terminal_transmitWord("Sink PDOs ");
     i = 0;
     intData = 0;
     unsigned char length = *(dataArray);
-    terminal_transmitWord("0x");
+    for(intData =0; intData < 1000; intData++);
+    terminal_transmitWord("\r0x");
     terminal_transmitByte((length&0xF0)>>4);
     terminal_transmitByte(length & 0x0F);
     *dataArray++;

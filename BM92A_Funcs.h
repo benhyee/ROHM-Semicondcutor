@@ -16,4 +16,7 @@ void BM92Asnk_init();
 void BM92A_sink_PDO();
 void BM92A_fastSet();
 void currentPDO();
+void pdo100WMode();
+void defaultAllRangeMode();
+
 #endif /* BM92A_FUNCS_H_ */
