@@ -69,6 +69,7 @@ void PORT1_IRQHandler(void){
         if(select == 1)
         {
             settings_menu += 1;
+            select = 0;
         }
         JOYCON1->IFG &= ~0xFF;
 

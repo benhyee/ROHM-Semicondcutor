@@ -120,22 +120,22 @@ void sinkPDOMenu(){
     switch(sink_set)
     {
         case 1:
-            LCD_word("        5V (3A)");
+            LCD_word("    5V-20V (3A)");
             break;
         case 2:
-            LCD_word("        9V (3A)");
+            LCD_word("    5V-15V (3A)");
             break;
         case 3:
-            LCD_word("        12V (3A)");
+            LCD_word("        5V (3A)");
             break;
         case 4:
-            LCD_word("        15V (2A)");
+            LCD_word("        9V (3A)");
             break;
         case 5:
-            LCD_word("        20V (3A)");
+            LCD_word("        15V (2A)");
             break;
         case 6:
-            LCD_word("    5V-20V (3A)");
+            LCD_word("        20V (3A)");
             break;
         default:
             break;

@@ -56,9 +56,8 @@ void terminal_transmitInt(unsigned int input)
     //terminal_transmitChar('\n');
 }
 
-void terminal_transmitByte(unsigned int byte_value)
+void terminal_transmitByte(unsigned char byte_value)
 {
-
     switch(byte_value)
     {
     case 0:

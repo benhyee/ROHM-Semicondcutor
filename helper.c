@@ -7,6 +7,7 @@
 
 
 #include "msp.h"
+#include "UART.h"
 unsigned char char_Hold;
 unsigned short shortData;
 unsigned int intData;
@@ -39,7 +40,27 @@ unsigned int four_byteOrg(unsigned char* dataArray)
     }
     return intData;
 }
+void printPDO(unsigned char* dataArray)
+{
+    i = 0;
+    intData = 0;
+    unsigned char length = *(dataArray);
+    terminal_transmitWord("0x");
+    terminal_transmitByte((length&0xF0)>>4);
+    terminal_transmitByte(length & 0x0F);
+    *dataArray++;
 
+    for(i = 0; i < length; i++)
+    {
+        if(i%4 ==0) terminal_transmitWord(", 0x");
+        terminal_transmitByte((*(dataArray)&0xF0)>>4);
+        terminal_transmitByte(*(dataArray)&0x0F);
+        *dataArray++;
+
+    }
+    terminal_transmitWord("\r\n");
+
+}
 //int transferIntArray( unsigned char* tempArray, unsigned int* PDO_array)
 //{
 //    unsigned int temp;

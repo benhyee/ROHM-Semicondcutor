@@ -112,6 +112,15 @@ void LCD_clearLine()
     LCD_enter();
 }
 
+void LCD_PDO(unsigned short voltage, unsigned short current){
+    LCD_data(((voltage /1000))+48);
+    LCD_word("V  ");
+    LCD_data(((current/100))+48);
+    LCD_data(((current/10)%10)+48);
+    LCD_data('A');
+
+
+}
 
 void LCD_Voltage(unsigned short voltage)
 {

@@ -53,7 +53,10 @@ int main(void)
     unsigned char readBack[30];  //Temp Storage of registers
     unsigned short alertRead;
 
-    BD99954_Startup_Routine();
+//    BD99954_Startup_Routine();
+    readTwoByte(0x02,BM92A_ADDRESS);
+    WriteRead(0x33,BM92A_ADDRESS,13,readBack);
+    printPDO(readBack);
 
     while(1)
     {
@@ -66,9 +69,18 @@ int main(void)
         }
         if(plugAlertFlag)
         {
-            alertRead = readTwoByte(0x02,BM92A_ADDRESS);
-            terminal_transmitWord("Ngt");
-            plugAlertFlag = FALSE;
+            if((readTwoByte(0x03,BM92A_ADDRESS)|0x0080)>>7)
+            {
+                alertRead = readTwoByte(0x02,BM92A_ADDRESS);
+                terminal_transmitWord("Ngt");
+                LCD_clearLine();
+//                LCD_command(0x01); // clear screen, move cursor home
+//                LCD_word("Negotiated");
+//                LCD_enter();
+//                currentPDO();
+//                plugAlertFlag = FALSE;
+            }
+
         }
         __sleep();      // go to lower power mode
 
