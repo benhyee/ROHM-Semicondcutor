@@ -14,6 +14,7 @@
 void BM92Asrc_init();
 void BM92Asnk_init();
 void BM92A_sink_PDO();
+void BM92A_source_PDO();
 void BM92A_fastSet();
 void currentPDO();
 void pdo100WMode();

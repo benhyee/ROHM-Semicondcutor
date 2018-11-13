@@ -34,10 +34,11 @@ int i;
 void BD99954_Startup_Routine()
 {
     unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
-    write_word(0x3E,BD99954_ADDRESS,0x0000);    //Protect set
-    write_word(0x3F,BD99954_ADDRESS,0x0001);    //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
 //    write_word(0x3D,BD99954_ADDRESS,0x0001);    //All reset
 //    write_word(0x3D,BD99954_ADDRESS,0x0000);    //Release all reset
+    write_word(0x3E,BD99954_ADDRESS,0x0000);    //Protect set
+    write_word(0x3F,BD99954_ADDRESS,0x0001);    //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
+
 
     for(i=0;i<200;i++);
     default_BDSettings();
@@ -61,22 +62,30 @@ void chgDisable()
 void reverseBuckBoost()
 {
     write_word(0x19,BD99954_ADDRESS,5056);
-    write_word(0x09,BD99954_ADDRESS,1472);
+    write_word(0x09,BD99954_ADDRESS,960);
 
+}
+void reverseVoltage(int voltage)
+{
+    write_word(0x19,BD99954_ADDRESS,voltage);
 }
 void reverseEnable(char channel)
 {
+    unsigned short tempCHG = readTwoByte(0x0A, BD99954_ADDRESS);
     if(channel == 1){ //Select VBus
-        write_word(0x0A,BD99954_ADDRESS,0x5060);
-
+        tempCHG |= 0x5000;
+        write_word(0x0A,BD99954_ADDRESS,tempCHG);
     }
     else{  // Select VCC
-        write_word(0x0A,BD99954_ADDRESS,0x6060);
+        tempCHG |= 0x6000;
+        write_word(0x0A,BD99954_ADDRESS,tempCHG);
     }
 }
 void reverseDisable()
 {
-    write_word(0x0A,BD99954_ADDRESS,0x0060);
+    unsigned short tempCHG = readTwoByte(0x0A, BD99954_ADDRESS);
+    tempCHG &= 0x8FFF;
+    write_word(0x0A,BD99954_ADDRESS,tempCHG);
 }
 void default_BDSettings()
 {

@@ -13,6 +13,8 @@
 #include "debugFunctions.h"
 #include "BD99954_Funcs.h"
 #include "BM92A_Funcs.h"
+#include "msp432.h"
+#include "GPIO.h"
 #define TRUE 1
 #define FALSE 0
 #define BD99954_ADDRESS 0x09
@@ -61,21 +63,26 @@ void fastSetMenu()
        LCD_enter();
        LCD_clearLine();
        LCD_word("5V-20V (3A)");
+//       BM92Asnk_init();
+//       defaultAllRangeMode();
+       lock_fast = 1;
    }
    else if(fast_set == 2){
        LCD_word("Ready to Source");
        LCD_enter();
        LCD_clearLine();
        LCD_word("5V-20V (3A)");
+//       BM92Asrc_init();
+//       reverseBuckBoost();
+       lock_fast = 2;
    }
+//   if(select)
+//   {
+//       gpio_init();
+//   }
 
 
-   if(select)
-   {
-       lock_fast = fast_set;
-       if(lock_fast == 1)defaultAllRangeMode();
-       select = 0;
-   }
+
 
 }
 void standardMenu(){
@@ -117,6 +124,8 @@ void sinkPDOMenu(){
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Sink PDO");
     LCD_enter();
+    BM92Asnk_init();
+
     if(sink_set < 1)sink_set = 1;
     if(sink_set > 6)sink_set = 6;
     switch(sink_set)
@@ -155,6 +164,8 @@ void sourcePDOMenu(){
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Source PDO");
     LCD_enter();
+    BM92Asrc_init();
+
     if(source_set < 1)source_set = 1;
     if(source_set > 6)source_set = 6;
     switch(source_set)
@@ -181,6 +192,7 @@ void sourcePDOMenu(){
             break;
     }
     if(select == 2){
+        BM92A_source_PDO();
         select = 0;
         displayMode();
     }
@@ -248,13 +260,18 @@ void enableMenu(char mode, char enable){
         select = 0;
         if(mode == 2 && enable == 1){
             generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-            chgEnable();
+            if(lock_fast == 1)chgEnable();
+            else if(lock_fast ==2)reverseEnable(1);
+
+
             generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
             BD99954ReadRegister();
         }
         else if(mode == 2 && enable == 0){
             generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-            chgDisable();
+            if(lock_fast == 1)chgDisable();
+           else if(lock_fast ==2)reverseDisable();
+
             BD99954ReadRegister();
         }
         else if(mode == 1 && enable == 1){

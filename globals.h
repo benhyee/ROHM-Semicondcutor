@@ -18,18 +18,13 @@ extern char fast_set;
 extern char lock_fast;
 
 extern char standard_menu;
-extern char lock_standard;
 
 extern char sink_set;
-extern char lock_sink;
 
 extern char source_set;
-extern char lock_source;
 
 extern char sleep_time;
-extern char lock_sleep;
 
-extern char lock_high;
 extern char high100_mode;
 
 

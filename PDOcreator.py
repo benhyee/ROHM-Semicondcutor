@@ -104,7 +104,7 @@ def PDOdecode(pdo):
 # 		print(volt,current);
 # 		createPDO(volt,current)
 
-# createPDO(5,3)
+createPDO(20,0.5)
 # createVariablePDO(5,20,5)
 autoNgt(20,5,5); 
-PDOdecode(   0x2C910199)
+PDOdecode(    0x2C910199)

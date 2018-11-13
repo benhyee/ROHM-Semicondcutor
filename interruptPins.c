@@ -22,6 +22,7 @@ char select = 0, rightFlag = 0, leftFlag = 0;
 unsigned char readback;
 void interruptPinInit()
 {
+
     JOYCON1 -> SEL1 &= ~0x30;
     JOYCON1 -> SEL0 &= ~0x30;
     JOYCON1 -> DIR &= ~0x30;

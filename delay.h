@@ -10,6 +10,7 @@
 #define FREQ_24_MHZ 240
 #define CURRENT_FREQ FREQ_3_MHZ
 
+void delay_longer(int n);
 void delay_ms(int n, int freq);
 void delay_us(int n, int freq);
 void set_DCO(int freq);

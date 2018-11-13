@@ -1,17 +1,22 @@
 #include "msp432.h"
 #include "delay.h"
 
+int counti;
+
+void delay_longer(int n){
+    for(counti=0;counti<n;counti++){
+        delay_ms(300,CURRENT_FREQ);
+    }
+}
 void delay_ms(int n, int freq)
 {
-    int i;
-    for (i = 0; i < 7 * n * freq; i++);
+    for (counti = 0; counti < 7 * n * freq; counti++);
 }
 
 void delay_us(int n, int freq)
 {
-    int i;
     int limit = (n * freq / 110) - 4;
-    for (i = 0; i < limit; i++)
+    for (counti = 0; counti < limit; counti++)
     {
         //empty loop
     }

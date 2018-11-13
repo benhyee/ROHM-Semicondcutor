@@ -13,6 +13,8 @@
 void BD99954_Startup_Routine();
 void default_BDSettings();
 void reverseBuckBoost();
+void reverseVoltage(int voltage);
+
 void reverseEnable(char channel);
 void reverseDisable();
 void chgEnable();

@@ -29,6 +29,7 @@
 #include "menu.h"
 #include "delay.h"
 #include "debugFunctions.h"
+#include "GPIO.h"
 
 #define BD99954_ADDRESS 0x09
 #define BM92A_ADDRESS 0x18
@@ -43,20 +44,21 @@ int main(void)
     InitI2C();
     LCD_init();
     LCD_command(0x01); // clear screen, move cursor home
-
-    displayMode();  //Display Text on screen
-
     terminal_init();    //SDA -> P1.6 SCL->P1.7
-
     interruptPinInit();
     __enable_irq();                           // Enable global interrupt
-    unsigned short alertRead;
-//    BD99954_Startup_Routine();
-    readTwoByte(0x02,BM92A_ADDRESS);
 
+    unsigned short alertRead;
+    unsigned int currentRDO;
+
+    BD99954_Startup_Routine();
+
+    readTwoByte(0x02,BM92A_ADDRESS);
+    cursorFlag = TRUE;
 
     while(1)
     {
+
         if(cursorFlag == TRUE)
         {
             if(rightFlag == TRUE)menuScroll(1);
@@ -71,18 +73,19 @@ int main(void)
                 terminal_transmitWord("Ngt\t");
                 LCD_clearLine();
                 LCD_command(0x01); // clear screen, move cursor home
-                LCD_word("Negotiated");
+                if(lock_fast == 1)LCD_word("Sink");
+                else if(lock_fast == 2)LCD_word("Source");
                 LCD_enter();
                 currentPDO();
                 alertRead = readTwoByte(0x02,BM92A_ADDRESS);
-
+                currentRDO = readFourByte(0x2B,BM92A_ADDRESS);
+//                delay_longer(5);
                 plugAlertFlag = FALSE;
             }
             else{   //if its just a register update
-                alertRead = readTwoByte(0x02,BM92A_ADDRESS);
                 displayMode();
+                alertRead = readTwoByte(0x02,BM92A_ADDRESS);
                 plugAlertFlag = FALSE;
-
             }
 
         }
