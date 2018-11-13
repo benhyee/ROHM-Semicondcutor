@@ -63,8 +63,12 @@ void fastSetMenu()
        LCD_enter();
        LCD_clearLine();
        LCD_word("5V-20V (3A)");
-//       BM92Asnk_init();
-//       defaultAllRangeMode();
+       if(plugAlertFlag == FALSE)
+       {
+           BM92Asnk_init();
+           defaultAllRangeMode();
+       }
+
        lock_fast = 1;
    }
    else if(fast_set == 2){
@@ -72,8 +76,12 @@ void fastSetMenu()
        LCD_enter();
        LCD_clearLine();
        LCD_word("5V-20V (3A)");
-//       BM92Asrc_init();
-//       reverseBuckBoost();
+       if(plugAlertFlag == FALSE)
+       {
+           BM92Asrc_init();
+           reverseBuckBoost();
+       }
+
        lock_fast = 2;
    }
 //   if(select)
@@ -124,7 +132,6 @@ void sinkPDOMenu(){
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Sink PDO");
     LCD_enter();
-    BM92Asnk_init();
 
     if(sink_set < 1)sink_set = 1;
     if(sink_set > 6)sink_set = 6;

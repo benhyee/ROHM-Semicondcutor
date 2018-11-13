@@ -89,8 +89,8 @@ void reverseDisable()
 }
 void default_BDSettings()
 {
-    write_word(0x07,BD99954_ADDRESS,1472);    //IBUS_LIM_SET
-    write_word(0x08,BD99954_ADDRESS,1472);    //ICC_LIM_SET
+    write_word(0x07,BD99954_ADDRESS,992);    //IBUS_LIM_SET
+    write_word(0x08,BD99954_ADDRESS,992);    //ICC_LIM_SET
     write_word(0x1D,BD99954_ADDRESS,8112);    //VRECHG_SET
     write_word(0x1E,BD99954_ADDRESS,8912);    //VBATOVP_SET
     write_word(0x11,BD99954_ADDRESS,6976);    //VSYSREG_SET

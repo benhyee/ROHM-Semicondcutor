@@ -44,39 +44,8 @@ void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
     write_word(0x06,BM92A_ADDRESS,0x0000);  //Controller Config 1
     free(PDO);
 }
-void BM92Asnk_init()                //GPIO2 and GPIO3 set the Src Prov Table
-{
 
 
-    unsigned char *PDO = malloc(sizeof(char)*6);
-    PDO[0] = 0x00;
-    PDO[1] = 0x00;
-    PDO[2] = 0x00;
-    PDO[3] = 0x00;
-    write_word(0x03,BM92A_ADDRESS,0x0000);
-    write_word(0x04,BM92A_ADDRESS,0x0000);
-    write_word(0x06,BM92A_ADDRESS,0xCCE0);
-
-    write_word(0x17,BM92A_ADDRESS,0x0000);  //config 2
-    write_word(0x26,BM92A_ADDRESS,0x8749);  // SysConfig1
-    write_word(0x27,BM92A_ADDRESS,0x0046);  // SysConfig2
-    write_word(0x2F,BM92A_ADDRESS,0xA400);  // SysConfig3
-    write_block(0x3C,BM92A_ADDRESS,4,PDO);
-    write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
-    write_word(0x06,BM92A_ADDRESS,0x0000);  //
-    free(PDO);
-
-}
-void BM92A_fastSet(){
-    if(lock_fast == 1){
-        BM92Asnk_init();
-    }
-    if(lock_fast == 2){
-        BM92Asrc_init();
-    }
-
-
-}
 void currentPDO(){
     currentNgtPDO = readFourByte(0x28,BM92A_ADDRESS);
     unsigned short PDOcurrent = currentNgtPDO & 0x000003FF;
@@ -140,10 +109,35 @@ void BM92A_source_PDO(){
     free(readBack);
     free(PDO);
 }
+void BM92Asnk_init()                //GPIO2 and GPIO3 set the Src Prov Table
+{
+    write_word(0x17,BM92A_ADDRESS,0x0000);  //config 2
+    write_word(0x26,BM92A_ADDRESS,0x8749); //system Config 1
+    write_word(0x27,BM92A_ADDRESS,0x0046);  // SysConfig2
+    write_word(0x2F,BM92A_ADDRESS,0xA400);  // SysConfig3
+    write_word(0x06,BM92A_ADDRESS,0xCCE0);  //Controller Config 1
+
+    readTwoByte(0x02,BM92A_ADDRESS);
+    write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
+    readalertStatus = readTwoByte(0x02,BM92A_ADDRESS); //Read Alert
+    readstatus1 = readTwoByte(0x03,BM92A_ADDRESS); //Read Status
+
+}
+void BM92A_fastSet(){
+    if(lock_fast == 1){
+        BM92Asnk_init();
+    }
+    if(lock_fast == 2){
+        BM92Asrc_init();
+    }
+
+
+}
 void BM92A_sink_PDO(){
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
+    BM92Asnk_init();
     controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);
     write_word(0x26,BM92A_ADDRESS,0x8149);
     switch(sink_set){
