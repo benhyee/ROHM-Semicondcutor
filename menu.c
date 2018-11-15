@@ -66,7 +66,7 @@ void fastSetMenu()
        if(plugAlertFlag == FALSE)
        {
            BM92Asnk_init();
-           defaultAllRangeMode();
+           sinkAllPDOMode();
        }
 
        lock_fast = 1;
@@ -80,6 +80,7 @@ void fastSetMenu()
        {
            BM92Asrc_init();
            reverseBuckBoost();
+           srcAllPDOMode();
        }
 
        lock_fast = 2;
@@ -285,7 +286,7 @@ void enableMenu(char mode, char enable){
             pdo100WMode();
         }
         else if(mode == 1 && enable == 0){
-            defaultAllRangeMode();
+            sinkAllPDOMode();
         }
         displayMode();
 

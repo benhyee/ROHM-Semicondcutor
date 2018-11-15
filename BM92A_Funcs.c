@@ -231,7 +231,7 @@ void pdo100WMode(){
     free(PDO);
 
 }
-void defaultAllRangeMode(){
+void sinkAllPDOMode(){
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
@@ -250,6 +250,29 @@ void defaultAllRangeMode(){
     WriteRead(0x33,BM92A_ADDRESS,13,readBack);
     printPDO(readBack);
 
+    free(readBack);
+    free(PDO);
+}
+void srcAllPDOMode(){
+    unsigned char *readBack = malloc(sizeof(char)*17);
+    unsigned char *PDO = malloc(sizeof(char)*21);
+    write_word(0x17,BM92A_ADDRESS,0x0080); //controller Config 2
+    write_word(0x26,BM92A_ADDRESS,0x9109); //system Config 1
+    write_word(0x27,BM92A_ADDRESS,0x0A00); //system Config 2
+    write_word(0x2F,BM92A_ADDRESS,0x0001); //system Config 3
+    PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
+    PDO[4] = 0x32; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;
+    PDO[8] = 0x32; PDO[9] = 0xc0; PDO[10] = 0x03;  PDO[11] = 0x14;
+    PDO[12] = 0x32; PDO[13] = 0xb0; PDO[14] = 0x04;  PDO[15] = 0x14;
+    PDO[16] = 0x32; PDO[17] = 0x40; PDO[18] = 0x06;  PDO[19] = 0x14;
+
+    write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
+    write_word(0x05,BM92A_ADDRESS,0x0909);
+    readTwoByte(0x02,BM92A_ADDRESS);
+    readTwoByte(0x03,BM92A_ADDRESS);
+
+    WriteRead(0x3C,BM92A_ADDRESS,13,readBack);
+    write_word(0x06,BM92A_ADDRESS,0x0000);  //Controller Config 1
     free(readBack);
     free(PDO);
 }

@@ -18,6 +18,7 @@ void BM92A_source_PDO();
 void BM92A_fastSet();
 void currentPDO();
 void pdo100WMode();
-void defaultAllRangeMode();
+void sinkAllPDOMode();
+void srcAllPDOMode();
 
 #endif /* BM92A_FUNCS_H_ */

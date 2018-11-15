@@ -4,7 +4,6 @@
 #define RS 0x01
 #define RW 0x02
 #define EN 0x04
-
 #define LCDPORT P5
 #define LCDCNTRL P7
 //void LCD_nibble_write(unsigned char data, unsigned char control)

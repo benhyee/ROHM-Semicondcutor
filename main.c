@@ -50,11 +50,14 @@ int main(void)
 
     unsigned short alertRead;
     unsigned int currentRDO;
-
+    unsigned int currentPDOreg;
+    unsigned short PDOvoltage;
     BD99954_Startup_Routine();
-
+    reverseDisable();
+    chgDisable();
     readTwoByte(0x02,BM92A_ADDRESS);
     cursorFlag = TRUE;
+    unsigned char *readBack = malloc(sizeof(char)*17);
 
     while(1)
     {
@@ -78,7 +81,9 @@ int main(void)
                 LCD_enter();
                 currentPDO();
                 alertRead = readTwoByte(0x02,BM92A_ADDRESS);
-                currentRDO = readFourByte(0x2B,BM92A_ADDRESS);
+                printPDO(readBack);
+
+
 //                delay_longer(5);
                 plugAlertFlag = FALSE;
             }
