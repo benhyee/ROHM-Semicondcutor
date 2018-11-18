@@ -115,9 +115,8 @@ void LCD_clearLine()
 void LCD_PDO(unsigned short voltage, unsigned short current){
     if((voltage /10)%10 != 0) LCD_data(((voltage /10)%10)+48);  //if integer is more that one digits
     LCD_data((voltage%10)+48);
-
     LCD_word("V  ");
-    LCD_data(((current/1000)%10)+48);
+    if(((current/1000)%10) != 0){LCD_data(((current/1000)%10)+48);
     LCD_data(((current/100)%10)+48);
     LCD_data(((current/10)%10)+48);
     LCD_data((current%10)+48);

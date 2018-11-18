@@ -87,6 +87,7 @@ void reverseDisable()
     unsigned short tempCHG = readTwoByte(0x0A, BD99954_ADDRESS);
     tempCHG &= 0x8FFF;
     write_word(0x0A,BD99954_ADDRESS,tempCHG);
+    reverseVoltage(5024);
 }
 void default_BDSettings()
 {

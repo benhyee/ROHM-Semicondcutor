@@ -18,21 +18,14 @@ extern char fast_set;
 extern char lock_fast;
 extern char mode_set;
 extern char standard_menu;
-
 extern char sink_set;
-
 extern char source_set;
-
 extern char sleep_time;
-
 extern char high100_mode;
-
-
 extern char advanced_menu;
 extern char batt_chg;
 extern char battery_sel;
 extern char uart_en;
-
 extern char rightFlag;
 extern char leftFlag;
 extern char select;

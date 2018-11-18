@@ -95,7 +95,6 @@ void standardMenu(){
         case 1:
             if(select) sinkPDOMenu();
             LCD_word("       Sink PDO");
-
             break;
         case 2:
             if(select) sourcePDOMenu();
@@ -112,7 +111,6 @@ void standardMenu(){
             break;
         default:
             break;
-
     }
 
 

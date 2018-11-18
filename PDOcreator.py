@@ -106,7 +106,7 @@ def PDOdecode(pdo):
 
 createPDO(9,0.5)
 # createVariablePDO(5,5,5)
-autoNgt(20,5,5); 
-PDOdecode(0x3290011C)
+autoNgt(9,5,3); 
+# PDOdecode(0x3290011C)
 
-print(5000 + 32 - 5000%32)
+# print(5000 + 32 - 5000%32)
