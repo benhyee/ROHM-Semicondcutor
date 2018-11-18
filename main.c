@@ -49,11 +49,10 @@ int main(void) {
     __enable_irq();                           // Enable global interrupt
 
     unsigned short alertRead;
-    unsigned int PDOvoltage,currentPDOreg,RDO;
+    unsigned int PDOvoltage,currentPDOreg,RDO,i;
     terminal_transmitWord("Initializaing Registers\n\r");
     BD99954_Startup_Routine();
     terminal_transmitWord("BD9954 Refreshed Registers\n\r");
-
     cursorFlag = TRUE;
     unsigned char *readBack = malloc(sizeof(char)*21);
     readTwoByte(0x02,BM92A_ADDRESS);
@@ -82,6 +81,8 @@ int main(void) {
     */
 
     while(1) {
+
+
         if(cursorFlag == TRUE) {
             if(rightFlag == TRUE)menuScroll(1);
             if(leftFlag == TRUE) menuScroll(-1);
@@ -98,15 +99,17 @@ int main(void) {
                     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
                     LCD_word("Sink"); LCD_enter();
                     currentPDO();
+                    delay_ms(1000,CURRENT_FREQ);
+                    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0) monitorVoltage();
+                    displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
-                    plugAlertFlag = FALSE;
+
                 }
                 else{   //if its just a register update
                     displayMode();
                     alertRead = readTwoByte(0x02,BM92A_ADDRESS);
-                    plugAlertFlag = FALSE;
                 }
-            readTwoByte(0x02,BM92A_ADDRESS);
+                readTwoByte(0x02,BM92A_ADDRESS);
 
             }
             else if(mode_set == 1) {
@@ -126,18 +129,21 @@ int main(void) {
                     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
                     LCD_word("Source"); LCD_enter();
                     currentPDO();
+                    delay_ms(1000,CURRENT_FREQ);
+                    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0) monitorVoltage();
+                    displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
                 }
                 else {   //if its just a register update
                     reverseVoltage(5024);
                     displayMode();
                     alertRead = readTwoByte(0x02,BM92A_ADDRESS);
-                    plugAlertFlag = FALSE;
                 }
                 readTwoByte(0x02,BM92A_ADDRESS);
-
             }
+            plugAlertFlag = FALSE;
         }
         __sleep();      // go to lower power mode
+
     }
 }

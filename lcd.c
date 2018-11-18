@@ -1,6 +1,8 @@
 #include "msp432.h"
 #include "delay.h"
 #include <string.h>
+#include "BM92A_funcs.h"
+#include "BD99954_Funcs.h"
 #define RS 0x01
 #define RW 0x02
 #define EN 0x04
@@ -16,7 +18,7 @@
 //    LCDPORT->OUT = data; //clear EN
 //    LCDPORT->OUT = 0;
 //}
-
+int k;
 void LCD_command(unsigned char command)
 {
     LCDCNTRL->OUT &= ~(RS|RW);
@@ -99,10 +101,9 @@ void LCD_init()
 }
 void LCD_word(char *word)
 {
-    int i;
-    for (i = 0;  word[i] != 0; i++)
+    for (k = 0;  word[k] != 0; k++)
     {
-        LCD_data(word[i]);
+        LCD_data(word[k]);
     }
 }
 void LCD_clearLine()
@@ -134,4 +135,30 @@ void LCD_Voltage(unsigned short voltage) {
     LCD_data(((voltage /10)%10)+48);
     LCD_data('V');
 }
+void LCD_Monitor(int busVoltage,int batteryVolt){
+    LCD_command(0x02);
+    for(k = 0; k < 6; k++){
+        LCD_command(0x14);
+    }
+    if((busVoltage /10000)%10 != 0)LCD_data( ((busVoltage/10000)%10)+48);
+    LCD_data( ((busVoltage/1000)%10)+48);
+    LCD_word(".");
+    LCD_data( ((busVoltage/100)%10)+48);
+    LCD_data( ((busVoltage/10)%10)+48);
+    LCD_word("V");
+    LCD_command(0x02);
+    LCD_enter();
+
+    for(k = 0; k < 6; k++){
+        LCD_command(0x14);
+    }
+    LCD_data( ((batteryVolt/1000)%10)+48);
+    LCD_word(".");
+    LCD_data( ((batteryVolt/100)%10)+48);
+    LCD_data( ((batteryVolt/10)%10)+48);
+    LCD_data( (batteryVolt%10)+48);
+    LCD_word("V");
+
+}
+
 

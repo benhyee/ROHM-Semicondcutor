@@ -8,6 +8,13 @@
 
 #include "msp.h"
 #include "UART.h"
+#include "BM92A_Funcs.h"
+#include "BD99954_Funcs.h"
+#include "lcd.h"
+#include "I2C_Helper.h"
+#include "delay.h"
+#define BD99954_ADDRESS 0x09
+#define BM92A_ADDRESS 0x18
 unsigned char char_Hold;
 unsigned short shortData;
 unsigned int intData;
@@ -90,6 +97,21 @@ int ngtOperatingCurrent(unsigned int currentRDO)
 //    }
 //    return 0;
 //}
+void monitorVoltage()
+{
+    LCD_clearLine(); LCD_command(0x01);
+    LCD_word("VBUS:");
+    LCD_enter();
+    LCD_word("VBAT:");
+    int busVoltage; int batteryVolt;
+    while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
+    {
+        busVoltage = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
+        batteryVolt = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
+        LCD_Monitor(busVoltage,batteryVolt);
+        delay_ms(100,CURRENT_FREQ);
+    }
+}
 
 void blinkLED()
 {

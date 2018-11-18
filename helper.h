@@ -17,6 +17,6 @@ void printPDO(unsigned char* dataArray);
 int ngtVoltage(unsigned int currentPDOreg);
 int ngtMaxCurrent(unsigned int currentRDO);
 int ngtOperatingCurrent(unsigned int currentRDO);
-
+void monitorVoltage();
 
 #endif /* HELPER_H_ */

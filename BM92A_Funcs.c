@@ -32,7 +32,6 @@ void BM92Asrc_regSet(){
     write_word(0x26,BM92A_ADDRESS,0x9109); //system Config 1
     write_word(0x27,BM92A_ADDRESS,0x0A00); //system Config 2
     write_word(0x2F,BM92A_ADDRESS,0x0001); //system Config 3
-    write_word(0x05,BM92A_ADDRESS,0x0909); //Store System Config
 }
 void BM92Asrc_commandSet(){  //GPIO2 and GPIO3 set the Src Prov Table
                              //L L -> (60W)  L H -> (45W) H L -> (27W) H H ->
@@ -69,34 +68,44 @@ void BM92A_source_PDO() {
     mode_set = 1;    //Sets the global for source
     unsigned char *PDO = malloc(sizeof(char)*21);
     BM92Asrc_regSet();
+    PDO[0] = 0x00; PDO[1] = 0x00; PDO[2] = 0x00;  PDO[3] = 0x00;
+    PDO[4] = 0x00; PDO[5] = 0x00; PDO[6] = 0x00;  PDO[7] = 0x00;
+    PDO[8] = 0x00; PDO[9] = 0x00; PDO[10] = 0x00;  PDO[11] = 0x00;
+    PDO[12] = 0x00; PDO[13] = 0x00; PDO[14] = 0x00;  PDO[15] = 0x00;
+    PDO[16] = 0x00; PDO[17] = 0x00; PDO[18] = 0x00;  PDO[19] = 0x00;
+    write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
     switch(source_set){
         case 1:
             PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
             write_block(0x3C,BM92A_ADDRESS,4,PDO); //PDO Src Prov
             break;
         case 2:
-            PDO[0] = 0x32; PDO[1] = 0xd0; PDO[2] = 0x02;  PDO[3] = 0x14;
-            write_block(0x3C,BM92A_ADDRESS,4,PDO); //PDO Src Prov
+            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[4] = 0x32; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 0.5A
+            write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
 
             break;
         case 3:
-            PDO[0] = 0x32; PDO[1] = 0xc0; PDO[2] = 0x03;  PDO[3] = 0x14;
-            write_block(0x3C,BM92A_ADDRESS,4,PDO); //PDO Src Prov
+            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[4] = 0x32; PDO[5] = 0xc0; PDO[6] = 0x03;  PDO[7] = 0x14;  //12V @ 0.5A
+            write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
             break;
         case 4:
-            PDO[0] = 0x32; PDO[1] = 0xb0; PDO[2] = 0x04;  PDO[3] = 0x14;
-            write_block(0x3C,BM92A_ADDRESS,4,PDO); //PDO Src Prov
+            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[4] = 0x32; PDO[5] = 0xb0; PDO[6] = 0x04;  PDO[7] = 0x14;//15V @ 0.5A
+            write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
             break;
         case 5:
-            PDO[0] = 0x32; PDO[1] = 0x40; PDO[2] = 0x06;  PDO[3] = 0x14;
-            write_block(0x3C,BM92A_ADDRESS,4,PDO); //PDO Src Prov
+            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[4] = 0x32; PDO[5] = 0x40; PDO[6] = 0x06;  PDO[7] = 0x14;//20V @ 0.5A
+            write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
             break;
         case 6:
-            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
-            PDO[4] = 0x32; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;
-            PDO[8] = 0x32; PDO[9] = 0xc0; PDO[10] = 0x03;  PDO[11] = 0x14;
-            PDO[12] = 0x32; PDO[13] = 0xb0; PDO[14] = 0x04;  PDO[15] = 0x14;
-            PDO[16] = 0x32; PDO[17] = 0x40; PDO[18] = 0x06;  PDO[19] = 0x14;
+            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 0.5A
+            PDO[4] = 0x32; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 0.5A
+            PDO[8] = 0x32; PDO[9] = 0xc0; PDO[10] = 0x03;  PDO[11] = 0x14;  //12V @ 0.5A
+            PDO[12] = 0x32; PDO[13] = 0xb0; PDO[14] = 0x04;  PDO[15] = 0x14;//15V @ 0.5A
+            PDO[16] = 0x32; PDO[17] = 0x40; PDO[18] = 0x06;  PDO[19] = 0x14;//20V @ 0.5A
             write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
             break;
         default:
