@@ -68,8 +68,6 @@ void fastSetMenu()
            BM92Asnk_init();
            sinkAllPDOMode();
        }
-
-       lock_fast = 1;
    }
    else if(fast_set == 2){
        LCD_word("Ready to Source");
@@ -83,16 +81,7 @@ void fastSetMenu()
            srcAllPDOMode();
        }
 
-       lock_fast = 2;
    }
-//   if(select)
-//   {
-//       gpio_init();
-//   }
-
-
-
-
 }
 void standardMenu(){
     if(standard_menu > 4)standard_menu = 4;
@@ -268,8 +257,8 @@ void enableMenu(char mode, char enable){
         select = 0;
         if(mode == 2 && enable == 1){
             generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-            if(lock_fast == 1)chgEnable();
-            else if(lock_fast ==2)reverseEnable(1);
+            if(mode_set == 0)chgEnable();
+            else if(mode_set ==1)reverseEnable(1);
 
 
             generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
@@ -277,9 +266,8 @@ void enableMenu(char mode, char enable){
         }
         else if(mode == 2 && enable == 0){
             generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-            if(lock_fast == 1)chgDisable();
-           else if(lock_fast ==2)reverseDisable();
-
+            if(mode_set == 0)chgDisable();
+           else if(mode_set ==1)reverseDisable();
             BD99954ReadRegister();
         }
         else if(mode == 1 && enable == 1){

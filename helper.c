@@ -61,6 +61,20 @@ void printPDO(unsigned char* dataArray)
 
     }
     terminal_transmitWord("\r\n");
+}
+int ngtVoltage(unsigned int currentPDOreg)
+{
+    return ((currentPDOreg & 0x000FFC00)>>10)*50;
+
+}
+int ngtMaxCurrent(unsigned int currentRDO)
+{
+    return ((currentRDO & 0x000003FF)>>10)*10;
+
+}
+int ngtOperatingCurrent(unsigned int currentRDO)
+{
+    return ((currentRDO & 0x000FFC00)>>10)*10;
 
 }
 //int transferIntArray( unsigned char* tempArray, unsigned int* PDO_array)

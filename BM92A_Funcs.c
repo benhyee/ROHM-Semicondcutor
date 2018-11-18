@@ -18,31 +18,22 @@
 #include "globals.h"
 #define BM92A_ADDRESS 0x18
 int i;
+char mode_set= 0;
 unsigned short readalertStatus = 0, readstatus1 = 0;
 unsigned int currentNgtPDO = 0;
 
 void BM92Asrc_init()                //GPIO2 and GPIO3 set the Src Prov Table
 {                                   //L L -> (60W)  L H -> (45W) H L -> (27W) H H -> (18W)
-
-
-    unsigned char *PDO = malloc(sizeof(char)*21);
-
-    PDO[0] = 0x00; PDO[1] = 0x00; PDO[2] = 0x00;  PDO[3] = 0x00;
-    PDO[4] = 0x00; PDO[5] = 0x00; PDO[6] = 0x00;  PDO[7] = 0x00;
-    PDO[8] = 0x00; PDO[9] = 0x00; PDO[10] = 0x00; PDO[11] = 0x00;
-    PDO[12] = 0x00; PDO[13] = 0x00; PDO[14] = 0x00;  PDO[15] = 0x00;
-    PDO[16] = 0x00; PDO[17] = 0x00; PDO[18] = 0x00;  PDO[19] = 0x00;
-
+    mode_set = 1;
+    write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)|0x0001);
     write_word(0x17,BM92A_ADDRESS,0x0080); //controller Config 2
     write_word(0x26,BM92A_ADDRESS,0x9109); //system Config 1
     write_word(0x27,BM92A_ADDRESS,0x0A00); //system Config 2
     write_word(0x2F,BM92A_ADDRESS,0x0001); //system Config 3
-    write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
     write_word(0x05,BM92A_ADDRESS,0x0909); //Store System Config
     readalertStatus = readTwoByte(0x02,BM92A_ADDRESS); //Read Alert
     readstatus1 = readTwoByte(0x03,BM92A_ADDRESS); //Read Status
     write_word(0x06,BM92A_ADDRESS,0x0000);  //Controller Config 1
-    free(PDO);
 }
 
 
@@ -56,8 +47,10 @@ void currentPDO(){
 
 }
 void BM92A_source_PDO(){
+    mode_set = 1;
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*21);
+    write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)|0x0001);
     write_word(0x17,BM92A_ADDRESS,0x0080); //controller Config 2
     write_word(0x26,BM92A_ADDRESS,0x9109); //system Config 1
     write_word(0x27,BM92A_ADDRESS,0x0A00); //system Config 2
@@ -111,6 +104,8 @@ void BM92A_source_PDO(){
 }
 void BM92Asnk_init()                //GPIO2 and GPIO3 set the Src Prov Table
 {
+    mode_set = 0;
+    write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)&0xFFFE);
     write_word(0x17,BM92A_ADDRESS,0x0000);  //config 2
     write_word(0x26,BM92A_ADDRESS,0x8749); //system Config 1
     write_word(0x27,BM92A_ADDRESS,0x0046);  // SysConfig2
@@ -134,6 +129,7 @@ void BM92A_fastSet(){
 
 }
 void BM92A_sink_PDO(){
+    mode_set =0;
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
@@ -209,6 +205,7 @@ void BM92A_sink_PDO(){
     free(PDO);
 }
 void pdo100WMode(){
+
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
@@ -232,9 +229,11 @@ void pdo100WMode(){
 
 }
 void sinkAllPDOMode(){
+    mode_set = 0;
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
+    write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)&0xFFFE);
     controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);
     write_word(0x26,BM92A_ADDRESS,0x8149);
 
@@ -254,8 +253,10 @@ void sinkAllPDOMode(){
     free(PDO);
 }
 void srcAllPDOMode(){
+    mode_set = 1;
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*21);
+    write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)|0x0001);
     write_word(0x17,BM92A_ADDRESS,0x0080); //controller Config 2
     write_word(0x26,BM92A_ADDRESS,0x9109); //system Config 1
     write_word(0x27,BM92A_ADDRESS,0x0A00); //system Config 2

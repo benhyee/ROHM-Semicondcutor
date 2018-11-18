@@ -61,12 +61,13 @@ void chgDisable()
 }
 void reverseBuckBoost()
 {
-    write_word(0x19,BD99954_ADDRESS,5056);
+    reverseVoltage(5056);
     write_word(0x09,BD99954_ADDRESS,960);
 
 }
 void reverseVoltage(int voltage)
 {
+    voltage = voltage +32 -(voltage % 32);
     write_word(0x19,BD99954_ADDRESS,voltage);
 }
 void reverseEnable(char channel)

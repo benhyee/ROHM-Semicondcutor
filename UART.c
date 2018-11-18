@@ -55,7 +55,33 @@ void terminal_transmitInt(unsigned int input)
     //terminal_transmitChar('\r');
     //terminal_transmitChar('\n');
 }
+void terminal_transmitShortByte(unsigned short byte_short)
+{
+    terminal_transmitWord("0x");
+    terminal_transmitByte((byte_short&0xF000)>>12);
+    terminal_transmitByte((byte_short&0x0F00)>>8);
+    terminal_transmitByte((byte_short&0x00F0)>>4);
+    terminal_transmitByte(byte_short&0x000F);
+    terminal_transmitWord("\n\r");
 
+}
+void terminal_transmitIntByte(unsigned int byte_int)
+{
+    terminal_transmitWord("0x");
+    terminal_transmitByte((byte_int&0x000000F0)>>4);
+    terminal_transmitByte(byte_int&0x0000000F);
+    terminal_transmitByte((byte_int&0x0000F000)>>12);
+    terminal_transmitByte((byte_int&0x00000F00)>>8);
+    terminal_transmitByte((byte_int&0x00F00000)>>20);
+    terminal_transmitByte((byte_int&0x000F0000)>>16);
+    terminal_transmitByte((byte_int&0xF0000000)>>28);
+    terminal_transmitByte((byte_int&0x0F000000)>>24);
+
+
+
+    terminal_transmitWord("\n\r");
+
+}
 void terminal_transmitByte(unsigned char byte_value)
 {
     switch(byte_value)

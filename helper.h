@@ -14,6 +14,9 @@ unsigned int four_byteOrg(unsigned char* dataArray);
 int transferIntArray(unsigned char* tempArray, unsigned int* PDO);
 void blinkLED();
 void printPDO(unsigned char* dataArray);
+int ngtVoltage(unsigned int currentPDOreg);
+int ngtMaxCurrent(unsigned int currentRDO);
+int ngtOperatingCurrent(unsigned int currentRDO);
 
 
 #endif /* HELPER_H_ */

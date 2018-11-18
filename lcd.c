@@ -67,6 +67,7 @@ void LCD_enter()
 
 void LCD_init()
 {
+
 //    LCDPORT->DIR = 0xFF;
 //    delay_ms(100, CURRENT_FREQ);
 //    LCD_nibble_write(0x30, 0);

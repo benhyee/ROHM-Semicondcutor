@@ -16,7 +16,7 @@ extern char settings_menu;
 
 extern char fast_set;
 extern char lock_fast;
-
+extern char mode_set;
 extern char standard_menu;
 
 extern char sink_set;
