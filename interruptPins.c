@@ -65,7 +65,7 @@ void interruptPinInit()
 void PORT1_IRQHandler(void){
     if (JOYCON1->IFG & 0x10)    //Up
     {
-        terminal_transmitWord("Up");
+        terminal_transmitWord("Up\r\n");
         settings_menu -= 1;
         if(select == 1)
         {
@@ -77,7 +77,7 @@ void PORT1_IRQHandler(void){
     }
     else if(JOYCON1->IFG & 0x20)//Left
     {
-        terminal_transmitWord("Left");
+        terminal_transmitWord("Left\r\n");
         JOYCON1->IFG &= ~0xFF;
         leftFlag = TRUE;
     }
@@ -88,14 +88,14 @@ void PORT1_IRQHandler(void){
 void PORT6_IRQHandler(void){
    if (JOYCON2->IFG & 0x80)//Right
    {
-       terminal_transmitWord("Right");
+       terminal_transmitWord("Right\r\n");
        JOYCON2->IFG &= ~0xFF;
        rightFlag = TRUE;
 
    }
    else if (JOYCON2->IFG & 0x40)//Down
    {
-       terminal_transmitWord("Down");
+       terminal_transmitWord("Down\r\n");
        settings_menu += 1;
        if(select == 1)
        {
@@ -110,7 +110,7 @@ void PORT6_IRQHandler(void){
 void PORT3_IRQHandler(void){
     if (JOYCONPB->IFG & 0x20)
     {
-        terminal_transmitWord("Push\r\n");
+        terminal_transmitWord("Push\t");
         select += 1;
         cursorFlag = 1;
 
@@ -118,7 +118,7 @@ void PORT3_IRQHandler(void){
     }
     else if (JOYCONPB->IFG & 0x01)
     {
-          terminal_transmitWord("Plug Insert\r\n");
+          terminal_transmitWord("Alert Triggered\t");
           plugAlertFlag = TRUE;
     }
 

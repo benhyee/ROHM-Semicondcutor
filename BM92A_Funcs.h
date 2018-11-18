@@ -11,14 +11,15 @@
 
 
 //BM92A Helper I2C Functions
-void BM92Asrc_init();
 void BM92Asnk_init();
 void BM92A_sink_PDO();
 void BM92A_source_PDO();
-void BM92A_fastSet();
 void currentPDO();
 void pdo100WMode();
 void sinkAllPDOMode();
 void srcAllPDOMode();
-
+void BM92Asrc_regSet();
+void BM92Asrc_commandSet();
+void BM92Asnk_commandSet();
+void BM92Asnk_regSet();
 #endif /* BM92A_FUNCS_H_ */

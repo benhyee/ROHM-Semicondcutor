@@ -108,5 +108,5 @@ createPDO(9,0.5)
 # createVariablePDO(5,5,5)
 autoNgt(9,5,3); 
 # PDOdecode(0x3290011C)
-
-# print(5000 + 32 - 5000%32)
+voltage = 5000-130
+print(voltage + 32 - voltage%32)

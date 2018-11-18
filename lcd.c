@@ -116,18 +116,14 @@ void LCD_PDO(unsigned short voltage, unsigned short current){
     if((voltage /10)%10 != 0) LCD_data(((voltage /10)%10)+48);  //if integer is more that one digits
     LCD_data((voltage%10)+48);
     LCD_word("V  ");
-    if(((current/1000)%10) != 0){LCD_data(((current/1000)%10)+48);
+    if(((current/1000)%10) != 0){LCD_data(((current/1000)%10)+48);}
     LCD_data(((current/100)%10)+48);
     LCD_data(((current/10)%10)+48);
     LCD_data((current%10)+48);
-
     LCD_word("mA");
-
-
 }
 
-void LCD_Voltage(unsigned short voltage)
-{
+void LCD_Voltage(unsigned short voltage) {
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Voltage: ");
 
@@ -138,3 +134,4 @@ void LCD_Voltage(unsigned short voltage)
     LCD_data(((voltage /10)%10)+48);
     LCD_data('V');
 }
+

@@ -21,18 +21,19 @@ void gpio_init()
 }
 
 void sleepMode(){
-    P1 -> SEL1 &= ~0x02;//BD99954_RESET
-    P1 -> SEL0 &= ~0x02;
-    P1 -> DIR |= 0x02;
-}
-
-void BD99954_reset()
-{
     P3 ->SEL1 &= ~0x42;//LTC2953 kill & BM92A15_XRST
     P3 ->SEL0 &= ~0x42;
     P3 ->DIR |= 0x42;
     P3 -> OUT &= ~0x42;
     P3 -> OUT |= 0x40;
+}
+
+void BD99954_reset()
+{
+
+    P1 -> SEL1 &= ~0x02;//BD99954_RESET
+    P1 -> SEL0 &= ~0x02;
+    P1 -> DIR |= 0x02;
 
 }
 

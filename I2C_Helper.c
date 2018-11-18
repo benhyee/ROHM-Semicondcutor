@@ -117,9 +117,6 @@ int write_word(unsigned char commandCode,unsigned char slaveAddr, unsigned short
     return 0;
 
 }
-
-
-
 int write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize, unsigned char* dataArray)
 {
 
@@ -134,7 +131,6 @@ int write_block(unsigned char commandCode,unsigned char slaveAddr, int dataSize,
        TransmitFlag = 0;
        EUSCI_B0 -> TXBUF = dataSize;      // Send the dataSize
        do {
-
            while (!TransmitFlag);            // Wait for the transmit to complete
            TransmitFlag = 0;
            EUSCI_B0 -> TXBUF = *dataArray++;      //increment through the dataArray
@@ -255,7 +251,6 @@ unsigned int readFourByte(unsigned char commandCode,unsigned char slaveAddr)
     free(readBack);
     return temp;
 }
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 // I2C Interrupt Service Routine

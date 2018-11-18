@@ -35,8 +35,7 @@
 #define BM92A_ADDRESS 0x18
 #define CURRENT_FREQ FREQ_3_MHZ
 
-int main(void)
-{
+int main(void) {
     __disable_irq();
 
     set_DCO(CURRENT_FREQ);
@@ -51,9 +50,10 @@ int main(void)
 
     unsigned short alertRead;
     unsigned int PDOvoltage,currentPDOreg,RDO;
+    terminal_transmitWord("Initializaing Registers\n\r");
     BD99954_Startup_Routine();
-    reverseDisable();
-    chgDisable();
+    terminal_transmitWord("BD9954 Refreshed Registers\n\r");
+
     cursorFlag = TRUE;
     unsigned char *readBack = malloc(sizeof(char)*21);
     readTwoByte(0x02,BM92A_ADDRESS);
@@ -81,9 +81,7 @@ int main(void)
     free(PDO);
     */
 
-    while(1)
-    {
-
+    while(1) {
         if(cursorFlag == TRUE) {
             if(rightFlag == TRUE)menuScroll(1);
             if(leftFlag == TRUE) menuScroll(-1);
@@ -93,8 +91,10 @@ int main(void)
 
         if(plugAlertFlag) {
             alertRead = readTwoByte(0x02,BM92A_ADDRESS);
+            terminal_transmitWord("Inside Alert \t");
             if(mode_set ==0) {
-                if((alertRead&0x0080)>>7) { //If Alert Pin Triggered
+                if((alertRead&0x4000)>>14) { //If Alert Pin Triggered
+                    terminal_transmitWord("Sink Negotiation \n\r");
                     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
                     LCD_word("Sink"); LCD_enter();
                     currentPDO();
@@ -106,39 +106,38 @@ int main(void)
                     alertRead = readTwoByte(0x02,BM92A_ADDRESS);
                     plugAlertFlag = FALSE;
                 }
+            readTwoByte(0x02,BM92A_ADDRESS);
+
             }
             else if(mode_set == 1) {
-
-                if((alertRead &0x2000)>>13){
-
+                if((alertRead &0x2000)>>13) {
+                    terminal_transmitWord("Source Negotiation \n\r");
                     currentPDOreg = readFourByte(0x28,BM92A_ADDRESS);   //Ngt PDO
                     WriteRead(0x08,BM92A_ADDRESS,12,readBack);  //Display Sink Cap
                     printPDO(readBack);
                     RDO = readFourByte(0x2B,BM92A_ADDRESS);
                     PDOvoltage = ngtVoltage(currentPDOreg);
-                    if(PDOvoltage > 5000)
-                    {
-                        reverseVoltage(PDOvoltage-64); //If PDO voltage is not 5V
+                    if(PDOvoltage > 9000) {
+                        reverseVoltage(PDOvoltage-300); //If PDO voltage is not 5V
                     }
-                    else{
-                        reverseVoltage(5024);
+                    else {
+                        reverseVoltage(PDOvoltage-130);
                     }
                     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
-                    LCD_word("Sink"); LCD_enter();
+                    LCD_word("Source"); LCD_enter();
                     currentPDO();
                     readTwoByte(0x02,BM92A_ADDRESS);
                 }
-                else{   //if its just a register update
+                else {   //if its just a register update
+                    reverseVoltage(5024);
                     displayMode();
                     alertRead = readTwoByte(0x02,BM92A_ADDRESS);
                     plugAlertFlag = FALSE;
                 }
+                readTwoByte(0x02,BM92A_ADDRESS);
+
             }
         }
-        readTwoByte(0x02,BM92A_ADDRESS);    //Clear Any alerts
         __sleep();      // go to lower power mode
-
     }
-
-
 }

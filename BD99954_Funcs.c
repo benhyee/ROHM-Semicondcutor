@@ -19,7 +19,8 @@
 #include <string.h>
 
 void default_BDSettings();
-
+void chgDisable();
+void reverseVoltage(int voltage);
 #define BD99954_ADDRESS 0x09
 int i;
 //BD99954 Local Variables
@@ -31,20 +32,10 @@ int i;
 // Reading Registers (DEBUG)
 
 
-void BD99954_Startup_Routine()
+void reverseVoltage(int voltage)
 {
-    unsigned char *readBack = malloc(sizeof(char)*30);  //Temp Storage of registers
-//    write_word(0x3D,BD99954_ADDRESS,0x0001);    //All reset
-//    write_word(0x3D,BD99954_ADDRESS,0x0000);    //Release all reset
-    write_word(0x3E,BD99954_ADDRESS,0x0000);    //Protect set
-    write_word(0x3F,BD99954_ADDRESS,0x0001);    //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
-
-
-    for(i=0;i<200;i++);
-    default_BDSettings();
-
-
-
+    voltage = voltage +32 -(voltage % 32);
+    write_word(0x19,BD99954_ADDRESS,voltage);
 }
 void chgEnable()
 {
@@ -65,11 +56,7 @@ void reverseBuckBoost()
     write_word(0x09,BD99954_ADDRESS,960);
 
 }
-void reverseVoltage(int voltage)
-{
-    voltage = voltage +32 -(voltage % 32);
-    write_word(0x19,BD99954_ADDRESS,voltage);
-}
+
 void reverseEnable(char channel)
 {
     unsigned short tempCHG = readTwoByte(0x0A, BD99954_ADDRESS);
@@ -89,6 +76,19 @@ void reverseDisable()
     write_word(0x0A,BD99954_ADDRESS,tempCHG);
     reverseVoltage(5024);
 }
+void BD99954_Startup_Routine()
+{
+    write_word(0x3D,BD99954_ADDRESS,0x0001);    //All reset
+    write_word(0x3D,BD99954_ADDRESS,0x0000);    //Release all reset
+    write_word(0x3E,BD99954_ADDRESS,0x0000);    //Protect set
+    write_word(0x3F,BD99954_ADDRESS,0x0001);    //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
+    reverseDisable();
+    chgDisable();
+
+    for(i=0;i<200;i++);
+    default_BDSettings();
+}
+
 void default_BDSettings()
 {
     write_word(0x07,BD99954_ADDRESS,992);    //IBUS_LIM_SET

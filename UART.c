@@ -1,6 +1,7 @@
 #include <string.h>
 #include <UART.h>
 #include "msp.h"
+#include "globals.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -28,6 +29,10 @@ void terminal_init()
 
 void terminal_transmitChar(char character)
 {
+    if(uart_en == 0)
+    {
+        return;
+    }
     while(!(EUSCI_A0->IFG & 0x02)) { }
     EUSCI_A0->TXBUF = character;
 }

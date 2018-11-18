@@ -15,6 +15,7 @@
 #include "BM92A_Funcs.h"
 #include "msp432.h"
 #include "GPIO.h"
+#include "UART.h"
 #define TRUE 1
 #define FALSE 0
 #define BD99954_ADDRESS 0x09
@@ -35,7 +36,6 @@ void displayMode()
 {
     if(settings_menu < 1){settings_menu  = 1;}
     else if(settings_menu > 3){settings_menu = 3;}
-
     switch(settings_menu)
     {
         case 1:
@@ -65,8 +65,10 @@ void fastSetMenu()
        LCD_word("5V-20V (3A)");
        if(plugAlertFlag == FALSE)
        {
-           BM92Asnk_init();
+
            sinkAllPDOMode();
+           terminal_transmitWord("Sink PDO Set\n\r");
+
        }
    }
    else if(fast_set == 2){
@@ -76,11 +78,11 @@ void fastSetMenu()
        LCD_word("5V-20V (3A)");
        if(plugAlertFlag == FALSE)
        {
-           BM92Asrc_init();
            reverseBuckBoost();
            srcAllPDOMode();
-       }
+           terminal_transmitWord("Source PDO Set\n\r");
 
+       }
    }
 }
 void standardMenu(){
@@ -112,8 +114,6 @@ void standardMenu(){
         default:
             break;
     }
-
-
 }
 void sinkPDOMenu(){
     LCD_clearLine();
@@ -159,7 +159,6 @@ void sourcePDOMenu(){
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Source PDO");
     LCD_enter();
-    BM92Asrc_init();
 
     if(source_set < 1)source_set = 1;
     if(source_set > 6)source_set = 6;
@@ -253,27 +252,25 @@ void enableMenu(char mode, char enable){
     else if(enable == 1)LCD_word("        Enabled");
     if(select == 2){
         select = 0;
-        if(mode == 2 && enable == 1){
-            generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-            if(mode_set == 0)chgEnable();
-            else if(mode_set ==1)reverseEnable(1);
 
-
-            generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-            BD99954ReadRegister();
-        }
-        else if(mode == 2 && enable == 0){
-            generalShort = readTwoByte(0x0C,BD99954_ADDRESS);
-            if(mode_set == 0)chgDisable();
-           else if(mode_set ==1)reverseDisable();
-            BD99954ReadRegister();
-        }
-        else if(mode == 1 && enable == 1){
+        if(mode == 1 && enable == 1){  //if the mod
             pdo100WMode();
         }
         else if(mode == 1 && enable == 0){
             sinkAllPDOMode();
         }
+        if(mode == 2 && enable == 1){
+            if(mode_set == 0)chgEnable();
+            else if(mode_set ==1)reverseEnable(1);
+            BD99954ReadRegister();
+        }
+        else if(mode == 2 && enable == 0){
+            if(mode_set == 0)chgDisable();
+            else if(mode_set ==1)reverseDisable();
+            BD99954ReadRegister();
+        }
+        if(mode == 3 && enable == 1){uart_en = 1;}
+        else{uart_en = 0;}
         displayMode();
 
     }
@@ -291,7 +288,6 @@ void advancedMenu(){
         case 1:
             if(select) enableMenu(2,batt_chg);
             LCD_word("  Battery Charge");
-
             break;
         case 2:
             if(select) batterySelectMenu();
