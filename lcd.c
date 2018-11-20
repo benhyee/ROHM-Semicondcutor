@@ -156,7 +156,6 @@ void LCD_Monitor(int busVoltage,int batteryVolt){
     LCD_word(".");
     LCD_data( ((batteryVolt/100)%10)+48);
     LCD_data( ((batteryVolt/10)%10)+48);
-    LCD_data( (batteryVolt%10)+48);
     LCD_word("V");
 
 }

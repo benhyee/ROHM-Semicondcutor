@@ -53,7 +53,7 @@ void chgDisable()
 void reverseBuckBoost()
 {
     reverseVoltage(5056);
-    write_word(0x09,BD99954_ADDRESS,960);
+    write_word(0x09,BD99954_ADDRESS,1120);//IOTG_Lim_set
 
 }
 

@@ -218,11 +218,11 @@ void sinkAllPDOMode() {
 void srcAllPDOMode() {
     unsigned char *PDO = malloc(sizeof(char)*21);
     BM92Asrc_regSet();
-    PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 0.5A
-    PDO[4] = 0x32; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 0.5A
-    PDO[8] = 0x32; PDO[9] = 0xc0; PDO[10] = 0x03;  PDO[11] = 0x14;  //12V @ 0.5A
-    PDO[12] = 0x32; PDO[13] = 0xb0; PDO[14] = 0x04;  PDO[15] = 0x14;//15V @ 0.5A
-    PDO[16] = 0x32; PDO[17] = 0x40; PDO[18] = 0x06;  PDO[19] = 0x14;//20V @ 0.5A
+    PDO[0] = 0x64; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 0.5A
+    PDO[4] = 0x64; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 0.5A
+    PDO[8] = 0x64; PDO[9] = 0xc0; PDO[10] = 0x03;  PDO[11] = 0x14;  //12V @ 0.5A
+    PDO[12] = 0x64; PDO[13] = 0xb0; PDO[14] = 0x04;  PDO[15] = 0x14;//15V @ 0.5A
+    PDO[16] = 0x64; PDO[17] = 0x40; PDO[18] = 0x06;  PDO[19] = 0x14;//20V @ 0.5A
     write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
     BM92Asrc_commandSet();
     free(PDO);

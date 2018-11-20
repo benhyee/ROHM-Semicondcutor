@@ -13,6 +13,11 @@
 #include "lcd.h"
 #include "I2C_Helper.h"
 #include "delay.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#include "globals.h"
 #define BD99954_ADDRESS 0x09
 #define BM92A_ADDRESS 0x18
 unsigned char char_Hold;
@@ -20,6 +25,9 @@ unsigned short shortData;
 unsigned int intData;
 unsigned int intArray[];
 int i;
+int busVoltage; int batteryVolt;
+
+void sourceNegotiate();
 
 unsigned short two_byteOrg(unsigned char* dataArray)
 {
@@ -84,28 +92,33 @@ int ngtOperatingCurrent(unsigned int currentRDO)
     return ((currentRDO & 0x000FFC00)>>10)*10;
 
 }
-//int transferIntArray( unsigned char* tempArray, unsigned int* PDO_array)
-//{
-//    unsigned int temp;
-//    for(i = 0; i < 3; i++)
-//    {
-//        temp = four_byteOrg(&tempArray);
-//        *tempArray++;
-//        *PDO_array = temp;
-//        *PDO_array++;
-//
-//    }
-//    return 0;
-//}
-void monitorVoltage()
+void monitorSnkVoltage(){
+    LCD_clearLine(); LCD_command(0x01);
+    LCD_word("VBUS:");
+    LCD_enter();
+    LCD_word("VBAT:");
+    while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
+    {
+        busVoltage = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
+        batteryVolt = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
+        LCD_Monitor(busVoltage,batteryVolt);
+        delay_ms(200,CURRENT_FREQ);
+    }
+}
+void monitorSrcVoltage()
 {
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("VBUS:");
     LCD_enter();
     LCD_word("VBAT:");
-    int busVoltage; int batteryVolt;
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
+        if(plugAlertFlag){
+            sourceNegotiate();
+            LCD_clearLine(); LCD_command(0x01);
+            LCD_word("VBUS:");LCD_enter(); LCD_word("VBAT:");
+            plugAlertFlag = FALSE;
+        }
         busVoltage = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
         batteryVolt = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
         LCD_Monitor(busVoltage,batteryVolt);
@@ -113,6 +126,33 @@ void monitorVoltage()
     }
 }
 
+void sourceNegotiate(){
+    readTwoByte(0x02,BM92A_ADDRESS);
+    signed int deltaVolt;
+    unsigned char *readBack = malloc(sizeof(char)*21);
+    unsigned int PDOvoltage,currentPDOreg;
+    currentPDOreg = readFourByte(0x28,BM92A_ADDRESS);   //Ngt PDO
+    PDOvoltage = ngtVoltage(currentPDOreg);
+    if(PDOvoltage > 5000) {
+        reverseVoltage(PDOvoltage); //If PDO voltage is not 5V
+        delay_ms(200,CURRENT_FREQ);
+        deltaVolt = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
+        deltaVolt = (PDOvoltage - deltaVolt+64)/2;
+        reverseVoltage(PDOvoltage+deltaVolt);
+    }
+    else {
+        reverseVoltage(5024);
+    }
+    terminal_transmitWord("Source Negotiation \n\r");
+    WriteRead(0x08,BM92A_ADDRESS,12,readBack);  //Display Sink Cap
+    printPDO(readBack);
+    LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
+    LCD_word("Source"); LCD_enter();
+    currentPDO();
+    delay_ms(3000,CURRENT_FREQ);
+    readTwoByte(0x02,BM92A_ADDRESS);
+    free(readBack);
+}
 void blinkLED()
 {
 
