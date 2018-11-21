@@ -20,5 +20,6 @@ int ngtOperatingCurrent(unsigned int currentRDO);
 void monitorSrcVoltage();
 void sourceNegotiate();
 void monitorSnkVoltage();
+void monitorVCCSnkVoltage();
 
 #endif /* HELPER_H_ */

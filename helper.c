@@ -25,7 +25,7 @@ unsigned short shortData;
 unsigned int intData;
 unsigned int intArray[];
 int i;
-int busVoltage; int batteryVolt;
+int busVoltage, batteryVolt, vccVoltage;
 
 void sourceNegotiate();
 
@@ -93,17 +93,57 @@ int ngtOperatingCurrent(unsigned int currentRDO)
 
 }
 void monitorSnkVoltage(){
+    terminal_transmitWord("Sink Negotiation \n\r");
+    LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
+    LCD_word("Sink"); LCD_enter();
+    delay_ms(400,CURRENT_FREQ);
+    currentPDO(); delay_ms(2000,CURRENT_FREQ);
+    write_word(0x71,BD99954_ADDRESS,0x000F);
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("VBUS:");
     LCD_enter();
     LCD_word("VBAT:");
+    readTwoByte(0x02,BM92A_ADDRESS);
+    write_word(0x71,BD99954_ADDRESS,0x000F);
+
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
+        write_word(0x72,BD99954_ADDRESS,0x000F);
         busVoltage = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
         batteryVolt = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
         LCD_Monitor(busVoltage,batteryVolt);
         delay_ms(200,CURRENT_FREQ);
     }
+    write_word(0x71,BD99954_ADDRESS,0x000F);
+
+}
+void monitorVCCSnkVoltage(){
+    LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
+    write_word(0x72,BD99954_ADDRESS,0x000F);
+    LCD_word("Sink from VCC");
+    delay_ms(2000,CURRENT_FREQ);
+    LCD_clearLine(); LCD_command(0x01);
+    LCD_word("VCC :");
+    LCD_enter();
+    LCD_word("VBAT:");
+    while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1)
+    {
+
+        if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
+        {
+            monitorSnkVoltage();
+            LCD_clearLine(); LCD_command(0x01);
+            LCD_word("VCC :");
+            LCD_enter();
+            LCD_word("VBAT:");
+        }
+        vccVoltage = readTwoByte(0x5F,BD99954_ADDRESS)& 0x7FFF;
+        batteryVolt = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
+        LCD_Monitor(vccVoltage,batteryVolt);
+        delay_ms(200,CURRENT_FREQ);
+    }
+    write_word(0x72,BD99954_ADDRESS,0x000F);
+
 }
 void monitorSrcVoltage()
 {
@@ -113,16 +153,16 @@ void monitorSrcVoltage()
     LCD_word("VBAT:");
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
-        if(plugAlertFlag){
+        if(AlertFlag){
             sourceNegotiate();
             LCD_clearLine(); LCD_command(0x01);
             LCD_word("VBUS:");LCD_enter(); LCD_word("VBAT:");
-            plugAlertFlag = FALSE;
+            AlertFlag = FALSE;
         }
         busVoltage = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
         batteryVolt = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
         LCD_Monitor(busVoltage,batteryVolt);
-        delay_ms(100,CURRENT_FREQ);
+        delay_ms(50,CURRENT_FREQ);
     }
 }
 
@@ -149,7 +189,7 @@ void sourceNegotiate(){
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Source"); LCD_enter();
     currentPDO();
-    delay_ms(3000,CURRENT_FREQ);
+    delay_ms(2000,CURRENT_FREQ);
     readTwoByte(0x02,BM92A_ADDRESS);
     free(readBack);
 }

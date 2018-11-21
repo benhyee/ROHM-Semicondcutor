@@ -10,11 +10,12 @@
 
 
 //BD99954 Helper I2C Functions
+void BD_INT_INIT();
+void clear_BD_int();
 void BD99954_Startup_Routine();
 void default_BDSettings();
 void reverseBuckBoost();
 void reverseVoltage(int voltage);
-
 void reverseEnable(char channel);
 void reverseDisable();
 void chgEnable();

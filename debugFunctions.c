@@ -16,6 +16,7 @@
 #include "I2C_Helper.h"
 #include "delay.h"
 #include "debugFunctions.h"
+#include "helper.h"
 int i;
 
 //BD99954 Variables
@@ -334,6 +335,7 @@ void BD99954ReadRegister()
     terminal_transmitWord("------------------------------\r\n");
 
     for(i = 0; i < 200; i++);
+    clear_BD_int();
 
 }
 

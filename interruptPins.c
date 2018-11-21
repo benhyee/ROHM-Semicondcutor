@@ -17,18 +17,19 @@
 #define JOYCONPB P3
 #define JOYCON2 P6
 
-volatile char plugAlertFlag = 0;
-char select = 0, rightFlag = 0, leftFlag = 0;
+volatile char AlertFlag = 0;
+char select = 0, rightFlag = 0, leftFlag = 0,BD99954_INT = 0;
 unsigned char readback;
+
 void interruptPinInit()
 {
 
-    JOYCON1 -> SEL1 &= ~0x30;
-    JOYCON1 -> SEL0 &= ~0x30;
-    JOYCON1 -> DIR &= ~0x30;
-    JOYCON1 -> OUT |= 0x30;
-    JOYCON1 -> REN |= 0x30;
-    JOYCON1 -> IES |= 0x30;
+    JOYCON1 -> SEL1 &= ~0x31;
+    JOYCON1 -> SEL0 &= ~0x31;
+    JOYCON1 -> DIR &= ~0x31;
+    JOYCON1 -> OUT |= 0x31;
+    JOYCON1 -> REN |= 0x31;
+    JOYCON1 -> IES |= 0x31;
 
     JOYCON2 -> SEL1 &= ~0xC0;
     JOYCON2 -> SEL0 &= ~0xC0;
@@ -46,7 +47,7 @@ void interruptPinInit()
 
 
     JOYCON1 -> IFG = 0;
-    JOYCON1 -> IE |= 0x30;
+    JOYCON1 -> IE |= 0x31;
     JOYCON2 -> IFG = 0;
     JOYCON2 -> IE |= 0xC0;
     JOYCONPB -> IFG = 0;
@@ -63,6 +64,14 @@ void interruptPinInit()
 
 }
 void PORT1_IRQHandler(void){
+    if (JOYCON1->IFG & 0x01)
+    {
+        terminal_transmitWord("BD99954 Interupt");
+        AlertFlag = TRUE;
+        BD99954_INT = TRUE;
+        JOYCON1->IFG &= ~0xFF;
+    }
+
     if (JOYCON1->IFG & 0x10)    //Up
     {
         terminal_transmitWord("Up\r\n");
@@ -73,15 +82,15 @@ void PORT1_IRQHandler(void){
             select = 0;
         }
         JOYCON1->IFG &= ~0xFF;
-
+        cursorFlag = TRUE;
     }
     else if(JOYCON1->IFG & 0x20)//Left
     {
         terminal_transmitWord("Left\r\n");
         JOYCON1->IFG &= ~0xFF;
         leftFlag = TRUE;
+        cursorFlag = TRUE;
     }
-    cursorFlag = TRUE;
 
 
 }
@@ -119,7 +128,7 @@ void PORT3_IRQHandler(void){
     else if (JOYCONPB->IFG & 0x01)
     {
           terminal_transmitWord("Alert Triggered\t");
-          plugAlertFlag = TRUE;
+          AlertFlag = TRUE;
     }
 
 

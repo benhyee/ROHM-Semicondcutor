@@ -63,7 +63,7 @@ void fastSetMenu()
        LCD_enter();
        LCD_clearLine();
        LCD_word("5V-20V (3A)");
-       if(plugAlertFlag == FALSE)
+       if(AlertFlag == FALSE)
        {
 
            sinkAllPDOMode();
@@ -76,13 +76,18 @@ void fastSetMenu()
        LCD_enter();
        LCD_clearLine();
        LCD_word("5V-20V (3A)");
-       if(plugAlertFlag == FALSE)
+       if(AlertFlag == FALSE)
        {
+           clear_BD_int();
            reverseBuckBoost();
            srcAllPDOMode();
            terminal_transmitWord("Source PDO Set\n\r");
 
        }
+   }
+   if(select)
+   {
+       sleepMode();
    }
 }
 void standardMenu(){
@@ -268,6 +273,7 @@ void enableMenu(char mode, char enable){
             if(mode_set == 0)chgDisable();
             else if(mode_set ==1)reverseDisable();
             BD99954ReadRegister();
+
         }
         if(mode == 3 && enable == 1){uart_en = 1;}
         else{uart_en = 0;}

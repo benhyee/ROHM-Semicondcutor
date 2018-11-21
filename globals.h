@@ -10,9 +10,10 @@
 
 #define TRUE 1
 #define FALSE 0
-extern volatile char plugAlertFlag;
+extern volatile char AlertFlag;
 extern char cursorFlag;
 extern char settings_menu;
+extern char BD99954_INT;
 
 extern char fast_set;
 extern char lock_fast;

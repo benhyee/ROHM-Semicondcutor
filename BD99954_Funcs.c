@@ -30,7 +30,29 @@ int i;
 
 
 // Reading Registers (DEBUG)
+void clear_BD_int(){
+    write_word(0x70,BD99954_ADDRESS,0x00FF);    //Int0
+    write_word(0x71,BD99954_ADDRESS,0x00FF);    //Int1 Vbus
+    write_word(0x72,BD99954_ADDRESS,0x00FF);    //Int2 Vcc
+}
+void BD_INT_INIT(){
+    short int_set;
 
+
+    int_set = readTwoByte(0x68,BD99954_ADDRESS);
+    int_set |= 0x0006;
+    write_word(0x68,BD99954_ADDRESS,int_set);
+
+    int_set = readTwoByte(0x69,BD99954_ADDRESS);
+    int_set |= 0x0003;
+    write_word(0x69,BD99954_ADDRESS,int_set);
+
+    int_set = readTwoByte(0x6A,BD99954_ADDRESS);
+    int_set |= 0x0003;
+    write_word(0x6A,BD99954_ADDRESS,int_set);
+
+    clear_BD_int();
+}
 
 void reverseVoltage(int voltage)
 {
@@ -84,7 +106,7 @@ void BD99954_Startup_Routine()
     write_word(0x3F,BD99954_ADDRESS,0x0001);    //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
     reverseDisable();
     chgDisable();
-
+    BD_INT_INIT();
     for(i=0;i<200;i++);
     default_BDSettings();
 }
