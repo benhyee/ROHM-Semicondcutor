@@ -11,5 +11,6 @@ void LCD_Voltage(unsigned short voltage);
 void LCD_clearLine();
 void LCD_PDO(unsigned short voltage, unsigned short current);
 void LCD_Monitor(int busVoltage,int batteryCurrent, int batteryVoltage);
+void LCD_charge_error();
 
 #endif

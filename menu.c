@@ -283,7 +283,12 @@ void enableMenu(char mode, char enable){
         }
         if(mode == 2 && enable == 1){
             if(mode_set == 0)chgEnable();
-            else if(mode_set ==1)reverseEnable(1);
+            else if(mode_set ==1)
+            {
+                LCD_charge_error();
+                delay_ms(2000,CURRENT_FREQ);
+                batt_chg = 0;
+            }
             delay_ms(100,CURRENT_FREQ);
             clear_BD_int();
             BD99954ReadRegister();

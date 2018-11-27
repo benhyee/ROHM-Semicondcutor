@@ -164,5 +164,11 @@ void LCD_Monitor(int busVoltage,int batteryCurrent, int batteryVoltage){
     LCD_word(" mA");
 
 }
+void LCD_charge_error(){
+    LCD_command(0x01); // clear screen, move cursor home
+    LCD_word("Charging only");
+    LCD_enter();
+    LCD_word("for Sink Mode");
+}
 
 
