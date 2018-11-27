@@ -335,7 +335,6 @@ void BD99954ReadRegister()
     terminal_transmitWord("------------------------------\r\n");
 
     for(i = 0; i < 200; i++);
-    clear_BD_int();
 
 }
 

@@ -70,7 +70,8 @@ void fastSetMenu()
        {
            mode_set = 0;
            clear_BD_int();
-           sinkAllPDOMode();
+           BM92Asnk_regSet();
+           BM92Asnk_commandSet();
            terminal_transmitWord("Sink PDO Set\n\r");
 
        }
@@ -83,10 +84,10 @@ void fastSetMenu()
        if(AlertFlag == FALSE)
        {
            mode_set = 1;
-
            clear_BD_int();
            reverseBuckBoost();
-           srcAllPDOMode();
+           BM92Asrc_regSet();
+           BM92Asrc_commandSet();
            terminal_transmitWord("Source PDO Set\n\r");
 
        }
@@ -159,6 +160,11 @@ void sinkPDOMenu(){
     }
     if(select == 2){
         BM92A_sink_PDO();
+        if(mode_set==0)
+        {
+            BM92Asnk_regSet();
+            BM92Asnk_commandSet();
+        }
         select = 0;
         displayMode();
     }
@@ -198,6 +204,11 @@ void sourcePDOMenu(){
     }
     if(select == 2){
         BM92A_source_PDO();
+        if(mode_set == 1){
+            BM92Asrc_regSet();
+            BM92Asrc_commandSet();
+        }
+
         select = 0;
         displayMode();
     }

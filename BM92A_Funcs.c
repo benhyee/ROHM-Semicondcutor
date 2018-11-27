@@ -24,7 +24,7 @@ unsigned int currentNgtPDO = 0;
 
 
 void BM92Asrc_regSet(){
-    reverseDisable();chgDisable(); batt_chg = 0;
+    reverseEnable(1);
     write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)|0x0001);
     write_word(0x17,BM92A_ADDRESS,0x0080); //controller Config 2
     write_word(0x26,BM92A_ADDRESS,0x9109); //system Config 1
@@ -63,7 +63,6 @@ void currentPDO() {
 }
 void BM92A_source_PDO() {
     unsigned char *PDO = malloc(sizeof(char)*21);
-    BM92Asrc_regSet();
     PDO[0] = 0x00; PDO[1] = 0x00; PDO[2] = 0x00;  PDO[3] = 0x00;
     PDO[4] = 0x00; PDO[5] = 0x00; PDO[6] = 0x00;  PDO[7] = 0x00;
     PDO[8] = 0x00; PDO[9] = 0x00; PDO[10] = 0x00;  PDO[11] = 0x00;
@@ -108,7 +107,6 @@ void BM92A_source_PDO() {
             break;
     }
 
-    BM92Asrc_commandSet();
     free(PDO);
 }
 
@@ -117,7 +115,6 @@ void BM92A_sink_PDO() {
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
-    BM92Asnk_regSet();
     controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);
     write_word(0x26,BM92A_ADDRESS,0x8149);
     switch(sink_set){
@@ -167,7 +164,6 @@ void BM92A_sink_PDO() {
         default:
             break;
     }
-    BM92Asnk_commandSet();
     free(PDO);
 }
 void pdo100WMode(){
@@ -196,7 +192,6 @@ void sinkAllPDOMode() {
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
-    BM92Asnk_regSet();
     controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);
     write_word(0x26,BM92A_ADDRESS,0x8149);
     controllerConfig |= 0x0020;
@@ -205,21 +200,18 @@ void sinkAllPDOMode() {
     PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;PDO[3] = 0x19;
     write_block(0x20,BM92A_ADDRESS,4,PDO);
     delay_ms(1,CURRENT_FREQ);
-    BM92Asnk_commandSet();
     printPDO(readBack);
     free(readBack);
     free(PDO);
 }
 void srcAllPDOMode() {
     unsigned char *PDO = malloc(sizeof(char)*21);
-    BM92Asrc_regSet();
     PDO[0] = 0x64; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 0.5A
     PDO[4] = 0x64; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 0.5A
     PDO[8] = 0x64; PDO[9] = 0xc0; PDO[10] = 0x03;  PDO[11] = 0x14;  //12V @ 0.5A
     PDO[12] = 0x64; PDO[13] = 0xb0; PDO[14] = 0x04;  PDO[15] = 0x14;//15V @ 0.5A
     PDO[16] = 0x64; PDO[17] = 0x40; PDO[18] = 0x06;  PDO[19] = 0x14;//20V @ 0.5A
     write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
-    BM92Asrc_commandSet();
     free(PDO);
 }
 

@@ -51,6 +51,8 @@ int main(void) {
     unsigned short alertRead, BD_rail;
     terminal_transmitWord("Initializing Registers\n\r");
     BD99954_Startup_Routine();
+    sinkAllPDOMode();
+    srcAllPDOMode();
     terminal_transmitWord("BD9954 Refreshed Registers\n\r");
     cursorFlag = TRUE;
     readTwoByte(0x02,BM92A_ADDRESS);

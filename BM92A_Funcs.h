@@ -22,4 +22,5 @@ void BM92Asrc_regSet();
 void BM92Asrc_commandSet();
 void BM92Asnk_commandSet();
 void BM92Asnk_regSet();
+void srcRegWrite();
 #endif /* BM92A_FUNCS_H_ */
