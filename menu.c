@@ -16,6 +16,7 @@
 #include "msp432.h"
 #include "GPIO.h"
 #include "UART.h"
+#include "delay.h"
 #define TRUE 1
 #define FALSE 0
 #define BD99954_ADDRESS 0x09
@@ -30,6 +31,8 @@ char lock_fast = 1, lock_standard = 0, fast_set = 1;
 char sink_set = 0, source_set = 0, sleep_time = 6, high100_mode = 0;
 char batt_chg = 0, battery_sel = 0, uart_en = 0;
 char lock_sink = 0,lock_source = 0, lock_high = 0, lock_sleep = 0;
+char mode_set= 0;
+
 unsigned short generalShort;
 unsigned int generalInt,temp;
 void displayMode()
@@ -54,8 +57,8 @@ void displayMode()
 }
 void fastSetMenu()
 {
-   if(fast_set < 1)fast_set = 1;
-   if(fast_set > 2)fast_set = 2;
+   if(fast_set < 1)fast_set = 2;
+   if(fast_set > 2)fast_set = 1;
    LCD_command(0x01); // clear screen, move cursor home
    if(fast_set == 1)
    {
@@ -65,7 +68,8 @@ void fastSetMenu()
        LCD_word("5V-20V (3A)");
        if(AlertFlag == FALSE)
        {
-
+           mode_set = 0;
+           clear_BD_int();
            sinkAllPDOMode();
            terminal_transmitWord("Sink PDO Set\n\r");
 
@@ -78,6 +82,8 @@ void fastSetMenu()
        LCD_word("5V-20V (3A)");
        if(AlertFlag == FALSE)
        {
+           mode_set = 1;
+
            clear_BD_int();
            reverseBuckBoost();
            srcAllPDOMode();
@@ -91,8 +97,8 @@ void fastSetMenu()
    }
 }
 void standardMenu(){
-    if(standard_menu > 4)standard_menu = 4;
-    if(standard_menu < 1)standard_menu = 1;
+    if(standard_menu > 4)standard_menu = 1;
+    if(standard_menu < 1)standard_menu = 4;
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Standard Menu");
@@ -126,8 +132,8 @@ void sinkPDOMenu(){
     LCD_word("Sink PDO");
     LCD_enter();
 
-    if(sink_set < 1)sink_set = 1;
-    if(sink_set > 6)sink_set = 6;
+    if(sink_set < 1)sink_set = 6;
+    if(sink_set > 6)sink_set = 1;
     switch(sink_set)
     {
         case 1:
@@ -165,8 +171,8 @@ void sourcePDOMenu(){
     LCD_word("Source PDO");
     LCD_enter();
 
-    if(source_set < 1)source_set = 1;
-    if(source_set > 6)source_set = 6;
+    if(source_set < 1)source_set = 6;
+    if(source_set > 6)source_set = 1;
     switch(source_set)
     {
         case 1:
@@ -204,8 +210,8 @@ void sleepMenu()
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Sleep Timeout");
     LCD_enter();
-    if(sleep_time < 1)sleep_time = 1;
-    if(sleep_time > 6)sleep_time = 6;
+    if(sleep_time < 1)sleep_time = 6;
+    if(sleep_time > 6)sleep_time = 1;
     switch(sleep_time)
     {
         case 1:
@@ -267,11 +273,15 @@ void enableMenu(char mode, char enable){
         if(mode == 2 && enable == 1){
             if(mode_set == 0)chgEnable();
             else if(mode_set ==1)reverseEnable(1);
+            delay_ms(100,CURRENT_FREQ);
+            clear_BD_int();
             BD99954ReadRegister();
         }
         else if(mode == 2 && enable == 0){
             if(mode_set == 0)chgDisable();
             else if(mode_set ==1)reverseDisable();
+            delay_ms(100,CURRENT_FREQ);
+            clear_BD_int();
             BD99954ReadRegister();
 
         }
@@ -283,8 +293,8 @@ void enableMenu(char mode, char enable){
 
 }
 void advancedMenu(){
-    if(advanced_menu > 3)advanced_menu = 3;
-    if(advanced_menu < 1)advanced_menu = 1;
+    if(advanced_menu > 3)advanced_menu = 1;
+    if(advanced_menu < 1)advanced_menu = 3;
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Advanced Menu");
@@ -309,8 +319,8 @@ void advancedMenu(){
     }
 }
 void batterySelectMenu(){
-    if(battery_sel < 1)battery_sel = 1;
-    if(battery_sel > 4)battery_sel = 4;
+    if(battery_sel < 1)battery_sel = 4;
+    if(battery_sel > 4)battery_sel = 1;
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Battery Select");

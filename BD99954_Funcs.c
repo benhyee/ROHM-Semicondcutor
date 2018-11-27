@@ -40,12 +40,8 @@ void BD_INT_INIT(){
 
 
     int_set = readTwoByte(0x68,BD99954_ADDRESS);
-    int_set |= 0x0006;
+    int_set |= 0x0004;
     write_word(0x68,BD99954_ADDRESS,int_set);
-
-    int_set = readTwoByte(0x69,BD99954_ADDRESS);
-    int_set |= 0x0003;
-    write_word(0x69,BD99954_ADDRESS,int_set);
 
     int_set = readTwoByte(0x6A,BD99954_ADDRESS);
     int_set |= 0x0003;
@@ -76,7 +72,6 @@ void reverseBuckBoost()
 {
     reverseVoltage(5056);
     write_word(0x09,BD99954_ADDRESS,1120);//IOTG_Lim_set
-
 }
 
 void reverseEnable(char channel)

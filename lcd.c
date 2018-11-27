@@ -135,7 +135,7 @@ void LCD_Voltage(unsigned short voltage) {
     LCD_data(((voltage /10)%10)+48);
     LCD_data('V');
 }
-void LCD_Monitor(int busVoltage,int batteryVolt){
+void LCD_Monitor(int busVoltage,int batteryCurrent, int batteryVoltage){
     LCD_command(0x02);
     for(k = 0; k < 6; k++){
         LCD_command(0x14);
@@ -149,14 +149,19 @@ void LCD_Monitor(int busVoltage,int batteryVolt){
     LCD_command(0x02);
     LCD_enter();
 
-    for(k = 0; k < 6; k++){
-        LCD_command(0x14);
-    }
-    LCD_data( ((batteryVolt/1000)%10)+48);
+    if((batteryVoltage /10000)%10 != 0)LCD_data( ((batteryVoltage/10000)%10)+48);
+    LCD_data( ((batteryVoltage/1000)%10)+48);
     LCD_word(".");
-    LCD_data( ((batteryVolt/100)%10)+48);
-    LCD_data( ((batteryVolt/10)%10)+48);
-    LCD_word("V");
+    LCD_data( ((batteryVoltage/100)%10)+48);
+    LCD_data( ((batteryVoltage/10)%10)+48);
+    LCD_word("V  ");
+
+    LCD_data( ((batteryCurrent/10000)%10)+48);
+    LCD_data( ((batteryCurrent/1000)%10)+48);
+    LCD_data( ((batteryCurrent/100)%10)+48);
+    LCD_data( ((batteryCurrent/10)%10)+48);
+    LCD_data( ((batteryCurrent/1)%10)+48);
+    LCD_word(" mA");
 
 }
 
