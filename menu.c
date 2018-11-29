@@ -151,7 +151,7 @@ void sinkPDOMenu(){
             BM92Asnk_regSet();
             BM92Asnk_commandSet();
         }
-        select = 0;
+        select = 0;pushFlag = 0;
         displayMode();
     }
 
@@ -195,7 +195,7 @@ void sourcePDOMenu(){
             BM92Asrc_commandSet();
         }
 
-        select = 0;
+        select = 0;pushFlag = 0;
         displayMode();
     }
 
@@ -234,7 +234,7 @@ void sleepMenu()
     }
     if(select == 2){
 
-        select = 0;
+        select = 0;pushFlag = 0;
         displayMode();
     }
 }
@@ -287,7 +287,7 @@ void enableMenu(char mode, char enable){
         if(mode == 3 && enable == 1){uart_en = 1;}
         else{uart_en = 0;}
         displayMode();
-
+        pushFlag = 0;
     }
 
 }
@@ -298,7 +298,11 @@ void advancedMenu(){
     LCD_enter();
     LCD_word("     UART Debug");
 
-    if(select) enableMenu(1,uart_en);
+    if(select){
+        enableMenu(1,uart_en);
+        pushFlag = 0;
+    }
+
 
 
 }
