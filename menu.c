@@ -28,7 +28,7 @@ unsigned short readTwoByte(unsigned char commandCode,unsigned char slaveAddr);
 char cursorFlag = 0;
 char settings_menu = 1, standard_menu = 1,advanced_menu =1;
 char lock_fast = 1, lock_standard = 0, fast_set = 1;
-char sink_set = 0, source_set = 0, sleep_time = 6, high100_mode = 0;
+char sink_set = 4, source_set = 6, sleep_time = 6, high100_mode = 0;
 char batt_chg = 0, battery_sel = 0, uart_en = 0;
 char lock_sink = 0,lock_source = 0, lock_high = 0, lock_sleep = 0;
 char mode_set= 0;
@@ -65,7 +65,7 @@ void fastSetMenu()
        LCD_word("Ready to Sink");
        LCD_enter();
        LCD_clearLine();
-       LCD_word("5V-20V (3A)");
+       LCD_fastSnkSetPDO();
        if(AlertFlag == FALSE)
        {
            mode_set = 0;
@@ -80,7 +80,7 @@ void fastSetMenu()
        LCD_word("Ready to Source");
        LCD_enter();
        LCD_clearLine();
-       LCD_word("5V-20V (3A)");
+       LCD_fastSrcSetPDO();
        if(AlertFlag == FALSE)
        {
            mode_set = 1;
@@ -92,14 +92,14 @@ void fastSetMenu()
 
        }
    }
-   if(select)
+   if(pushFlag)
    {
        sleepMode();
    }
 }
 void standardMenu(){
-    if(standard_menu > 4)standard_menu = 1;
-    if(standard_menu < 1)standard_menu = 4;
+    if(standard_menu > 2)standard_menu = 1;
+    if(standard_menu < 1)standard_menu = 2;
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Standard Menu");
@@ -115,14 +115,6 @@ void standardMenu(){
             LCD_word("     Source PDO");
 
             break;
-        case 3:
-            if(select) sleepMenu();
-            LCD_word("  Sleep Timeout");
-            break;
-        case 4:
-            if(select) enableMenu(1,high100_mode);
-            LCD_word("   100W USB-PD");
-            break;
         default:
             break;
     }
@@ -133,27 +125,21 @@ void sinkPDOMenu(){
     LCD_word("Sink PDO");
     LCD_enter();
 
-    if(sink_set < 1)sink_set = 6;
-    if(sink_set > 6)sink_set = 1;
+    if(sink_set < 1)sink_set = 4;
+    if(sink_set > 4)sink_set = 1;
     switch(sink_set)
     {
         case 1:
-            LCD_word("    5V-20V (3A)");
-            break;
-        case 2:
-            LCD_word("    5V-15V (3A)");
-            break;
-        case 3:
             LCD_word("        5V (3A)");
             break;
+        case 2:
+            LCD_word("    5V- 9V (3A)");
+            break;
+        case 3:
+            LCD_word("    5V-15V (3A)");
+            break;
         case 4:
-            LCD_word("        9V (3A)");
-            break;
-        case 5:
-            LCD_word("        15V (2A)");
-            break;
-        case 6:
-            LCD_word("        20V (3A)");
+            LCD_word("    5V-20V (3A)");
             break;
         default:
             break;
@@ -256,13 +242,13 @@ void enableMenu(char mode, char enable){
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
     switch(mode){
+//    case 1:
+//        LCD_word("100W USB-PD");
+//        break;
+//    case 1:
+//        LCD_word("Battery Charge");
+//        break;
     case 1:
-        LCD_word("100W USB-PD");
-        break;
-    case 2:
-        LCD_word("Battery Charge");
-        break;
-    case 3:
         LCD_word("UART Debug");
         break;
     default:
@@ -275,10 +261,7 @@ void enableMenu(char mode, char enable){
     if(select == 2){
         select = 0;
 
-        if(mode == 1 && enable == 1){  //if the mod
-            pdo100WMode();
-        }
-        else if(mode == 1 && enable == 0){
+        if(mode == 1 && enable == 0){
             sinkAllPDOMode();
         }
         if(mode == 2 && enable == 1){
@@ -309,31 +292,17 @@ void enableMenu(char mode, char enable){
 
 }
 void advancedMenu(){
-    if(advanced_menu > 3)advanced_menu = 1;
-    if(advanced_menu < 1)advanced_menu = 3;
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Advanced Menu");
     LCD_enter();
-    switch(advanced_menu)
-    {
-        case 1:
-            if(select) enableMenu(2,batt_chg);
-            LCD_word("  Battery Charge");
-            break;
-        case 2:
-            if(select) batterySelectMenu();
-            LCD_word("  Battery Select");
-            break;
-        case 3:
-            if(select) enableMenu(3,uart_en);
-            LCD_word("     UART Debug");
+    LCD_word("     UART Debug");
 
-            break;
-        default:
-            break;
-    }
+    if(select) enableMenu(1,uart_en);
+
+
 }
+/*
 void batterySelectMenu(){
     if(battery_sel < 1)battery_sel = 4;
     if(battery_sel > 4)battery_sel = 1;
@@ -365,6 +334,7 @@ void batterySelectMenu(){
     }
 
 }
+*/
 void menuScroll(char value){
 
     if(select == 0)
@@ -407,13 +377,13 @@ void menuScroll(char value){
         else if(settings_menu == 3)
         {
             switch(advanced_menu){
+//                case 1:
+//                    batt_chg ^= 1;
+//                    break;
+//                case 2:
+//                    battery_sel += value;
+//                    break;
                 case 1:
-                    batt_chg ^= 1;
-                    break;
-                case 2:
-                    battery_sel += value;
-                    break;
-                case 3:
                     uart_en ^= 1;
                     break;
                 default:

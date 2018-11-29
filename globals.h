@@ -30,4 +30,5 @@ extern char uart_en;
 extern char rightFlag;
 extern char leftFlag;
 extern char select;
+extern char pushFlag;
 #endif /* GLOBALS_H_ */

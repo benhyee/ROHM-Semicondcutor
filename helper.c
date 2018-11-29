@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include "GPIO.h"
 
 #include "globals.h"
 #define BD99954_ADDRESS 0x09
@@ -25,7 +26,7 @@ unsigned short shortData;
 unsigned int intData;
 unsigned int intArray[];
 int i;
-int busVoltage, batteryCurrent, vccVoltage, batteryVoltage;
+int  vccVoltage, acpVoltage, acpCurrent;
 
 void sourceNegotiate();
 
@@ -100,24 +101,26 @@ void monitorSnkVoltage(){
     currentPDO(); delay_ms(2000,CURRENT_FREQ);
     write_word(0x71,BD99954_ADDRESS,0x000F);
     LCD_clearLine(); LCD_command(0x01);
-    LCD_word("VBUS:");
-//    LCD_enter();
-//    LCD_word("BAT:");
+    LCD_word("Sinking (USB-C)");
+
     readTwoByte(0x02,BM92A_ADDRESS);
     write_word(0x71,BD99954_ADDRESS,0x000F);
 
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
+        if(pushFlag == 1)
+        {
+            LCD_toggle();
+            pushFlag = 0;
+        }
         write_word(0x72,BD99954_ADDRESS,0x000F);
-        busVoltage = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
-        batteryCurrent = readTwoByte(0x51,BD99954_ADDRESS) & 0x7FFF;
-        batteryVoltage = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
+        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
+        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
 
-        LCD_Monitor(busVoltage,batteryCurrent,batteryVoltage);
+        LCD_Monitor(acpVoltage,acpCurrent);
         delay_ms(200,CURRENT_FREQ);
     }
     write_word(0x71,BD99954_ADDRESS,0x000F);
-
 }
 void monitorVCCSnkVoltage(){
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
@@ -125,16 +128,20 @@ void monitorVCCSnkVoltage(){
     LCD_word("Sink from VCC");
     delay_ms(2000,CURRENT_FREQ);
     LCD_clearLine(); LCD_command(0x01);
-    LCD_word("VCC :");
+    LCD_word("Sinking (DC)");
 //    LCD_enter();
 //    LCD_word("BAT:");
     while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1)
     {
+        if(pushFlag == 1)
+        {
+            LCD_toggle();
+            pushFlag = 0;
+        }
+        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
+        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
 
-        vccVoltage = readTwoByte(0x5F,BD99954_ADDRESS)& 0x7FFF;
-        batteryCurrent = readTwoByte(0x51,BD99954_ADDRESS) & 0x7FFF;
-        batteryVoltage = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
-        LCD_Monitor(vccVoltage,batteryCurrent,batteryVoltage);
+        LCD_Monitor(acpVoltage,acpCurrent);
         delay_ms(200,CURRENT_FREQ);
     }
     write_word(0x72,BD99954_ADDRESS,0x000F);
@@ -143,21 +150,23 @@ void monitorVCCSnkVoltage(){
 void monitorSrcVoltage()
 {
     LCD_clearLine(); LCD_command(0x01);
-    LCD_word("VBUS:");
-//    LCD_enter();
-//    LCD_word("BAT:");
+    LCD_word("Sourcing (USB-C)");
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
         if(AlertFlag){
             sourceNegotiate();
             LCD_clearLine(); LCD_command(0x01);
-            LCD_word("VBUS:");
+            LCD_word("Sourcing (USB-C)");
             AlertFlag = FALSE;
         }
-        busVoltage = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
-        batteryCurrent = readTwoByte(0x53,BD99954_ADDRESS) & 0x7FFF;
-        batteryVoltage = readTwoByte(0x55,BD99954_ADDRESS) & 0x7FFF;
-        LCD_Monitor(busVoltage,batteryCurrent,batteryVoltage);
+        if(pushFlag == 1)
+        {
+            LCD_toggle();
+            pushFlag = 0;
+        }
+        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
+        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
+        LCD_Monitor(acpVoltage,acpCurrent);
         delay_ms(200,CURRENT_FREQ);
     }
     write_word(0x71,BD99954_ADDRESS,0x000F);

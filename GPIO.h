@@ -11,6 +11,7 @@
 
 void gpio_init();
 void sleepMode();
+void LCD_toggle();
 
 
 

@@ -3,6 +3,7 @@
 #include <string.h>
 #include "BM92A_funcs.h"
 #include "BD99954_Funcs.h"
+#include "globals.h"
 #define RS 0x01
 #define RW 0x02
 #define EN 0x04
@@ -36,23 +37,11 @@ void LCD_command(unsigned char command)
         delay_us(50, CURRENT_FREQ);
     }
 
-//    LCD_nibble_write(command & 0xF0, 0);
-//    LCD_nibble_write(command << 4, 0);
-//
-//    if (command < 4)
-//    {
-//        delay_ms(4, CURRENT_FREQ);
-//    }
-//    else
-//    {
-//        delay_us(50, CURRENT_FREQ);
-//    }
 }
 
 void LCD_data(unsigned char command)
 {
-//    LCD_nibble_write(command & 0xF0, RS);
-//    LCD_nibble_write(command << 4, RS);
+
     LCDCNTRL->OUT |= RS;
     LCDCNTRL->OUT &= ~RW;
     LCDPORT->OUT = command;
@@ -70,21 +59,9 @@ void LCD_enter()
 void LCD_init()
 {
 
-//    LCDPORT->DIR = 0xFF;
-//    delay_ms(100, CURRENT_FREQ);
-//    LCD_nibble_write(0x30, 0);
-//    delay_ms(30, CURRENT_FREQ);
-//    LCD_nibble_write(0x30, 0);
-//    delay_ms(10, CURRENT_FREQ);
-//    LCD_nibble_write(0x30, 0);
-//    delay_ms(10, CURRENT_FREQ);
-//    LCD_nibble_write(0x20, 0);
-//    delay_ms(10, CURRENT_FREQ);
     LCDCNTRL->DIR |= RS| EN | RW;
     LCDPORT->DIR = 0xFF;
     delay_ms(30,CURRENT_FREQ);
-
-//        delay_ms(100, CURRENT_FREQ);
     LCD_command(0x30);
     delay_ms(30, CURRENT_FREQ);
     LCD_command(0x30);
@@ -135,32 +112,22 @@ void LCD_Voltage(unsigned short voltage) {
     LCD_data(((voltage /10)%10)+48);
     LCD_data('V');
 }
-void LCD_Monitor(int busVoltage,int batteryCurrent, int batteryVoltage){
-    LCD_command(0x02);
-    for(k = 0; k < 6; k++){
-        LCD_command(0x14);
-    }
-    if((busVoltage /10000)%10 != 0)LCD_data( ((busVoltage/10000)%10)+48);
-    LCD_data( ((busVoltage/1000)%10)+48);
-    LCD_word(".");
-    LCD_data( ((busVoltage/100)%10)+48);
-    LCD_data( ((busVoltage/10)%10)+48);
-    LCD_word("V");
+void LCD_Monitor(int lineVoltage, int lineCurrent){
     LCD_command(0x02);
     LCD_enter();
 
-    if((batteryVoltage /10000)%10 != 0)LCD_data( ((batteryVoltage/10000)%10)+48);
-    LCD_data( ((batteryVoltage/1000)%10)+48);
+    if((lineVoltage /10000)%10 != 0)LCD_data( ((lineVoltage/10000)%10)+48);
+    LCD_data( ((lineVoltage/1000)%10)+48);
     LCD_word(".");
-    LCD_data( ((batteryVoltage/100)%10)+48);
-    LCD_data( ((batteryVoltage/10)%10)+48);
+    LCD_data( ((lineVoltage/100)%10)+48);
+    LCD_data( ((lineVoltage/10)%10)+48);
     LCD_word("V  ");
 
-    LCD_data( ((batteryCurrent/10000)%10)+48);
-    LCD_data( ((batteryCurrent/1000)%10)+48);
-    LCD_data( ((batteryCurrent/100)%10)+48);
-    LCD_data( ((batteryCurrent/10)%10)+48);
-    LCD_data( ((batteryCurrent/1)%10)+48);
+    LCD_data( ((lineCurrent/10000)%10)+48);
+    LCD_data( ((lineCurrent/1000)%10)+48);
+    LCD_data( ((lineCurrent/100)%10)+48);
+    LCD_data( ((lineCurrent/10)%10)+48);
+    LCD_data( ((lineCurrent/1)%10)+48);
     LCD_word(" mA");
 
 }
@@ -170,5 +137,51 @@ void LCD_charge_error(){
     LCD_enter();
     LCD_word("for Sink Mode");
 }
+void LCD_fastSnkSetPDO()
+{
+    switch(sink_set)
+    {
 
+        case 1:
+            LCD_word("        5V (3A)");
+            break;
+        case 2:
+            LCD_word("    5V- 9V (3A)");
+            break;
+        case 3:
+            LCD_word("    5V-15V (3A)");
+            break;
+        case 4:
+            LCD_word("    5V-20V (3A)");
+            break;
+        default:
+            break;
+    }
+}
+void LCD_fastSrcSetPDO()
+{
+    switch(source_set)
+    {
+        case 1:
+            LCD_word("        5V (3A)");
+            break;
+        case 2:
+            LCD_word("        9V (3A)");
+            break;
+        case 3:
+            LCD_word("        12V (3A)");
+            break;
+        case 4:
+            LCD_word("        15V (3A)");
+            break;
+        case 5:
+            LCD_word("        20V (3A)");
+            break;
+        case 6:
+            LCD_word("    5V-20V (3A)");
+            break;
+        default:
+            break;
+    }
+}
 

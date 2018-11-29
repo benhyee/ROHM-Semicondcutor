@@ -19,7 +19,10 @@ void gpio_init()
     P7->OUT|= 0x08;
     P8->OUT|= 0x03;
 }
-
+void LCD_toggle()
+{
+    P8->OUT ^= 0x03;
+}
 void sleepMode(){
     P3 ->SEL1 &= ~0x42;//LTC2953 kill & BM92A15_XRST
     P3 ->SEL0 &= ~0x42;

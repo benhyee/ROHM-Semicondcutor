@@ -18,6 +18,8 @@
 #include "globals.h"
 #include "BD99954_Funcs.h"
 #define BM92A_ADDRESS 0x18
+#define BD99954_ADDRESS 0x09
+
 int i;
 unsigned short readalertStatus = 0, readstatus1 = 0;
 unsigned int currentNgtPDO = 0;
@@ -56,6 +58,7 @@ void currentPDO() {
     currentNgtPDO = readFourByte(0x28,BM92A_ADDRESS);
     unsigned short PDOcurrent = currentNgtPDO & 0x000003FF;
     PDOcurrent = PDOcurrent *10;
+    write_word(0x07,BD99954_ADDRESS,PDOcurrent);
     unsigned short PDOvoltage = (currentNgtPDO & 0x000FFC00)>>10;
     PDOvoltage = PDOvoltage/20;
     LCD_PDO(PDOvoltage,PDOcurrent);
@@ -118,37 +121,25 @@ void BM92A_sink_PDO() {
     write_word(0x26,BM92A_ADDRESS,0x8149);
     switch(sink_set){
         case 1:
-            controllerConfig |= 0x0020;
-            write_word(0x06,BM92A_ADDRESS,controllerConfig);
-            PDO[0] = 0x2C; PDO[1] = 0x91;   //batteryNgt 20V max 5V min @ 3A
-            PDO[2] = 0x01; PDO[3] = 0x19;
-            break;
-        case 2:
-            controllerConfig |= 0x0020;
-            write_word(0x06,BM92A_ADDRESS,controllerConfig);
-            PDO[0] = 0xc8; PDO[1] = 0x90;   //batteryNgt 15V max 5V min @ 3A
-            PDO[2] = 0xc1; PDO[3] = 0x12;
-            break;
-        case 3:
             controllerConfig &= 0xFFDF;
             write_word(0x06,BM92A_ADDRESS,controllerConfig);
             PDO[0] = 0x2C; PDO[1] = 0x91;   //batteryNgt 5V max 5V min @ 3A
             PDO[2] = 0x41; PDO[3] = 0x06;
             break;
-        case 4:
+        case 2:
             controllerConfig &= 0xFFDF;
             write_word(0x06,BM92A_ADDRESS,controllerConfig);
             PDO[0] = 0x2C; PDO[1] = 0x91;   //batteryNgt 9V max 5V min @ 3A
             PDO[2] = 0x41; PDO[3] = 0x0b;
             break;
 
-        case 5:
+        case 3:
             controllerConfig &= 0xFFDF;
             write_word(0x06,BM92A_ADDRESS,controllerConfig);
             PDO[0] = 0xc8; PDO[1] = 0x90;   //batteryNgt 15V max 5V min @ 3A
             PDO[2] = 0xc1; PDO[3] = 0x12;
             break;
-        case 6:
+        case 4:
             controllerConfig &= 0xFFDF;
             write_word(0x06,BM92A_ADDRESS,controllerConfig);
             PDO[0] = 0x2C; PDO[1] = 0x91;   //batteryNgt 20V max 5V min @ 3A

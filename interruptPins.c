@@ -18,7 +18,7 @@
 #define JOYCON2 P6
 
 volatile char AlertFlag = 0;
-char select = 0, rightFlag = 0, leftFlag = 0,BD99954_INT = 0;
+char select = 0, rightFlag = 0, leftFlag = 0,BD99954_INT = 0,pushFlag = 0;
 unsigned char readback;
 
 void interruptPinInit()
@@ -122,6 +122,7 @@ void PORT3_IRQHandler(void){
         terminal_transmitWord("Push\t");
         select += 1;
         cursorFlag = 1;
+        pushFlag = 1;
 
 
     }
