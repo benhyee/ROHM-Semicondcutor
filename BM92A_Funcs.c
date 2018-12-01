@@ -58,10 +58,19 @@ void currentPDO() {
     currentNgtPDO = readFourByte(0x28,BM92A_ADDRESS);
     unsigned short PDOcurrent = currentNgtPDO & 0x000003FF;
     PDOcurrent = PDOcurrent *10;
-    write_word(0x07,BD99954_ADDRESS,PDOcurrent);
+    write_word(0x07,BD99954_ADDRESS,PDOcurrent);//IBUS_LIM_SET PDO current
     unsigned short PDOvoltage = (currentNgtPDO & 0x000FFC00)>>10;
     PDOvoltage = PDOvoltage/20;
     LCD_PDO(PDOvoltage,PDOcurrent);
+    terminal_transmitWord("Actual Input Current Limit(0x05): ");
+    PDOcurrent = readTwoByte(0x05,BD99954_ADDRESS)&0xCFFF;
+    terminal_transmitShortByte(PDOcurrent);
+    terminal_transmitWord("Selected Input Current Limit(0x06): ");
+
+    PDOcurrent = readTwoByte(0x06,BD99954_ADDRESS)&0xCFFF;
+    terminal_transmitShortByte(PDOcurrent);
+
+
 }
 void BM92A_source_PDO() {
     unsigned char *PDO = malloc(sizeof(char)*21);
@@ -73,36 +82,36 @@ void BM92A_source_PDO() {
     write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
     switch(source_set){
         case 1:
-            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;
             write_block(0x3C,BM92A_ADDRESS,4,PDO); //PDO Src Prov
             break;
         case 2:
-            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
-            PDO[4] = 0x32; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 0.5A
+            PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[4] = 0x2C; PDO[5] = 0xd1; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 3A
             write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
 
             break;
         case 3:
-            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
-            PDO[4] = 0x32; PDO[5] = 0xc0; PDO[6] = 0x03;  PDO[7] = 0x14;  //12V @ 0.5A
+            PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[4] = 0x2C; PDO[5] = 0xc1; PDO[6] = 0x03;  PDO[7] = 0x14;  //12V @ 3A
             write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
             break;
         case 4:
-            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
-            PDO[4] = 0x32; PDO[5] = 0xb0; PDO[6] = 0x04;  PDO[7] = 0x14;//15V @ 0.5A
+            PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[4] = 0x2C; PDO[5] = 0xb1; PDO[6] = 0x04;  PDO[7] = 0x14;//15V @ 3A
             write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
             break;
         case 5:
-            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;
-            PDO[4] = 0x32; PDO[5] = 0x40; PDO[6] = 0x06;  PDO[7] = 0x14;//20V @ 0.5A
+            PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[4] = 0x2C; PDO[5] = 0x41; PDO[6] = 0x06;  PDO[7] = 0x14;//20V @ 3A
             write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
             break;
         case 6:
-            PDO[0] = 0x32; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 0.5A
-            PDO[4] = 0x32; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 0.5A
-            PDO[8] = 0x32; PDO[9] = 0xc0; PDO[10] = 0x03;  PDO[11] = 0x14;  //12V @ 0.5A
-            PDO[12] = 0x32; PDO[13] = 0xb0; PDO[14] = 0x04;  PDO[15] = 0x14;//15V @ 0.5A
-            PDO[16] = 0x32; PDO[17] = 0x40; PDO[18] = 0x06;  PDO[19] = 0x14;//20V @ 0.5A
+            PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 3A
+            PDO[4] = 0x2C; PDO[5] = 0xd1; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 3A
+            PDO[8] = 0x2C; PDO[9] = 0xc1; PDO[10] = 0x03;  PDO[11] = 0x14;  //12V @ 3A
+            PDO[12] = 0x2C; PDO[13] = 0xb1; PDO[14] = 0x04;  PDO[15] = 0x14;//15V @ 3A
+            PDO[16] = 0x2C; PDO[17] = 0x41; PDO[18] = 0x06;  PDO[19] = 0x14;//20V @ 3A
             write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
             break;
         default:
@@ -118,7 +127,7 @@ void BM92A_sink_PDO() {
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
     controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);
-    write_word(0x26,BM92A_ADDRESS,0x8149);
+    write_word(0x26,BM92A_ADDRESS,0x814A);
     switch(sink_set){
         case 1:
             controllerConfig &= 0xFFDF;
@@ -158,7 +167,7 @@ void pdo100WMode(){
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
     controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);
-    write_word(0x26,BM92A_ADDRESS,0x8149);
+    write_word(0x26,BM92A_ADDRESS,0x814A);
     controllerConfig |= 0x0020;
     write_word(0x06,BM92A_ADDRESS,controllerConfig);
     PDO[0] = 0xf4;
@@ -179,7 +188,7 @@ void sinkAllPDOMode() {
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
     controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);
-    write_word(0x26,BM92A_ADDRESS,0x8149);
+    write_word(0x26,BM92A_ADDRESS,0x814A);
     controllerConfig |= 0x0020;
     write_word(0x06,BM92A_ADDRESS,controllerConfig);
     delay_ms(1,CURRENT_FREQ);
@@ -192,11 +201,11 @@ void sinkAllPDOMode() {
 }
 void srcAllPDOMode() {
     unsigned char *PDO = malloc(sizeof(char)*21);
-    PDO[0] = 0x64; PDO[1] = 0x90; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 0.5A
-    PDO[4] = 0x64; PDO[5] = 0xd0; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 0.5A
-    PDO[8] = 0x64; PDO[9] = 0xc0; PDO[10] = 0x03;  PDO[11] = 0x14;  //12V @ 0.5A
-    PDO[12] = 0x64; PDO[13] = 0xb0; PDO[14] = 0x04;  PDO[15] = 0x14;//15V @ 0.5A
-    PDO[16] = 0x64; PDO[17] = 0x40; PDO[18] = 0x06;  PDO[19] = 0x14;//20V @ 0.5A
+    PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 3A
+                PDO[4] = 0x2C; PDO[5] = 0xd1; PDO[6] = 0x02;  PDO[7] = 0x14;    //9V @ 3A
+                PDO[8] = 0x2C; PDO[9] = 0xc1; PDO[10] = 0x03;  PDO[11] = 0x14;  //12V @ 3A
+                PDO[12] = 0x2C; PDO[13] = 0xb1; PDO[14] = 0x04;  PDO[15] = 0x14;//15V @ 3A
+                PDO[16] = 0x2C; PDO[17] = 0x41; PDO[18] = 0x06;  PDO[19] = 0x14;//20V @ 3A
     write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
     free(PDO);
 }

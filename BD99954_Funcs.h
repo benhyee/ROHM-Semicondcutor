@@ -20,6 +20,6 @@ void reverseEnable(char channel);
 void reverseDisable();
 void chgEnable();
 void chgDisable();
-
+void chargingStatus();
 
 #endif /* BD99954_FUNCS_H_ */

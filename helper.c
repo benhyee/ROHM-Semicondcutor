@@ -27,7 +27,7 @@ unsigned int intData;
 unsigned int intArray[];
 int i;
 int  vccVoltage, acpVoltage, acpCurrent;
-
+char sleepWake = 1;
 void sourceNegotiate();
 
 unsigned short two_byteOrg(unsigned char* dataArray)
@@ -105,21 +105,30 @@ void monitorSnkVoltage(){
 
     readTwoByte(0x02,BM92A_ADDRESS);
     write_word(0x71,BD99954_ADDRESS,0x000F);
+    chargeState();
 
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
-        if(pushFlag == 1)
+        if(sleepWake == 1)
+        {
+            LCD_wake();
+            sleepWake = 0;
+        }
+        else if(pushFlag == 1)
         {
             LCD_toggle();
             pushFlag = 0;
         }
+
         write_word(0x72,BD99954_ADDRESS,0x000F);
         acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
         acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
 
         LCD_Monitor(acpVoltage,acpCurrent);
-        delay_ms(200,CURRENT_FREQ);
+        chargingStatus();
+        delay_ms(150,CURRENT_FREQ);
     }
+    P2 -> OUT &= ~0x0F;
     write_word(0x71,BD99954_ADDRESS,0x000F);
 }
 void monitorVCCSnkVoltage(){
@@ -129,21 +138,30 @@ void monitorVCCSnkVoltage(){
     delay_ms(2000,CURRENT_FREQ);
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("Sinking (DC)");
+    chgEnable();
+    write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET
+
 //    LCD_enter();
 //    LCD_word("BAT:");
     while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1)
     {
-        if(pushFlag == 1)
+        if(sleepWake == 1)
+        {
+            LCD_wake();
+            sleepWake = 0;
+        }
+        else if(pushFlag == 1)
         {
             LCD_toggle();
             pushFlag = 0;
         }
         acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
         acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
-
         LCD_Monitor(acpVoltage,acpCurrent);
-        delay_ms(200,CURRENT_FREQ);
+        chargingStatus();
+        delay_ms(150,CURRENT_FREQ);
     }
+    P2 -> OUT &= ~0x0F;
     write_word(0x72,BD99954_ADDRESS,0x000F);
 
 }
@@ -151,6 +169,10 @@ void monitorSrcVoltage()
 {
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("Sourcing (USB-C)");
+    pushFlag = 0;
+    write_word(0x09,BD99954_ADDRESS,3008);    //IOTG_LIM_SET
+    write_word(0x07,BD99954_ADDRESS,3008);    //IBUS_LIM_SET
+
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
         if(AlertFlag){
@@ -159,7 +181,12 @@ void monitorSrcVoltage()
             LCD_word("Sourcing (USB-C)");
             AlertFlag = FALSE;
         }
-        if(pushFlag == 1)
+        if(sleepWake == 1)
+        {
+            LCD_wake();
+            sleepWake = 0;
+        }
+        else if(pushFlag == 1)
         {
             LCD_toggle();
             pushFlag = 0;
@@ -167,7 +194,9 @@ void monitorSrcVoltage()
         acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
         acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
         LCD_Monitor(acpVoltage,acpCurrent);
-        delay_ms(200,CURRENT_FREQ);
+        acpVoltage = readTwoByte(0x5D,BD99954_ADDRESS) & 0x7FFF;
+
+        delay_ms(150,CURRENT_FREQ);
     }
     write_word(0x71,BD99954_ADDRESS,0x000F);
 
@@ -180,6 +209,8 @@ void sourceNegotiate(){
     unsigned int PDOvoltage,currentPDOreg;
     currentPDOreg = readFourByte(0x28,BM92A_ADDRESS);   //Ngt PDO
     PDOvoltage = ngtVoltage(currentPDOreg);
+    write_word(0x07,BD99954_ADDRESS,currentPDOreg*10);    //IBUS_LIM_SET
+
     if(PDOvoltage > 5000) {
         reverseVoltage(PDOvoltage); //If PDO voltage is not 5V
         delay_ms(200,CURRENT_FREQ);

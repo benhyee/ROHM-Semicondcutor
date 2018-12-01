@@ -29,7 +29,7 @@ char cursorFlag = 0;
 char settings_menu = 1, standard_menu = 1,advanced_menu =1;
 char lock_fast = 1, lock_standard = 0, fast_set = 1;
 char sink_set = 4, source_set = 6, sleep_time = 6, high100_mode = 0;
-char batt_chg = 0, battery_sel = 0, uart_en = 0;
+char batt_chg = 0, battery_sel = 0, uart_en = 1;
 char lock_sink = 0,lock_source = 0, lock_high = 0, lock_sleep = 0;
 char mode_set= 0;
 

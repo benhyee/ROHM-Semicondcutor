@@ -37,7 +37,6 @@
 
 int main(void) {
     __disable_irq();
-
     set_DCO(CURRENT_FREQ);
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
     gpio_init();
@@ -47,7 +46,6 @@ int main(void) {
     terminal_init();    //SDA -> P1.6 SCL->P1.7
     interruptPinInit();
     __enable_irq();                           // Enable global interrupt
-
     unsigned short alertRead, BD_rail;
     terminal_transmitWord("Initializing Registers\n\r");
     BD99954_Startup_Routine();
@@ -57,9 +55,9 @@ int main(void) {
     cursorFlag = TRUE;
     readTwoByte(0x02,BM92A_ADDRESS);
     terminal_transmitWord("Successful Initialization\n\r");
+    chargeState();
 
     while(1) {
-
 
         if(cursorFlag == TRUE) {
             if(rightFlag == TRUE)menuScroll(1);
@@ -81,6 +79,7 @@ int main(void) {
                     monitorVCCSnkVoltage();
                     write_word(0x72,BD99954_ADDRESS,0x000F);
                 }
+                cursorFlag = FALSE;select = 0;
                 displayMode();
                 BD99954_INT = FALSE;
                 AlertFlag = FALSE;
@@ -93,6 +92,7 @@ int main(void) {
                     AlertFlag = FALSE;
                     if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0) monitorSrcVoltage();
                     reverseVoltage(5024);
+                    select = 0;
                     displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
                 }

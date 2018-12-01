@@ -12,6 +12,9 @@
 void gpio_init();
 void sleepMode();
 void LCD_toggle();
+char readSwitchState();
+void chargeState();
+void LCD_wake();
 
 
 

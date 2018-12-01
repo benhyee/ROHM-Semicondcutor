@@ -5,23 +5,50 @@
  *      Author: User
  */
 #include "msp432.h"
-
+#include "BD99954_Funcs.h"
+#define LCDPORT P5
+#define LCDCNTRL P7
+#define CONFIG P4
+#define LED P2
+#define BD22 P8
 void gpio_init()
 {
 
-    P7 ->SEL1 &= ~0x08; //5V Enable
-    P7 ->SEL0 &= ~0x08;
-    P7 ->DIR |= 0x08;
-    P7 -> OUT &= ~0x08;
-    P8 -> SEL1 &= ~0x03;    //LCD Enable
-    P8 -> SEL0 &= ~0x03;
-    P8 -> DIR |= 0x03;
-    P7->OUT|= 0x08;
-    P8->OUT|= 0x03;
+    LCDCNTRL ->SEL1 &= ~0x08; //5V Enable
+    LCDCNTRL ->SEL0 &= ~0x08;
+    LCDCNTRL ->DIR |= 0x08;
+    LCDCNTRL -> OUT &= ~0x08;
+
+    CONFIG ->SEL1 &= ~0xF0;
+    CONFIG ->SEL0 &= ~0xF0;
+    CONFIG ->DIR &= ~0xF0;
+    CONFIG ->REN &= ~0xF0;
+
+    BD22 -> SEL1 &= ~0x03;    //LCD Enable
+    BD22 -> SEL0 &= ~0x03;
+    BD22 -> DIR |= 0x03;
+    LCDCNTRL->OUT|= 0x08;
+    BD22->OUT|= 0x03;
+
+    LED ->SEL1 &= ~0x0F; //LED Enable
+    LED ->SEL0 &= ~0x0F;
+    LED ->DIR |= 0x0F;
+    LED -> OUT &= ~0x0F;
+
+}
+void LCD_wake(){
+    BD22->OUT |= 0x03;
+//    LCDCNTRL->DIR |= 0x08;
+//    LCDPORT->DIR |= 0xFF;
+//    LCDCNTRL->OUT|= 0x08;
+//    LCDPORT->OUT |= 0xFF;
+
 }
 void LCD_toggle()
 {
-    P8->OUT ^= 0x03;
+    BD22->OUT ^= 0x03;
+//    LCDCNTRL->DIR ^= 0x08;
+//    LCDPORT->DIR ^= 0xFF;
 }
 void sleepMode(){
     P3 ->SEL1 &= ~0x42;//LTC2953 kill & BM92A15_XRST
@@ -37,5 +64,20 @@ void BD99954_reset()
     P1 -> SEL0 &= ~0x02;
     P1 -> DIR |= 0x02;
 
+}
+char readSwitchState(){
+    char sw_state = 0xF0;
+    sw_state &= P4->IN;
+    sw_state = sw_state >> 4;
+    return sw_state;
+}
+void chargeState(){
+    if(readSwitchState()&0x01)
+    {
+        chgEnable();
+    }
+    else{
+        chgDisable();
+    }
 }
 

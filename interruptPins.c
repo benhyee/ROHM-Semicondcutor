@@ -91,6 +91,7 @@ void PORT1_IRQHandler(void){
         leftFlag = TRUE;
         cursorFlag = TRUE;
     }
+    sleepWake = 1;
 
 
 }
@@ -100,6 +101,7 @@ void PORT6_IRQHandler(void){
        terminal_transmitWord("Right\r\n");
        JOYCON2->IFG &= ~0xFF;
        rightFlag = TRUE;
+
 
    }
    else if (JOYCON2->IFG & 0x40)//Down
@@ -112,6 +114,7 @@ void PORT6_IRQHandler(void){
        }
        JOYCON2->IFG &= ~0xFF;
    }
+   sleepWake = 1;
    cursorFlag = TRUE;
 
 }
@@ -123,8 +126,6 @@ void PORT3_IRQHandler(void){
         select += 1;
         cursorFlag = 1;
         pushFlag = 1;
-
-
     }
     else if (JOYCONPB->IFG & 0x01)
     {

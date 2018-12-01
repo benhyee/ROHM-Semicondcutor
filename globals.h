@@ -31,4 +31,5 @@ extern char rightFlag;
 extern char leftFlag;
 extern char select;
 extern char pushFlag;
+extern char sleepWake;
 #endif /* GLOBALS_H_ */

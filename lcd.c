@@ -123,7 +123,7 @@ void LCD_Monitor(int lineVoltage, int lineCurrent){
     LCD_data( ((lineVoltage/10)%10)+48);
     LCD_word("V  ");
 
-    LCD_data( ((lineCurrent/10000)%10)+48);
+
     LCD_data( ((lineCurrent/1000)%10)+48);
     LCD_data( ((lineCurrent/100)%10)+48);
     LCD_data( ((lineCurrent/10)%10)+48);

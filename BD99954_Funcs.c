@@ -17,12 +17,16 @@
 #include <stdio.h>
 #include "I2C_Helper.h"
 #include <string.h>
+#include "GPIO.h"
 
 void default_BDSettings();
 void chgDisable();
 void reverseVoltage(int voltage);
 #define BD99954_ADDRESS 0x09
+#define LED P2
+
 int i;
+
 //BD99954 Local Variables
 
 
@@ -108,15 +112,41 @@ void BD99954_Startup_Routine()
 
 void default_BDSettings()
 {
-    write_word(0x07,BD99954_ADDRESS,1500);    //IBUS_LIM_SET
-    write_word(0x08,BD99954_ADDRESS,3000);    //ICC_LIM_SET
-    write_word(0x1D,BD99954_ADDRESS,8112);    //VRECHG_SET
-    write_word(0x1E,BD99954_ADDRESS,8912);    //VBATOVP_SET
+    write_word(0x07,BD99954_ADDRESS,1504);    //IBUS_LIM_SET
+    write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET
+    write_word(0x09,BD99954_ADDRESS,3008);    //IOTG_LIM_SET
+
+    write_word(0x1D,BD99954_ADDRESS,7520);    //VRECHG_SET
+    write_word(0x1E,BD99954_ADDRESS,9024);    //VBATOVP_SET
     write_word(0x11,BD99954_ADDRESS,6976);    //VSYSREG_SET
     write_word(0x18,BD99954_ADDRESS,6080);    //VPRECHG_TH_SET
     write_word(0x1A,BD99954_ADDRESS,8000);    //VFASTCHG_REG_SET
     write_word(0x14,BD99954_ADDRESS,256);    //ITRICH_SET
     write_word(0x15,BD99954_ADDRESS,512);    //IPRECH_SET
-    write_word(0x16,BD99954_ADDRESS,704);    //ICHG_SET
-    write_word(0x17,BD99954_ADDRESS,0);    //ITERM_SET
+    write_word(0x16,BD99954_ADDRESS,768);    //ICHG_SET
+    write_word(0x17,BD99954_ADDRESS,128);    //ITERM_SET
+}
+void chargingStatus(){
+    short chargerState = readTwoByte(0x00,BD99954_ADDRESS) & 0x007F;
+    LED -> OUT &= ~0x0F;
+    switch(chargerState){
+        case 0:
+            LED -> OUT &= ~0x0F;//Suspend
+            break;
+        case 1:
+            LED -> OUT |= 0x01;//Trickle-Charging
+            break;
+        case 2:
+            LED -> OUT |= 0x03;//Pre-Charging
+            break;
+        case 3:
+            LED -> OUT |= 0x07;//Fast-Charging
+            break;
+        case 4:
+            LED -> OUT |= 0x0F;//Termination-Charging
+            break;
+        default:
+            break;
+    }
+
 }
