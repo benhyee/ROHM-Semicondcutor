@@ -52,7 +52,6 @@ void BM92Asnk_commandSet() {                //GPIO2 and GPIO3 set the Src Prov T
 
     readTwoByte(0x02,BM92A_ADDRESS);
     write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
-
     readalertStatus = readTwoByte(0x02,BM92A_ADDRESS); //Read Alert
     readstatus1 = readTwoByte(0x03,BM92A_ADDRESS); //Read Status
 }

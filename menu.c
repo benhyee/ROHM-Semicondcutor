@@ -69,6 +69,7 @@ void fastSetMenu()
        if(AlertFlag == FALSE)
        {
            mode_set = 0;
+           reverseDisable();
            clear_BD_int();
            BM92Asnk_regSet();
            BM92Asnk_commandSet();
@@ -89,7 +90,6 @@ void fastSetMenu()
            BM92Asrc_regSet();
            BM92Asrc_commandSet();
            terminal_transmitWord("Source PDO Set\n\r");
-
        }
    }
    if(pushFlag)

@@ -138,9 +138,10 @@ void monitorVCCSnkVoltage(){
     delay_ms(2000,CURRENT_FREQ);
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("Sinking (DC)");
-
-    while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1 ||
-            readTwoByte(0x5F,BD99954_ADDRESS)>1500)
+    acpCurrent = 100;
+    while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1 &&
+            readTwoByte(0x5F,BD99954_ADDRESS)>1500 &&
+            acpCurrent > 60)
     {
         if(sleepWake == 1)
         {

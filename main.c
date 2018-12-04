@@ -54,20 +54,19 @@ int main(void) {
     chargeState();
     srcAllPDOMode();
     sinkAllPDOMode();
-//    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){
-//        monitorSnkVoltage();
-//        write_word(0x71,BD99954_ADDRESS,0x000F);
-//    }
+    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){
+        monitorSnkVoltage();
+        write_word(0x71,BD99954_ADDRESS,0x000F);
+    }
     BM92Asnk_regSet();
     BM92Asnk_commandSet();
     terminal_transmitWord("BD9954 Refreshed Registers\n\r");
     cursorFlag = TRUE;
-    readTwoByte(0x02,BM92A_ADDRESS);
     terminal_transmitWord("Successful Initialization\n\r");
     BD99954_Startup_Routine();
+    readTwoByte(0x02,BM92A_ADDRESS);
 
     clear_BD_int();
-
     while(1) {
 
         if(cursorFlag == TRUE) {
@@ -85,17 +84,23 @@ int main(void) {
                 if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){
                     monitorSnkVoltage();
                     write_word(0x71,BD99954_ADDRESS,0x000F);
+                    displayMode();
+                    readTwoByte(0x02,BM92A_ADDRESS);
+
                 }
-                if((BD_rail&0x0004)>>2||
-                    readTwoByte(0x5F,BD99954_ADDRESS)>1500){
+                if((BD_rail&0x0004)>>2){
+//                    ||((readTwoByte(0x5F,BD99954_ADDRESS)& 0x7FFF)>1500 &&
+//                                            (readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF) > 20)
+
                     monitorVCCSnkVoltage();
                     write_word(0x72,BD99954_ADDRESS,0x000F);
+                    displayMode();
+                    readTwoByte(0x02,BM92A_ADDRESS);
+
                 }
                 cursorFlag = FALSE;select = 0;
-                displayMode();
                 BD99954_INT = FALSE;
                 AlertFlag = FALSE;
-                readTwoByte(0x02,BM92A_ADDRESS);
 
             }
             else if(mode_set == 1) {

@@ -120,6 +120,8 @@ void BD99954_Startup_Routine()
         readTwoByte(0x70,BD99954_ADDRESS);
         write_word(0x70,BD99954_ADDRESS,0x00FF);
         monitorVCCSnkVoltage();
+        write_word(0x72,BD99954_ADDRESS,0x000F);
+        displayMode();
     }
 
 }
