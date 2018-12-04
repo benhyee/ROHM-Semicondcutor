@@ -18,11 +18,14 @@
 #include "I2C_Helper.h"
 #include <string.h>
 #include "GPIO.h"
-
+#include "delay.h"
+#include "menu.h"
 void default_BDSettings();
 void chgDisable();
 void reverseVoltage(int voltage);
 #define BD99954_ADDRESS 0x09
+#define CURRENT_FREQ FREQ_3_MHZ
+
 #define LED P2
 
 int i;
@@ -99,8 +102,7 @@ void reverseDisable()
 }
 void BD99954_Startup_Routine()
 {
-    write_word(0x3D,BD99954_ADDRESS,0x0001);    //All reset
-    write_word(0x3D,BD99954_ADDRESS,0x0000);    //Release all reset
+
     write_word(0x3E,BD99954_ADDRESS,0x0000);    //Protect set
     write_word(0x3F,BD99954_ADDRESS,0x0001);
     //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
@@ -111,6 +113,12 @@ void BD99954_Startup_Routine()
     default_BDSettings();
     if(readTwoByte(0x5F,BD99954_ADDRESS)>1000)
     {
+        clear_BD_int();
+        displayMode();
+        chgDisable(); chgEnable();
+        readTwoByte(0x02,0x18);
+        readTwoByte(0x70,BD99954_ADDRESS);
+        write_word(0x70,BD99954_ADDRESS,0x00FF);
         monitorVCCSnkVoltage();
     }
 

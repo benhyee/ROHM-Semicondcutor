@@ -105,9 +105,6 @@ void monitorSnkVoltage(){
     LCD_word("Sinking (USB-C)");
 
     readTwoByte(0x02,BM92A_ADDRESS);
-    clear_BD_int();
-
-
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
         if(sleepWake == 1)
@@ -132,6 +129,7 @@ void monitorSnkVoltage(){
     clear_BD_int();
 }
 void monitorVCCSnkVoltage(){
+
     write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET
     terminal_transmitWord("VCC Delivery \n\r");
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home

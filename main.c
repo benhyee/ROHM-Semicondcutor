@@ -46,25 +46,26 @@ int main(void) {
     terminal_init();    //SDA -> P1.6 SCL->P1.7
     interruptPinInit();
     __enable_irq();                           // Enable global interrupt
-
+    chgDisable();
     unsigned short alertRead, BD_rail;
 
 
     terminal_transmitWord("Initializing Registers\n\r");
-
-    BD99954_Startup_Routine();
+    chargeState();
     srcAllPDOMode();
     sinkAllPDOMode();
-    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){
-        monitorSnkVoltage();
-        write_word(0x71,BD99954_ADDRESS,0x000F);
-    }
+//    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){
+//        monitorSnkVoltage();
+//        write_word(0x71,BD99954_ADDRESS,0x000F);
+//    }
     BM92Asnk_regSet();
     BM92Asnk_commandSet();
     terminal_transmitWord("BD9954 Refreshed Registers\n\r");
     cursorFlag = TRUE;
     readTwoByte(0x02,BM92A_ADDRESS);
     terminal_transmitWord("Successful Initialization\n\r");
+    BD99954_Startup_Routine();
+
     clear_BD_int();
 
     while(1) {
@@ -86,7 +87,7 @@ int main(void) {
                     write_word(0x71,BD99954_ADDRESS,0x000F);
                 }
                 if((BD_rail&0x0004)>>2||
-                        readTwoByte(0x5F,BD99954_ADDRESS)>1500){
+                    readTwoByte(0x5F,BD99954_ADDRESS)>1500){
                     monitorVCCSnkVoltage();
                     write_word(0x72,BD99954_ADDRESS,0x000F);
                 }
