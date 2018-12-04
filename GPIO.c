@@ -74,6 +74,7 @@ char readSwitchState(){
 void chargeState(){
     if(readSwitchState()&0x01)
     {
+        chgDisable();
         chgEnable();
     }
     else{

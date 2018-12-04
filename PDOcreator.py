@@ -104,10 +104,10 @@ def PDOdecode(pdo):
 # 		print(volt,current);
 # 		createPDO(volt,current)
 
-createPDO(5,3)
+createPDO(5,0)
 # createVariablePDO(5,5,3)
 # autoNgt(5,5,3); 
-# PDOdecode(0x32C80050)
+PDOdecode(0x00900114)
 # print(250 * 50)
 # voltage = 5000-130
 # print(voltage + 32 - voltage%32)

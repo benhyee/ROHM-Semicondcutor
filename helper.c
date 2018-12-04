@@ -94,18 +94,19 @@ int ngtOperatingCurrent(unsigned int currentRDO)
 
 }
 void monitorSnkVoltage(){
+    clear_BD_int();
     terminal_transmitWord("Sink Negotiation \n\r");
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
-    LCD_word("Sink"); LCD_enter();
+    LCD_word("Sink from USB-C"); LCD_enter();
     delay_ms(400,CURRENT_FREQ);
     currentPDO(); delay_ms(2000,CURRENT_FREQ);
-    write_word(0x71,BD99954_ADDRESS,0x000F);
+    clear_BD_int();
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("Sinking (USB-C)");
 
     readTwoByte(0x02,BM92A_ADDRESS);
-    write_word(0x71,BD99954_ADDRESS,0x000F);
-    chargeState();
+    clear_BD_int();
+
 
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
@@ -120,7 +121,6 @@ void monitorSnkVoltage(){
             pushFlag = 0;
         }
 
-        write_word(0x72,BD99954_ADDRESS,0x000F);
         acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
         acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
 
@@ -129,21 +129,20 @@ void monitorSnkVoltage(){
         delay_ms(150,CURRENT_FREQ);
     }
     P2 -> OUT &= ~0x0F;
-    write_word(0x71,BD99954_ADDRESS,0x000F);
+    clear_BD_int();
 }
 void monitorVCCSnkVoltage(){
+    write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET
+    terminal_transmitWord("VCC Delivery \n\r");
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
-    write_word(0x72,BD99954_ADDRESS,0x000F);
-    LCD_word("Sink from VCC");
+    LCD_word("Sink from VCC");LCD_enter();
+    delay_ms(400,CURRENT_FREQ);
     delay_ms(2000,CURRENT_FREQ);
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("Sinking (DC)");
-    chgEnable();
-    write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET
 
-//    LCD_enter();
-//    LCD_word("BAT:");
-    while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1)
+    while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1 ||
+            readTwoByte(0x5F,BD99954_ADDRESS)>1500)
     {
         if(sleepWake == 1)
         {
@@ -162,7 +161,7 @@ void monitorVCCSnkVoltage(){
         delay_ms(150,CURRENT_FREQ);
     }
     P2 -> OUT &= ~0x0F;
-    write_word(0x72,BD99954_ADDRESS,0x000F);
+    clear_BD_int();
 
 }
 void monitorSrcVoltage()

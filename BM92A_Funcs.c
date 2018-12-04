@@ -41,7 +41,7 @@ void BM92Asrc_commandSet(){  //GPIO2 and GPIO3 set the Src Prov Table
     write_word(0x06,BM92A_ADDRESS,0x0000);  //Controller Config 1
 }
 void BM92Asnk_regSet(){
-    reverseDisable();chgDisable(); batt_chg = 0;
+    batt_chg = 0;
     write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)&0xFFFE);
     write_word(0x17,BM92A_ADDRESS,0x0000);  //config 2
     write_word(0x27,BM92A_ADDRESS,0x0046);  // SysConfig2
@@ -49,8 +49,10 @@ void BM92Asnk_regSet(){
     write_word(0x06,BM92A_ADDRESS,0xCCE0);  //Controller Config 1
 }
 void BM92Asnk_commandSet() {                //GPIO2 and GPIO3 set the Src Prov Table
+
     readTwoByte(0x02,BM92A_ADDRESS);
     write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
+
     readalertStatus = readTwoByte(0x02,BM92A_ADDRESS); //Read Alert
     readstatus1 = readTwoByte(0x03,BM92A_ADDRESS); //Read Status
 }
@@ -132,26 +134,26 @@ void BM92A_sink_PDO() {
         case 1:
             controllerConfig &= 0xFFDF;
             write_word(0x06,BM92A_ADDRESS,controllerConfig);
-            PDO[0] = 0x2C; PDO[1] = 0x91;   //batteryNgt 5V max 5V min @ 3A
+            PDO[0] = 0x00; PDO[1] = 0x90;   //batteryNgt 5V max 5V min @ 3A
             PDO[2] = 0x41; PDO[3] = 0x06;
             break;
         case 2:
             controllerConfig &= 0xFFDF;
             write_word(0x06,BM92A_ADDRESS,controllerConfig);
-            PDO[0] = 0x2C; PDO[1] = 0x91;   //batteryNgt 9V max 5V min @ 3A
+            PDO[0] = 0x00; PDO[1] = 0x90;   //batteryNgt 9V max 5V min @ 3A
             PDO[2] = 0x41; PDO[3] = 0x0b;
             break;
 
         case 3:
             controllerConfig &= 0xFFDF;
             write_word(0x06,BM92A_ADDRESS,controllerConfig);
-            PDO[0] = 0xc8; PDO[1] = 0x90;   //batteryNgt 15V max 5V min @ 3A
+            PDO[0] = 0x00; PDO[1] = 0x90;   //batteryNgt 15V max 5V min @ 3A
             PDO[2] = 0xc1; PDO[3] = 0x12;
             break;
         case 4:
             controllerConfig &= 0xFFDF;
             write_word(0x06,BM92A_ADDRESS,controllerConfig);
-            PDO[0] = 0x2C; PDO[1] = 0x91;   //batteryNgt 20V max 5V min @ 3A
+            PDO[0] = 0x00; PDO[1] = 0x90;   //batteryNgt 20V max 5V min @ 3A
             PDO[2] = 0x01; PDO[3] = 0x19;
             break;
         default:
@@ -192,7 +194,7 @@ void sinkAllPDOMode() {
     controllerConfig |= 0x0020;
     write_word(0x06,BM92A_ADDRESS,controllerConfig);
     delay_ms(1,CURRENT_FREQ);
-    PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;PDO[3] = 0x19;
+    PDO[0] = 0x00; PDO[1] = 0x90; PDO[2] = 0x01;PDO[3] = 0x19;
     write_block(0x20,BM92A_ADDRESS,4,PDO);
     delay_ms(1,CURRENT_FREQ);
     printPDO(readBack);
