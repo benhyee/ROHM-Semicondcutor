@@ -46,10 +46,7 @@ int main(void) {
     terminal_init();    //SDA -> P1.6 SCL->P1.7
     interruptPinInit();
     __enable_irq();                           // Enable global interrupt
-    chgDisable();
     unsigned short alertRead, BD_rail;
-
-
     terminal_transmitWord("Initializing Registers\n\r");
     chargeState();
     srcAllPDOMode();

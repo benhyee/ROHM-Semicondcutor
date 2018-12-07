@@ -115,7 +115,6 @@ void BD99954_Startup_Routine()
     {
         clear_BD_int();
         displayMode();
-        chgDisable(); chgEnable();
         readTwoByte(0x02,0x18);
         readTwoByte(0x70,BD99954_ADDRESS);
         write_word(0x70,BD99954_ADDRESS,0x00FF);

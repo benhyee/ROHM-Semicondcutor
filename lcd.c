@@ -93,7 +93,7 @@ void LCD_clearLine()
 void LCD_PDO(unsigned short voltage, unsigned short current){
     if(voltage == 0 || current == 0)
     {
-        LCD_word("PDO Error");
+        LCD_word("No Negotiation");
     }
     if((voltage /10)%10 != 0) LCD_data(((voltage /10)%10)+48);  //if integer is more that one digits
     LCD_data((voltage%10)+48);
@@ -128,17 +128,22 @@ void LCD_Monitor(int lineVoltage, int lineCurrent){
     LCD_word("V  ");
 
 
-    if((lineCurrent /1000)%10 == 0){LCD_word(" ");}
-    else{
+    if((lineCurrent /1000)%10 != 0){
         LCD_data( ((lineCurrent/1000)%10)+48);
-    }
-    if((lineCurrent /100)%10 == 0){LCD_word(" ");}
-    else{
         LCD_data( ((lineCurrent/100)%10)+48);
-    }
-    if((lineCurrent /10)%10 == 0){LCD_word(" ");}
-    else{
         LCD_data( ((lineCurrent/10)%10)+48);
+    }
+    else if((lineCurrent /100)%10 != 0){
+        LCD_word(" ");
+        LCD_data( ((lineCurrent/100)%10)+48);
+        LCD_data( ((lineCurrent/10)%10)+48);
+    }
+    else if((lineCurrent /10)%10 != 0){
+        LCD_word("  ");
+        LCD_data( ((lineCurrent/10)%10)+48);
+   }
+    else{
+        LCD_word("   ");
     }
     LCD_data( ((lineCurrent/1)%10)+48);
     LCD_word(" mA");
