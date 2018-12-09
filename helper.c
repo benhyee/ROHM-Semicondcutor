@@ -94,6 +94,8 @@ int ngtOperatingCurrent(unsigned int currentRDO)
 
 }
 void monitorSnkVoltage(){
+    chargeState();
+
     clear_BD_int();
     terminal_transmitWord("Sink Negotiation \n\r");
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
@@ -129,6 +131,7 @@ void monitorSnkVoltage(){
     clear_BD_int();
 }
 void monitorVCCSnkVoltage(){
+    chargeState();
 
     write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET
     terminal_transmitWord("VCC Delivery \n\r");

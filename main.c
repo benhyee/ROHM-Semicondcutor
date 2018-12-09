@@ -52,6 +52,8 @@ int main(void) {
     srcAllPDOMode();
     sinkAllPDOMode();
     if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){
+        BD99954_Startup_Routine();
+        readTwoByte(0x02,BM92A_ADDRESS);
         monitorSnkVoltage();
         write_word(0x71,BD99954_ADDRESS,0x000F);
     }
