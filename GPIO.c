@@ -51,10 +51,6 @@ void LCD_toggle()
     LCDPORT->DIR ^= 0xFF;
     BD22->OUT ^= 0x03;
     LCD_init();
-
-
-
-
 }
 void sleepMode(){
     P3 ->SEL1 &= ~0x42;//LTC2953 kill & BM92A15_XRST

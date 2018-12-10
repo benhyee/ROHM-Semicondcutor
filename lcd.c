@@ -116,6 +116,7 @@ void LCD_Voltage(unsigned short voltage) {
     LCD_data(((voltage /10)%10)+48);
     LCD_data('V');
 }
+
 void LCD_Monitor(int lineVoltage, int lineCurrent){
     LCD_command(0x02);
     LCD_enter();
@@ -155,7 +156,7 @@ void LCD_charge_error(){
     LCD_enter();
     LCD_word("for Sink Mode");
 }
-void LCD_fastSnkSetPDO()    //Sinke menu set
+void LCD_fastSnkSetPDO()    //Sink menu set
 {
     switch(sink_set)
     {

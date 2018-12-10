@@ -34,7 +34,7 @@ char mode_set= 0;
 
 unsigned short generalShort;
 unsigned int generalInt,temp;
-void displayMode()
+void displayMode()  //The highest level of the menus
 {
     if(settings_menu < 1){settings_menu  = 1;}
     else if(settings_menu > 3){settings_menu = 3;}
@@ -59,6 +59,7 @@ void fastSetMenu()
    if(fast_set < 1)fast_set = 2;
    if(fast_set > 2)fast_set = 1;
    LCD_command(0x01); // clear screen, move cursor home
+   //Merely being on the fast set display will put the BM92A into either sink or source mode
    if(fast_set == 1)
    {
        LCD_word("Ready to Sink");
@@ -68,10 +69,9 @@ void fastSetMenu()
        if(AlertFlag == FALSE)
        {
            mode_set = 0;
-           reverseDisable();
+           reverseDisable();    //Ensures source mode is not active in sink mode
            clear_BD_int();
-           BM92Asnk_regSet();
-           BM92Asnk_commandSet();
+           BM92Asnk_regSet();   BM92Asnk_commandSet(); // Register writes the sink mode
            terminal_transmitWord("Sink PDO Set\n\r");
 
        }
@@ -85,9 +85,8 @@ void fastSetMenu()
        {
            mode_set = 1;
            clear_BD_int();
-           reverseBuckBoost();
-           BM92Asrc_regSet();
-           BM92Asrc_commandSet();
+           reverseBuckBoost();  //Reverse Buck boost mode setting of registers BD99954
+           BM92Asrc_regSet();   BM92Asrc_commandSet(); //Register writes for source mode
            terminal_transmitWord("Source PDO Set\n\r");
        }
    }
@@ -97,7 +96,7 @@ void fastSetMenu()
    }
 }
 void standardMenu(){
-    if(standard_menu > 2)standard_menu = 1;
+    if(standard_menu > 2)standard_menu = 1; //Applies wrap around menu
     if(standard_menu < 1)standard_menu = 2;
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
@@ -106,11 +105,11 @@ void standardMenu(){
     switch(standard_menu)
     {
         case 1:
-            if(select) sinkPDOMenu();
+            if(select) sinkPDOMenu();   //Navigate through the LCD of Sink
             LCD_word("       Sink PDO");
             break;
         case 2:
-            if(select) sourcePDOMenu();
+            if(select) sourcePDOMenu(); //Navigate through the LCD of Source
             LCD_word("     Source PDO");
 
             break;
@@ -147,8 +146,8 @@ void sinkPDOMenu(){
         BM92A_sink_PDO();
         if(mode_set==0)
         {
-            BM92Asnk_regSet();
-            BM92Asnk_commandSet();
+            BM92Asnk_regSet();  //Updates the registers with new PDO
+            BM92Asnk_commandSet();  //Does not affect source mode capabilities nor does it change the mode
         }
         select = 0;pushFlag = 0;
         displayMode();
@@ -190,8 +189,8 @@ void sourcePDOMenu(){
     if(select == 2){
         BM92A_source_PDO();
         if(mode_set == 1){
-            BM92Asrc_regSet();
-            BM92Asrc_commandSet();
+            BM92Asrc_regSet();  //Updates the registers with new SRC mode PDO
+            BM92Asrc_commandSet();  //Does not affect Sink mode capabilities or mode change
         }
 
         select = 0;pushFlag = 0;
@@ -241,15 +240,18 @@ void enableMenu(char mode, char enable){
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
     switch(mode){
-//    case 1:
-//        LCD_word("100W USB-PD");
-//        break;
-//    case 1:
-//        LCD_word("Battery Charge");
-//        break;
+    /*
+    case 1:
+        LCD_word("100W USB-PD");
+        break;
+    case 1:
+        LCD_word("Battery Charge");
+        break;
+    */
     case 1:
         LCD_word("UART Debug");
         break;
+
     default:
         break;
     }
@@ -380,12 +382,14 @@ void menuScroll(char value){
         else if(settings_menu == 3)
         {
             switch(advanced_menu){
-//                case 1:
-//                    batt_chg ^= 1;
-//                    break;
-//                case 2:
-//                    battery_sel += value;
-//                    break;
+            /*
+                case 1:
+                    batt_chg ^= 1;
+                    break;
+                case 2:
+                    battery_sel += value;
+                    break;
+            */
                 case 1:
                     uart_en ^= 1;
                     break;
