@@ -39,7 +39,7 @@ int main(void) {
     __disable_irq();
     set_DCO(CURRENT_FREQ);
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
-    gpio_init();
+    gpio_init();    //Enables GPIO Pins such as LEDs
     InitI2C();
     LCD_init();
     LCD_command(0x01); // clear screen, move cursor home

@@ -33,49 +33,46 @@ void BM92Asrc_regSet(){
     write_word(0x27,BM92A_ADDRESS,0x0A00); //system Config 2
     write_word(0x2F,BM92A_ADDRESS,0x0001); //system Config 3
 }
-void BM92Asrc_commandSet(){  //GPIO2 and GPIO3 set the Src Prov Table
-                             //L L -> (60W)  L H -> (45W) H L -> (27W) H H ->
+void BM92Asrc_commandSet(){
     write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
     readalertStatus = readTwoByte(0x02,BM92A_ADDRESS); //Read Alert
-    readstatus1 = readTwoByte(0x03,BM92A_ADDRESS); //Read Status
+    readstatus1 = readTwoByte(0x03,BM92A_ADDRESS); //Read Status1
     write_word(0x06,BM92A_ADDRESS,0x0000);  //Controller Config 1
 }
 void BM92Asnk_regSet(){
     batt_chg = 0;
     write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)&0xFFFE);
-    write_word(0x17,BM92A_ADDRESS,0x0000);  //config 2
+    write_word(0x17,BM92A_ADDRESS,0x0000);  //Config 2
     write_word(0x27,BM92A_ADDRESS,0x0046);  // SysConfig2
     write_word(0x2F,BM92A_ADDRESS,0xA400);  // SysConfig3
     write_word(0x06,BM92A_ADDRESS,0xCCE0);  //Controller Config 1
 }
-void BM92Asnk_commandSet() {                //GPIO2 and GPIO3 set the Src Prov Table
-
-    readTwoByte(0x02,BM92A_ADDRESS);
+void BM92Asnk_commandSet() {
+    readTwoByte(0x02,BM92A_ADDRESS);//Read Alert resets the Alert Pin
     write_word(0x05,BM92A_ADDRESS,0x0909);  // Set Command
     readalertStatus = readTwoByte(0x02,BM92A_ADDRESS); //Read Alert
-    readstatus1 = readTwoByte(0x03,BM92A_ADDRESS); //Read Status
+    readstatus1 = readTwoByte(0x03,BM92A_ADDRESS); //Read Status 1
 }
 void currentPDO() {
-    currentNgtPDO = readFourByte(0x28,BM92A_ADDRESS);
+    currentNgtPDO = readFourByte(0x28,BM92A_ADDRESS);   //Current PDO
     unsigned short PDOcurrent = currentNgtPDO & 0x000003FF;
     PDOcurrent = PDOcurrent *10;
-    write_word(0x07,BD99954_ADDRESS,PDOcurrent);//IBUS_LIM_SET PDO current
+    write_word(0x07,BD99954_ADDRESS,PDOcurrent);//Device Capability IBUS_LIM_SET PDO current
     unsigned short PDOvoltage = (currentNgtPDO & 0x000FFC00)>>10;
     PDOvoltage = PDOvoltage/20;
     LCD_PDO(PDOvoltage,PDOcurrent);
     terminal_transmitWord("Actual Input Current Limit(0x05): ");
-    PDOcurrent = readTwoByte(0x05,BD99954_ADDRESS)&0xCFFF;
+    PDOcurrent = readTwoByte(0x05,BD99954_ADDRESS)&0xCFFF;  //BD99954 Input Current Limit
     terminal_transmitShortByte(PDOcurrent);
     terminal_transmitWord("Selected Input Current Limit(0x06): ");
-
-    PDOcurrent = readTwoByte(0x06,BD99954_ADDRESS)&0xCFFF;
+    PDOcurrent = readTwoByte(0x06,BD99954_ADDRESS)&0xCFFF;  //BD99954 Selected Input Current Limit
     terminal_transmitShortByte(PDOcurrent);
 
 
 }
 void BM92A_source_PDO() {
     unsigned char *PDO = malloc(sizeof(char)*21);
-    PDO[0] = 0x00; PDO[1] = 0x00; PDO[2] = 0x00;  PDO[3] = 0x00;
+    PDO[0] = 0x00; PDO[1] = 0x00; PDO[2] = 0x00;  PDO[3] = 0x00;    //Remove all the PDOs first
     PDO[4] = 0x00; PDO[5] = 0x00; PDO[6] = 0x00;  PDO[7] = 0x00;
     PDO[8] = 0x00; PDO[9] = 0x00; PDO[10] = 0x00;  PDO[11] = 0x00;
     PDO[12] = 0x00; PDO[13] = 0x00; PDO[14] = 0x00;  PDO[15] = 0x00;
@@ -83,7 +80,7 @@ void BM92A_source_PDO() {
     write_block(0x3C,BM92A_ADDRESS,20,PDO); //PDO Src Prov
     switch(source_set){
         case 1:
-            PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;
+            PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;    //5V @ 3A
             write_block(0x3C,BM92A_ADDRESS,4,PDO); //PDO Src Prov
             break;
         case 2:
@@ -99,12 +96,12 @@ void BM92A_source_PDO() {
             break;
         case 4:
             PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;
-            PDO[4] = 0x2C; PDO[5] = 0xb1; PDO[6] = 0x04;  PDO[7] = 0x14;//15V @ 3A
+            PDO[4] = 0x2C; PDO[5] = 0xb1; PDO[6] = 0x04;  PDO[7] = 0x14;  //15V @ 3A
             write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
             break;
         case 5:
             PDO[0] = 0x2C; PDO[1] = 0x91; PDO[2] = 0x01;  PDO[3] = 0x14;
-            PDO[4] = 0x2C; PDO[5] = 0x41; PDO[6] = 0x06;  PDO[7] = 0x14;//20V @ 3A
+            PDO[4] = 0x2C; PDO[5] = 0x41; PDO[6] = 0x06;  PDO[7] = 0x14;  //20V @ 3A
             write_block(0x3C,BM92A_ADDRESS,8,PDO); //PDO Src Prov
             break;
         case 6:
@@ -127,25 +124,25 @@ void BM92A_sink_PDO() {
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
-    controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);
-    write_word(0x26,BM92A_ADDRESS,0x814A);
+    controllerConfig = readTwoByte(0x06,BM92A_ADDRESS); //Controller Config 1
+    write_word(0x26,BM92A_ADDRESS,0x814A);  //System Configuration
     switch(sink_set){
         case 1:
             controllerConfig &= 0xFFDF;
-            write_word(0x06,BM92A_ADDRESS,controllerConfig);
+            write_word(0x06,BM92A_ADDRESS,controllerConfig); //Controller Config 1
             PDO[0] = 0x00; PDO[1] = 0x90;   //batteryNgt 5V max 5V min @ 3A
             PDO[2] = 0x41; PDO[3] = 0x06;
             break;
         case 2:
             controllerConfig &= 0xFFDF;
-            write_word(0x06,BM92A_ADDRESS,controllerConfig);
+            write_word(0x06,BM92A_ADDRESS,controllerConfig); //Controller Config 1
             PDO[0] = 0x00; PDO[1] = 0x90;   //batteryNgt 9V max 5V min @ 3A
             PDO[2] = 0x41; PDO[3] = 0x0b;
             break;
 
         case 3:
             controllerConfig &= 0xFFDF;
-            write_word(0x06,BM92A_ADDRESS,controllerConfig);
+            write_word(0x06,BM92A_ADDRESS,controllerConfig); //Controller Config 1
             PDO[0] = 0x00; PDO[1] = 0x90;   //batteryNgt 15V max 5V min @ 3A
             PDO[2] = 0xc1; PDO[3] = 0x12;
             break;
@@ -159,10 +156,9 @@ void BM92A_sink_PDO() {
             break;
     }
     write_block(0x20,BM92A_ADDRESS,4,PDO);
-
-    free(PDO);
+    free(PDO); free(readBack);
 }
-void pdo100WMode(){
+void pdo100WMode(){ //For 100 Watt negotiation but not included in the final EVK
 
     unsigned char *readBack = malloc(sizeof(char)*17);
     unsigned char *PDO = malloc(sizeof(char)*6);
@@ -171,17 +167,13 @@ void pdo100WMode(){
     write_word(0x26,BM92A_ADDRESS,0x814A);
     controllerConfig |= 0x0020;
     write_word(0x06,BM92A_ADDRESS,controllerConfig);
-    PDO[0] = 0xf4;
-    PDO[1] = 0x91;
-    PDO[2] = 0x01;
-    PDO[3] = 0x19;
+    PDO[0] = 0xf4; PDO[1] = 0x91; PDO[2] = 0x01; PDO[3] = 0x19;
     write_block(0x20,BM92A_ADDRESS,4,PDO);
     write_word(0x05,BM92A_ADDRESS,0x0909);
     readTwoByte(0x02,BM92A_ADDRESS);
     WriteRead(0x33,BM92A_ADDRESS,13,readBack);
     printPDO(readBack);
-    free(readBack);
-    free(PDO);
+    free(readBack);free(PDO);
 
 }
 void sinkAllPDOMode() {
@@ -197,8 +189,7 @@ void sinkAllPDOMode() {
     write_block(0x20,BM92A_ADDRESS,4,PDO);
     delay_ms(1,CURRENT_FREQ);
     printPDO(readBack);
-    free(readBack);
-    free(PDO);
+    free(readBack); free(PDO);
 }
 void srcAllPDOMode() {
     unsigned char *PDO = malloc(sizeof(char)*21);

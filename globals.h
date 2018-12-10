@@ -15,7 +15,7 @@ extern char cursorFlag;
 extern char settings_menu;
 extern char BD99954_INT;
 
-extern char fast_set;
+extern char fast_set;   //For the Fast Set Menu
 extern char lock_fast;
 extern char mode_set;
 extern char standard_menu;

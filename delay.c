@@ -24,7 +24,7 @@ void delay_us(int n, int freq)
     return;
 }
 
-void set_DCO(int freq)
+void set_DCO(int freq)  //Sets the Clock Frequency that I2C and UART Utilize
 {
     CS->KEY = CS_KEY_VAL;
     CS->CTL0 = 0;

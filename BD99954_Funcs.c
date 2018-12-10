@@ -5,7 +5,7 @@
  *      Author: User
  */
 /*
- * BD99954 Functions
+ * BD99954 Functions for register reading and writing
  */
 #include "msp.h"
 #include <stdint.h>
@@ -20,75 +20,69 @@
 #include "GPIO.h"
 #include "delay.h"
 #include "menu.h"
+
+#define BD99954_ADDRESS 0x09
+#define CURRENT_FREQ FREQ_3_MHZ
+#define LED P2
+
+
 void default_BDSettings();
 void chgDisable();
 void reverseVoltage(int voltage);
-#define BD99954_ADDRESS 0x09
-#define CURRENT_FREQ FREQ_3_MHZ
-
-#define LED P2
-
-int i;
 
 //BD99954 Local Variables
+int i;
 
-
-// Debug Functions
-
-
-// Reading Registers (DEBUG)
-void clear_BD_int(){
-    write_word(0x70,BD99954_ADDRESS,0x00FF);    //Int0
-    write_word(0x71,BD99954_ADDRESS,0x00FF);    //Int1 Vbus
-    write_word(0x72,BD99954_ADDRESS,0x00FF);    //Int2 Vcc
-}
-void BD_INT_INIT(){
+void BD_INT_INIT(){ //Initializes Interrupt Flags for the BD99954
     short int_set;
-
-
-    int_set = readTwoByte(0x68,BD99954_ADDRESS);
+    int_set = readTwoByte(0x68,BD99954_ADDRESS);    //Readback for bit masking
     int_set |= 0x0004;
     write_word(0x68,BD99954_ADDRESS,int_set);
 
-    int_set = readTwoByte(0x6A,BD99954_ADDRESS);
+    int_set = readTwoByte(0x6A,BD99954_ADDRESS);    //Readback for bit masking
     int_set |= 0x0003;
     write_word(0x6A,BD99954_ADDRESS,int_set);
 
     clear_BD_int();
 }
+void clear_BD_int(){        //Clears the Interrupt flags
+    write_word(0x70,BD99954_ADDRESS,0x00FF);    //Int0
+    write_word(0x71,BD99954_ADDRESS,0x00FF);    //Int1 VBUS
+    write_word(0x72,BD99954_ADDRESS,0x00FF);    //Int2 VCC
+}
 
 void reverseVoltage(int voltage)
 {
-    voltage = voltage +32 -(voltage % 32);
+    voltage = voltage +32 -(voltage % 32);  //Forces integer into multiple of 32
     write_word(0x19,BD99954_ADDRESS,voltage);
 }
-void chgEnable()
+void chgEnable()    //Battery Charging Function
 {
-    unsigned short tempCHG = readTwoByte(0x0C, BD99954_ADDRESS);
+    unsigned short tempCHG = readTwoByte(0x0C, BD99954_ADDRESS);    //Bitmasking
     tempCHG |= 0x0080;
     write_word(0x0C,BD99954_ADDRESS,tempCHG);
 
 }
-void chgDisable()
+void chgDisable()   //Turns of Charging of Battery
 {
     unsigned short tempCHG = readTwoByte(0x0C, BD99954_ADDRESS);
     tempCHG &= 0xFF7F;
     write_word(0x0C,BD99954_ADDRESS,tempCHG);
 }
-void reverseBuckBoost()
+void reverseBuckBoost() //Initializes reverse Buck Boost
 {
     reverseVoltage(5056);
     write_word(0x09,BD99954_ADDRESS,1120);//IOTG_Lim_set
 }
 
-void reverseEnable(char channel)
+void reverseEnable(char channel)    //Enables Reverse Buck Boost and applies voltage
 {
     unsigned short tempCHG = readTwoByte(0x0A, BD99954_ADDRESS);
-    if(channel == 1){ //Select VBus
+    if(channel == 1){ //Selects VBus
         tempCHG |= 0x5000;
         write_word(0x0A,BD99954_ADDRESS,tempCHG);
     }
-    else{  // Select VCC
+    else{  // Selects VCC
         tempCHG |= 0x6000;
         write_word(0x0A,BD99954_ADDRESS,tempCHG);
     }
@@ -111,7 +105,7 @@ void BD99954_Startup_Routine()
     BD_INT_INIT();
     for(i=0;i<200;i++);
     default_BDSettings();
-    if(readTwoByte(0x5F,BD99954_ADDRESS)>1000)
+    if(readTwoByte(0x5F,BD99954_ADDRESS)>1000)  //When no Battery is attached to the terminal
     {
         clear_BD_int();
         displayMode();
