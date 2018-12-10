@@ -6,6 +6,7 @@
  */
 #include "msp432.h"
 #include "BD99954_Funcs.h"
+#include "lcd.h"
 #define LCDPORT P5
 #define LCDCNTRL P7
 #define CONFIG P4
@@ -37,11 +38,11 @@ void gpio_init()
 
 }
 void LCD_wake(){
-    BD22->OUT |= 0x03;
-    LCDCNTRL->DIR |= 0x08;
-    LCDPORT->DIR |= 0xFF;
-    LCDCNTRL->OUT|= 0x08;
-    LCDPORT->OUT |= 0xFF;
+    BD22->OUT |= 0x03;  //Turn on BD2242 LCD_VDD and LCD_LEDP
+    LCDCNTRL->DIR |= 0x08;  //Direction of the LCD_RS,RW,E to output
+    LCDPORT->DIR |= 0xFF;   //Data Lines to output
+    LCD_init();
+
 
 }
 void LCD_toggle()
@@ -49,6 +50,10 @@ void LCD_toggle()
     LCDCNTRL->DIR ^= 0x08;
     LCDPORT->DIR ^= 0xFF;
     BD22->OUT ^= 0x03;
+    LCD_init();
+
+
+
 
 }
 void sleepMode(){

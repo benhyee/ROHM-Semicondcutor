@@ -155,7 +155,7 @@ void LCD_charge_error(){
     LCD_enter();
     LCD_word("for Sink Mode");
 }
-void LCD_fastSnkSetPDO()
+void LCD_fastSnkSetPDO()    //Sinke menu set
 {
     switch(sink_set)
     {
@@ -176,7 +176,7 @@ void LCD_fastSnkSetPDO()
             break;
     }
 }
-void LCD_fastSrcSetPDO()
+void LCD_fastSrcSetPDO()    //Source mode standard menuing
 {
     switch(source_set)
     {
