@@ -19,7 +19,7 @@ void gpio_init()
     LCDCNTRL ->DIR |= 0x08;
     LCDCNTRL -> OUT &= ~0x08;
 
-    CONFIG ->SEL1 &= ~0xF0;
+    CONFIG ->SEL1 &= ~0xF0;  //DIP Switch readback
     CONFIG ->SEL0 &= ~0xF0;
     CONFIG ->DIR &= ~0xF0;
     CONFIG ->REN &= ~0xF0;
@@ -38,17 +38,17 @@ void gpio_init()
 }
 void LCD_wake(){
     BD22->OUT |= 0x03;
-//    LCDCNTRL->DIR |= 0x08;
-//    LCDPORT->DIR |= 0xFF;
-//    LCDCNTRL->OUT|= 0x08;
-//    LCDPORT->OUT |= 0xFF;
+    LCDCNTRL->DIR |= 0x08;
+    LCDPORT->DIR |= 0xFF;
+    LCDCNTRL->OUT|= 0x08;
+    LCDPORT->OUT |= 0xFF;
 
 }
 void LCD_toggle()
 {
     BD22->OUT ^= 0x03;
-//    LCDCNTRL->DIR ^= 0x08;
-//    LCDPORT->DIR ^= 0xFF;
+    LCDCNTRL->DIR ^= 0x08;
+    LCDPORT->DIR ^= 0xFF;
 }
 void sleepMode(){
     P3 ->SEL1 &= ~0x42;//LTC2953 kill & BM92A15_XRST

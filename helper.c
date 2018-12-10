@@ -30,7 +30,7 @@ int  vccVoltage, acpVoltage, acpCurrent;
 char sleepWake = 1;
 void sourceNegotiate();
 
-unsigned short two_byteOrg(unsigned char* dataArray)
+unsigned short two_byteOrg(unsigned char* dataArray)//Rearranges the 4 groups of Bytes so that MSB on the left
 {
     i = 0;
     shortData = 0;
@@ -42,7 +42,7 @@ unsigned short two_byteOrg(unsigned char* dataArray)
     }
     return shortData;
 }
-unsigned int four_byteOrg(unsigned char* dataArray)
+unsigned int four_byteOrg(unsigned char* dataArray)//Rearranges the 4 groups of Bytes so that MSB on the left
 {
     i = 0;
     intData = 0;
@@ -56,7 +56,7 @@ unsigned int four_byteOrg(unsigned char* dataArray)
     }
     return intData;
 }
-void printPDO(unsigned char* dataArray)
+void printPDO(unsigned char* dataArray) //Prints out the PDO for UART purposes
 {
     terminal_transmitWord("Sink PDOs ");
     i = 0;
@@ -78,31 +78,29 @@ void printPDO(unsigned char* dataArray)
     }
     terminal_transmitWord("\r\n");
 }
-int ngtVoltage(unsigned int currentPDOreg)
+int ngtVoltage(unsigned int currentPDOreg)  //Negotiated Voltage of PDO
 {
-    return ((currentPDOreg & 0x000FFC00)>>10)*50;
+    return ((currentPDOreg & 0x000FFC00)>>10)*50;   //50mV steps
 
 }
-int ngtMaxCurrent(unsigned int currentRDO)
+int ngtMaxCurrent(unsigned int currentRDO)  //Negotiated Max Current of PDO
 {
-    return ((currentRDO & 0x000003FF)>>10)*10;
+    return ((currentRDO & 0x000003FF)>>10)*10; //10 mA steps
 
 }
-int ngtOperatingCurrent(unsigned int currentRDO)
+int ngtOperatingCurrent(unsigned int currentRDO)    //Negotiated Operating Current of PDO
 {
-    return ((currentRDO & 0x000FFC00)>>10)*10;
+    return ((currentRDO & 0x000FFC00)>>10)*10;  //10 mA steps
 
 }
 void monitorSnkVoltage(){
-    chargeState();
-
-    clear_BD_int();
+    chargeState();  clear_BD_int(); //Check the DIP Switch for CHG Enable and clear BD interrupt
     terminal_transmitWord("Sink Negotiation \n\r");
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Sink from USB-C"); LCD_enter();
     delay_ms(400,CURRENT_FREQ);
-    currentPDO(); delay_ms(2000,CURRENT_FREQ);
-    clear_BD_int();
+    currentPDO(); delay_ms(2000,CURRENT_FREQ);  //View Current PDO and set BD for Sinking
+    clear_BD_int(); //Clear BD interrupt
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("Sinking (USB-C)");
 
