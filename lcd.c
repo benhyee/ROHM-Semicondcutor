@@ -89,7 +89,7 @@ void LCD_clearLine()
     LCD_word("                ");
     LCD_enter();
 }
-
+//Prints out negotiated PDO onto LCD
 void LCD_PDO(unsigned short voltage, unsigned short current){
     if(voltage == 0 || current == 0)
     {
@@ -104,7 +104,7 @@ void LCD_PDO(unsigned short voltage, unsigned short current){
     LCD_data((current%10)+48);
     LCD_word("mA");
 }
-
+//Monitors the ACP voltage
 void LCD_Voltage(unsigned short voltage) {
     LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Voltage: ");

@@ -46,9 +46,10 @@ void LCD_wake(){
 }
 void LCD_toggle()
 {
-    BD22->OUT ^= 0x03;
     LCDCNTRL->DIR ^= 0x08;
     LCDPORT->DIR ^= 0xFF;
+    BD22->OUT ^= 0x03;
+
 }
 void sleepMode(){
     P3 ->SEL1 &= ~0x42;//LTC2953 kill & BM92A15_XRST

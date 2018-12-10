@@ -24,28 +24,27 @@ unsigned char readback;
 void interruptPinInit()
 {
 
-    JOYCON1 -> SEL1 &= ~0x31;
+    JOYCON1 -> SEL1 &= ~0x31;   //Up and Left Joystick and BD99954 Interrupt
     JOYCON1 -> SEL0 &= ~0x31;
     JOYCON1 -> DIR &= ~0x31;
     JOYCON1 -> OUT |= 0x31;
     JOYCON1 -> REN |= 0x31;
     JOYCON1 -> IES |= 0x31;
 
-    JOYCON2 -> SEL1 &= ~0xC0;
+    JOYCON2 -> SEL1 &= ~0xC0;   // Down and Right Joystick
     JOYCON2 -> SEL0 &= ~0xC0;
     JOYCON2 -> DIR &= ~0xC0;
     JOYCON2 -> OUT |= 0xC0;
     JOYCON2 -> REN |= 0xC0;
     JOYCON2 -> IES |= 0xC0;
 
-    JOYCONPB -> SEL1 &= ~0x21;
+    JOYCONPB -> SEL1 &= ~0x21;  //Push button and BM92A Interrupt
     JOYCONPB -> SEL0 &= ~0x21;
     JOYCONPB -> DIR &= ~0x21;
     JOYCONPB -> OUT |= 0x21;
     JOYCONPB -> REN |= 0x21;
     JOYCONPB -> IES |= 0x21;
-
-
+    //Enables Interrupt flags for the Joysticks
     JOYCON1 -> IFG = 0;
     JOYCON1 -> IE |= 0x31;
     JOYCON2 -> IFG = 0;
@@ -91,7 +90,7 @@ void PORT1_IRQHandler(void){
         leftFlag = TRUE;
         cursorFlag = TRUE;
     }
-    sleepWake = 1;
+    sleepWake = 1;  //In sleep state case
 
 
 }
@@ -114,7 +113,7 @@ void PORT6_IRQHandler(void){
        }
        JOYCON2->IFG &= ~0xFF;
    }
-   sleepWake = 1;
+   sleepWake = 1;   //In sleep state case
    cursorFlag = TRUE;
 
 }

@@ -107,51 +107,65 @@ void monitorSnkVoltage(){
     readTwoByte(0x02,BM92A_ADDRESS);
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
-        if(sleepWake == 1)
+        if(sleepWake == 1)  //any joystick action can wake up from LCD sleep
         {
             LCD_wake();
             sleepWake = 0;
+            LCD_init();
+            LCD_word("Sinking (USB-C)");
+            LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+
         }
-        else if(pushFlag == 1)
+        else if(pushFlag == 1)  //Push button has different Flag set
         {
             LCD_toggle();
             pushFlag = 0;
+            LCD_init();
+            LCD_word("Sinking (USB-C)");
+            LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+
         }
+        //Monitor the ACP node which is a input current sense resistor
+        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;    //ACP current readback
+        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;    //ACP Voltage readback
 
-        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
-        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
-
-        LCD_Monitor(acpVoltage,acpCurrent);
-        chargingStatus();
+        LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+        chargingStatus();   //Display LEDs to charging state of the battery
         delay_ms(150,CURRENT_FREQ);
     }
-    P2 -> OUT &= ~0x0F;
-    clear_BD_int();
+    P2 -> OUT &= ~0x0F; //Clear the LEDs of their state
+    clear_BD_int(); // clear BD interrupt flags
 }
 void monitorVCCSnkVoltage(){
     chargeState();
-
-    write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET
+    write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET to enable proper VCC sinking
     terminal_transmitWord("VCC Delivery \n\r");
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Sink from VCC");LCD_enter();
-    delay_ms(400,CURRENT_FREQ);
     delay_ms(2000,CURRENT_FREQ);
     LCD_clearLine(); LCD_command(0x01);
     LCD_word("Sinking (DC)");
-    acpCurrent = 100;
+    acpCurrent = 100;   //initial state of the ACP current so that it doesn't exit while loop immediately.
     while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1 &&
-            readTwoByte(0x5F,BD99954_ADDRESS)>1500)
-    {
-        if(sleepWake == 1)
+            readTwoByte(0x5F,BD99954_ADDRESS)>1500) //While voltage is greater than 1500 or while
+    {                                               // no interrupt is triggered by BD99954
+        if(sleepWake == 1)  //any joystick action can wake up from LCD sleep
         {
             LCD_wake();
             sleepWake = 0;
+            LCD_init();
+            LCD_word("Sinking (USB-C)");
+            LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+
         }
-        else if(pushFlag == 1)
+        else if(pushFlag == 1)  //Push button has different Flag set
         {
             LCD_toggle();
             pushFlag = 0;
+            LCD_init();
+            LCD_word("Sinking (USB-C)");
+            LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+
         }
         acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
         acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
@@ -173,21 +187,27 @@ void monitorSrcVoltage()
 
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
-        if(AlertFlag){
+        if(AlertFlag){  //Check for renegotiation. Mostly for the PD load tester as it defaults 5V first
             sourceNegotiate();
             LCD_clearLine(); LCD_command(0x01);
             LCD_word("Sourcing (USB-C)");
             AlertFlag = FALSE;
         }
-        if(sleepWake == 1)
+        if(sleepWake == 1)  //any joystick action can wake up from LCD sleep
         {
             LCD_wake();
             sleepWake = 0;
+            LCD_word("Sinking (USB-C)");
+            LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+
         }
-        else if(pushFlag == 1)
+        else if(pushFlag == 1)  //Push button has different Flag set
         {
             LCD_toggle();
             pushFlag = 0;
+            LCD_word("Sinking (USB-C)");
+            LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+
         }
         acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
         acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
@@ -200,27 +220,27 @@ void monitorSrcVoltage()
 
 }
 
-void sourceNegotiate(){
+void sourceNegotiate(){ //sets the BD99954 to reverse buck boost as fast as possible for timing requirements
     readTwoByte(0x02,BM92A_ADDRESS);
     signed int deltaVolt;
     unsigned char *readBack = malloc(sizeof(char)*21);
     unsigned int PDOvoltage,currentPDOreg;
-    currentPDOreg = readFourByte(0x28,BM92A_ADDRESS);   //Ngt PDO
-    PDOvoltage = ngtVoltage(currentPDOreg);
+    currentPDOreg = readFourByte(0x28,BM92A_ADDRESS);   //Negotiated CUrrent PDO BM92A
+    PDOvoltage = ngtVoltage(currentPDOreg); //Figures out what the negotiated voltage is
     write_word(0x07,BD99954_ADDRESS,currentPDOreg*10);    //IBUS_LIM_SET
 
-    if(PDOvoltage > 5000) {
-        reverseVoltage(PDOvoltage); //If PDO voltage is not 5V
-        delay_ms(200,CURRENT_FREQ);
+    if(PDOvoltage > 5000) { //if the voltage is greater than 5V
+        reverseVoltage(PDOvoltage); //write the voltage from the PDO into the BD99954
+        delay_ms(200,CURRENT_FREQ); //Control loop to figure out the delta between actual BD99954 voltage
         deltaVolt = readTwoByte(0x5D,BD99954_ADDRESS)& 0x7FFF;
         deltaVolt = (PDOvoltage - deltaVolt+64)/2;
-        reverseVoltage(PDOvoltage+deltaVolt);
+        reverseVoltage(PDOvoltage+deltaVolt);   //Write new voltage that will take away that offset
     }
     else {
         reverseVoltage(5024);
     }
     terminal_transmitWord("Source Negotiation \n\r");
-    WriteRead(0x08,BM92A_ADDRESS,12,readBack);  //Display Sink Cap
+    WriteRead(0x08,BM92A_ADDRESS,12,readBack);  //Display Sink Capabilites
     printPDO(readBack);
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Source"); LCD_enter();
@@ -231,7 +251,6 @@ void sourceNegotiate(){
 }
 void blinkLED()
 {
-
     P2->OUT |= 1;
     for(i = 0; i< 50000; i++);
     P2->OUT &= ~1;
