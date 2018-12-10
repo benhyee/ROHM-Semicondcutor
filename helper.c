@@ -151,7 +151,7 @@ void monitorVCCSnkVoltage(){
         {
             LCD_wake();
             sleepWake = 0;
-            LCD_word("Sinking (USB-C)");
+            LCD_word("Sinking (DC)");
             LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
 
         }
@@ -159,7 +159,7 @@ void monitorVCCSnkVoltage(){
         {
             LCD_toggle();
             pushFlag = 0;
-            LCD_word("Sinking (USB-C)");
+            LCD_word("Sinking (DC)");
             LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
 
         }
@@ -193,7 +193,7 @@ void monitorSrcVoltage()
         {
             LCD_wake();
             sleepWake = 0;
-            LCD_word("Sinking (USB-C)");
+            LCD_word("Sourcing (USB-C)");
             LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
 
         }
@@ -201,7 +201,7 @@ void monitorSrcVoltage()
         {
             LCD_toggle();
             pushFlag = 0;
-            LCD_word("Sinking (USB-C)");
+            LCD_word("Sourcing (USB-C)");
             LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
 
         }

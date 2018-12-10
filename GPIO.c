@@ -39,7 +39,7 @@ void gpio_init()
 }
 void LCD_wake(){
     BD22->OUT |= 0x03;  //Turn on BD2242 LCD_VDD and LCD_LEDP
-    LCDCNTRL->DIR |= 0x08;  //Direction of the LCD_RS,RW,E to output
+    LCDCNTRL->DIR |= 0x0F;  //Direction of the LCD_RS,RW,E to output
     LCDPORT->DIR |= 0xFF;   //Data Lines to output
     LCD_init();
 
@@ -47,7 +47,7 @@ void LCD_wake(){
 }
 void LCD_toggle()
 {
-    LCDCNTRL->DIR ^= 0x08;
+    LCDCNTRL->DIR ^= 0x0F;
     LCDPORT->DIR ^= 0xFF;
     BD22->OUT ^= 0x03;
     LCD_init();
