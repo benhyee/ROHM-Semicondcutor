@@ -4,11 +4,14 @@
 #include "BM92A_funcs.h"
 #include "BD99954_Funcs.h"
 #include "globals.h"
+#include "I2C_Helper.h"
 #define RS 0x01
 #define RW 0x02
 #define EN 0x04
 #define LCDPORT P5
 #define LCDCNTRL P7
+#define BD99954_ADDRESS 0x09
+
 //void LCD_nibble_write(unsigned char data, unsigned char control)
 //{
 //    data &= 0xF0; //clear lower nibble for control
@@ -91,7 +94,12 @@ void LCD_clearLine()
 }
 //Prints out negotiated PDO onto LCD
 void LCD_PDO(unsigned short voltage, unsigned short current){
-    if(voltage == 0 || current == 0)    // Case if there is no negotiation
+    int acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
+    if(acpVoltage <  800)
+    {
+         LCD_word("No Negotiation");
+    }
+    else if(voltage == 0 || current == 0)    // Case if there is no negotiation
     {
         LCD_word("5V  1500 mA");
     }

@@ -340,8 +340,15 @@ void batterySelectMenu(){
 
 }
 */
-void menuScroll(char value){
-
+void menuScroll(char temp){
+    signed char value;
+    if(temp == 2)
+    {
+        value = -1;
+    }
+    else{
+        value = 1;
+    }
     if(select == 0)
     {
         switch(settings_menu){

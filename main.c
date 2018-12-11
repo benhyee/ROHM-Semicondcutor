@@ -9,10 +9,11 @@
  *
  *  Pin outs:
  *  P1.6 -> SDA;    P1.7->SCL
- *  P3.0-> GPIO0(#Alert) BM92A
- *  P4.4-4.7 -> D4-D7 LCD
- *  P4.0 -> RS;     P4.1 -> RW;     P4.2->EN (LCD)
- *
+ *  P3.0 -> GPIO0(#Alert) BM92A
+ *  P1.0 -> Interrupt BD99954
+ *  P5.1-5.7 -> D0-D7 LCD
+ *  P7.0 -> RS;     P7.1 -> RW;     P7.2->EN (LCD)
+ *  Joystick Pinouts refer to interruptPins.c
  */
 #include "I2C_Helper.h"
 #include "msp432.h"
@@ -71,7 +72,7 @@ int main(void) {
 
         if(cursorFlag == TRUE) {    //Triggered by joystick action
             if(rightFlag == TRUE)menuScroll(1);
-            if(leftFlag == TRUE) menuScroll(-1);
+            if(leftFlag == TRUE) menuScroll(2);
             displayMode();          //refreshes the menu with new joystick presses
             cursorFlag = FALSE;
         }
@@ -110,8 +111,13 @@ int main(void) {
                     monitorVCCSnkVoltage();
                     write_word(0x72,BD99954_ADDRESS,0x000F);//All this occurs after exiting of the while loop
                     LCD_wake();
-                    AlertFlag = FALSE;
+                    delay_ms(100,CURRENT_FREQ);
+                    AlertFlag = FALSE; select = 0;
+                    cursorFlag = FALSE;
+                    BD99954_INT = FALSE;
                     settings_menu = 1;fast_set = 1;
+
+                    readTwoByte(0x02,BM92A_ADDRESS);
                     displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
 
@@ -123,9 +129,12 @@ int main(void) {
                     reverseVoltage(5024);//All this occurs after exiting of the while loop
                     LCD_wake();
                     select = 0;
+                    cursorFlag = FALSE;
                     settings_menu = 1;fast_set = 2;
+                    readTwoByte(0x02,BM92A_ADDRESS);
                     displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
+
                 }
                 else{   //if its just a register update
                    alertRead = readTwoByte(0x02,BM92A_ADDRESS);

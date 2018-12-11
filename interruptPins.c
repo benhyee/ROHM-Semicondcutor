@@ -25,21 +25,21 @@ void interruptPinInit()
 {
 
     JOYCON1 -> SEL1 &= ~0x31;   //Up and Left Joystick and BD99954 Interrupt
-    JOYCON1 -> SEL0 &= ~0x31;
+    JOYCON1 -> SEL0 &= ~0x31;   //P1.4 and 1.5. BD99954 interrupt -> P1.0
     JOYCON1 -> DIR &= ~0x31;
     JOYCON1 -> OUT |= 0x31;
     JOYCON1 -> REN |= 0x31;
     JOYCON1 -> IES |= 0x31;
 
     JOYCON2 -> SEL1 &= ~0xC0;   // Down and Right Joystick
-    JOYCON2 -> SEL0 &= ~0xC0;
+    JOYCON2 -> SEL0 &= ~0xC0;   // P6.6 and 6.7
     JOYCON2 -> DIR &= ~0xC0;
     JOYCON2 -> OUT |= 0xC0;
     JOYCON2 -> REN |= 0xC0;
     JOYCON2 -> IES |= 0xC0;
 
     JOYCONPB -> SEL1 &= ~0x21;  //Push button and BM92A Interrupt
-    JOYCONPB -> SEL0 &= ~0x21;
+    JOYCONPB -> SEL0 &= ~0x21;  //P3.5 push button
     JOYCONPB -> DIR &= ~0x21;
     JOYCONPB -> OUT |= 0x21;
     JOYCONPB -> REN |= 0x21;
@@ -53,11 +53,11 @@ void interruptPinInit()
     JOYCONPB -> IE |= 0x21;
 
 
-    NVIC_SetPriority(PORT1_IRQn, 5);
+    NVIC_SetPriority(PORT1_IRQn, 7);
     NVIC_EnableIRQ(PORT1_IRQn);
-    NVIC_SetPriority(PORT3_IRQn, 5);
+    NVIC_SetPriority(PORT3_IRQn, 7);
     NVIC_EnableIRQ(PORT3_IRQn);
-    NVIC_SetPriority(PORT6_IRQn, 5);
+    NVIC_SetPriority(PORT6_IRQn, 7);
     NVIC_EnableIRQ(PORT6_IRQn);
 
 
