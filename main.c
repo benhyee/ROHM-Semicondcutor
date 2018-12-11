@@ -9,7 +9,7 @@
  *
  *  Pin outs:
  *  P1.6 -> SDA;    P1.7->SCL
- *  P3.6-> GPIO0(#Alert) BM92A
+ *  P3.0-> GPIO0(#Alert) BM92A
  *  P4.4-4.7 -> D4-D7 LCD
  *  P4.0 -> RS;     P4.1 -> RW;     P4.2->EN (LCD)
  *

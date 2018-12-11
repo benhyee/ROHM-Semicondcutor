@@ -91,9 +91,9 @@ void LCD_clearLine()
 }
 //Prints out negotiated PDO onto LCD
 void LCD_PDO(unsigned short voltage, unsigned short current){
-    if(voltage == 0 || current == 0)
+    if(voltage == 0 || current == 0)    // Case if there is no negotiation
     {
-        LCD_word("No Negotiation");
+        LCD_word("5V  1500 mA");
     }
     else{
         if((voltage /10)%10 != 0) LCD_data(((voltage /10)%10)+48);  //if integer is more that one digits
