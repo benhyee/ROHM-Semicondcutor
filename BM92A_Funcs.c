@@ -27,7 +27,7 @@ unsigned int currentNgtPDO = 0;
 
 void BM92Asrc_regSet(){
     reverseEnable(1);
-    write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)|0x0001);
+    write_word(0x1A,BM92A_ADDRESS,readTwoByte(0x1A,BM92A_ADDRESS)|0x0001);  //Vendor Configuration
     write_word(0x17,BM92A_ADDRESS,0x0080); //controller Config 2
     write_word(0x26,BM92A_ADDRESS,0x9109); //system Config 1
     write_word(0x27,BM92A_ADDRESS,0x0A00); //system Config 2
@@ -183,7 +183,7 @@ void pdo100WMode(){ //For 100 Watt negotiation but not included in the final EVK
 
 }
 void sinkAllPDOMode() {
-    unsigned char *readBack = malloc(sizeof(char)*17);
+    unsigned char *readBack = malloc(sizeof(char)*17);  //For 5-20V sink mode configuration
     unsigned char *PDO = malloc(sizeof(char)*6);
     unsigned short controllerConfig = 0;
     controllerConfig = readTwoByte(0x06,BM92A_ADDRESS);

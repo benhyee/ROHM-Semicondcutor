@@ -25,7 +25,7 @@
 #define CURRENT_FREQ FREQ_3_MHZ
 #define LED P2
 
-
+//Clears implicitly declared warnings
 void default_BDSettings();
 void chgDisable();
 void reverseVoltage(int voltage);

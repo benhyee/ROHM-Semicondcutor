@@ -41,12 +41,12 @@ int main(void) {
     set_DCO(CURRENT_FREQ);
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;       // Stop watchdog timer
     gpio_init();    //Enables GPIO Pins such as LEDs
-    InitI2C();
+    InitI2C();       //SDA -> P1.6 SCL->P1.7
     LCD_init();
     LCD_command(0x01); // clear screen, move cursor home
-    terminal_init();    //SDA -> P1.6 SCL->P1.7
+    terminal_init();
     interruptPinInit();
-    __enable_irq();                           // Enable global interrupt
+    __enable_irq();    // Enable global interrupt
     unsigned short alertRead, BD_rail;
     terminal_transmitWord("Initializing Registers\n\r");
     chargeState();  //Reads DIP Switch and Charge enable or disable
@@ -112,27 +112,33 @@ int main(void) {
                     write_word(0x72,BD99954_ADDRESS,0x000F);//All this occurs after exiting of the while loop
                     LCD_wake();
                     delay_ms(100,CURRENT_FREQ);
+                    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){//Occurs if the USB_C is plugged in while VCC was plugged in
+                        readTwoByte(0x02,BM92A_ADDRESS);
+                        monitorSnkVoltage();
+                        write_word(0x71,BD99954_ADDRESS,0x000F);    //All this occurs after exiting of the while loop
+                        LCD_wake();
+                        readTwoByte(0x02,BM92A_ADDRESS);
+                    }
+                    settings_menu = 1;fast_set = 1; //Reset flag checks
                     AlertFlag = FALSE; select = 0;
                     cursorFlag = FALSE;
                     BD99954_INT = FALSE;
-                    settings_menu = 1;fast_set = 1;
-
+                    delay_ms(500,CURRENT_FREQ);
                     readTwoByte(0x02,BM92A_ADDRESS);
                     displayMode();
-                    readTwoByte(0x02,BM92A_ADDRESS);
 
                 }
-                if((alertRead &0x2000)>>13) {
-                    sourceNegotiate();
+                if((alertRead &0x2000)>>13) {   //Source mode plug in event. Checks to see if Alert flag has plug insert event
+                    sourceNegotiate();  // Determines output voltage of negotiation
                     AlertFlag = FALSE;
-                    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0) monitorSrcVoltage();
-                    reverseVoltage(5024);//All this occurs after exiting of the while loop
-                    LCD_wake();
+                    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0) monitorSrcVoltage();   //While loop that monitors ACP node
+                    reverseVoltage(5024);//All this occurs after exiting of the while loop. Reverts Vbus to 5V for next plug in event
+                    LCD_wake();     //Wakes up monitor in case the unplug event was in sleep mode
                     select = 0;
                     cursorFlag = FALSE;
                     settings_menu = 1;fast_set = 2;
-                    readTwoByte(0x02,BM92A_ADDRESS);
-                    displayMode();
+                    readTwoByte(0x02,BM92A_ADDRESS);    // clear alert flag in prep for display mode
+                    displayMode();  //Display shows source mode fast set menu
                     readTwoByte(0x02,BM92A_ADDRESS);
 
                 }
@@ -142,7 +148,7 @@ int main(void) {
             }
             AlertFlag = FALSE;
         }
-        __sleep();      // go to lower power mode
+        __sleep();      // go to lower power mode and wait for interrupt
 
     }
 }

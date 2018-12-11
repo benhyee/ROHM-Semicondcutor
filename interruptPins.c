@@ -119,14 +119,14 @@ void PORT6_IRQHandler(void){
 }
 
 void PORT3_IRQHandler(void){
-    if (JOYCONPB->IFG & 0x20)
+    if (JOYCONPB->IFG & 0x20)// Interrupt routine for push button from Joystick
     {
         terminal_transmitWord("Push\t");
         select += 1;
         cursorFlag = 1;
         pushFlag = 1;
     }
-    else if (JOYCONPB->IFG & 0x01)
+    else if (JOYCONPB->IFG & 0x01)  //BM92A alert pin trigger. Usually for USB-C plug in events
     {
           terminal_transmitWord("Alert Triggered\t");
           AlertFlag = TRUE;

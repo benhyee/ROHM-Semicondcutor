@@ -7,7 +7,6 @@
 #define FALSE 0
 //counts the number of bytes read into the buffer
 char readCount = 0;
-
 char terminalbufferReady;
 int  terminalbuffer;
 unsigned int byte;
@@ -18,7 +17,7 @@ void terminal_init()
     EUSCI_A0->MCTLW = 0;
     EUSCI_A0->CTLW0 = 0x0081;
     EUSCI_A0->BRW = 26;
-    P1->SEL0 |= 0x0C;
+    P1->SEL0 |= 0x0C;   //P1.2 and P1.3 for receive and transmit on UART
     P1->SEL1 &= ~0x0C;
     EUSCI_A0->CTLW0 &= ~1;
     EUSCI_A0->IE |= 1;
@@ -88,7 +87,7 @@ void terminal_transmitIntByte(unsigned int byte_int)
 
 }
 void terminal_transmitByte(unsigned char byte_value)
-{
+{   //Translates character into byte for easier UART write
     switch(byte_value)
     {
     case 0:

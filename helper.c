@@ -164,10 +164,11 @@ void monitorVCCSnkVoltage(){
             LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
 
         }
-        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
-        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
-        LCD_Monitor(acpVoltage,acpCurrent);
-        chargingStatus();
+        //Monitor the ACP node which is a input current sense resistor
+        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;    //ACP current readback
+        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;    //ACP Voltage readback
+        LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+        chargingStatus();   //Display LEDs to charging state of the battery
         delay_ms(150,CURRENT_FREQ);
     }
     P2 -> OUT &= ~0x0F;
@@ -193,7 +194,7 @@ void monitorSrcVoltage()
             AlertFlag = FALSE;
         }
         else{
-            clear_BD_int();
+            clear_BD_int(); //If not negotiation, clear threshold flag. VCC should not renegotiate the device
         }
         if(sleepWake == 1)  //any joystick action can wake up from LCD sleep
         {
@@ -211,10 +212,11 @@ void monitorSrcVoltage()
             LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
 
         }
-        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;
-        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;
-        LCD_Monitor(acpVoltage,acpCurrent);
-        acpVoltage = readTwoByte(0x5D,BD99954_ADDRESS) & 0x7FFF;
+        //Monitor the ACP node which is a input current sense resistor
+        acpCurrent = readTwoByte(0x59,BD99954_ADDRESS) & 0x7FFF;    //ACP current readback
+        acpVoltage = readTwoByte(0x5B,BD99954_ADDRESS) & 0x7FFF;    //ACP Voltage readback
+        LCD_Monitor(acpVoltage,acpCurrent); //Formats the LCD for displaying of voltage and current
+        chargingStatus();   //Display LEDs to charging state of the battery
 
         delay_ms(150,CURRENT_FREQ);
     }
