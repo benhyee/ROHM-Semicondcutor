@@ -95,14 +95,17 @@ void LCD_PDO(unsigned short voltage, unsigned short current){
     {
         LCD_word("No Negotiation");
     }
-    if((voltage /10)%10 != 0) LCD_data(((voltage /10)%10)+48);  //if integer is more that one digits
-    LCD_data((voltage%10)+48);
-    LCD_word("V  ");
-    if(((current/1000)%10) != 0){LCD_data(((current/1000)%10)+48);}
-    LCD_data(((current/100)%10)+48);
-    LCD_data(((current/10)%10)+48);
-    LCD_data((current%10)+48);
-    LCD_word("mA");
+    else{
+        if((voltage /10)%10 != 0) LCD_data(((voltage /10)%10)+48);  //if integer is more that one digits
+        LCD_data((voltage%10)+48);
+        LCD_word("V  ");
+        if(((current/1000)%10) != 0){LCD_data(((current/1000)%10)+48);}
+        LCD_data(((current/100)%10)+48);
+        LCD_data(((current/10)%10)+48);
+        LCD_data((current%10)+48);
+        LCD_word("mA");
+    }
+
 }
 //Monitors the ACP voltage
 void LCD_Voltage(unsigned short voltage) {
@@ -118,6 +121,7 @@ void LCD_Voltage(unsigned short voltage) {
 }
 
 void LCD_Monitor(int lineVoltage, int lineCurrent){
+
     LCD_command(0x02);
     LCD_enter();
 

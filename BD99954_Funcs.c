@@ -50,7 +50,12 @@ void clear_BD_int(){        //Clears the Interrupt flags
     write_word(0x71,BD99954_ADDRESS,0x00FF);    //Int1 VBUS
     write_word(0x72,BD99954_ADDRESS,0x00FF);    //Int2 VCC
 }
-
+short VCCInterruptFlag(){   //Returns the contents of Interrupt register VCC
+    return readTwoByte(0x72,BD99954_ADDRESS);
+}
+short VBUSInterruptFlag(){   //Returns the contents of Interrupt register VCC
+    return readTwoByte(0x71,BD99954_ADDRESS);
+}
 void reverseVoltage(int voltage)
 {
     voltage = voltage +32 -(voltage % 32);  //Forces integer into multiple of 32

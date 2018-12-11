@@ -84,33 +84,49 @@ int main(void) {
                 if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){
                     monitorSnkVoltage();
                     write_word(0x71,BD99954_ADDRESS,0x000F);    //All this occurs after exiting of the while loop
+                    LCD_wake();
                     displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
-
                 }
                 if((BD_rail&0x0004)>>2){
                     monitorVCCSnkVoltage();
                     write_word(0x72,BD99954_ADDRESS,0x000F);//All this occurs after exiting of the while loop
+                    LCD_wake();
                     displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
 
                 }
+                settings_menu = 1;fast_set = 1;
                 cursorFlag = FALSE;select = 0;
                 BD99954_INT = FALSE;
                 AlertFlag = FALSE;
 
             }
             else if(mode_set == 1) {
+                if((BD_rail&0x0004)>>2){
+                    reverseDisable();    //Ensures source mode is not active in sink mode
+                    clear_BD_int();
+                    BM92Asnk_regSet();   BM92Asnk_commandSet(); // Register writes the sink mode
+                    monitorVCCSnkVoltage();
+                    write_word(0x72,BD99954_ADDRESS,0x000F);//All this occurs after exiting of the while loop
+                    LCD_wake();
+                    AlertFlag = FALSE;
+                    settings_menu = 1;fast_set = 1;
+                    displayMode();
+                    readTwoByte(0x02,BM92A_ADDRESS);
+
+                }
                 if((alertRead &0x2000)>>13) {
                     sourceNegotiate();
                     AlertFlag = FALSE;
                     if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0) monitorSrcVoltage();
                     reverseVoltage(5024);//All this occurs after exiting of the while loop
+                    LCD_wake();
                     select = 0;
+                    settings_menu = 1;fast_set = 2;
                     displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
                 }
-
                 else{   //if its just a register update
                    alertRead = readTwoByte(0x02,BM92A_ADDRESS);
                }

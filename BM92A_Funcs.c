@@ -57,7 +57,13 @@ void currentPDO() {
     currentNgtPDO = readFourByte(0x28,BM92A_ADDRESS);   //Current PDO
     unsigned short PDOcurrent = currentNgtPDO & 0x000003FF;
     PDOcurrent = PDOcurrent *10;
-    write_word(0x07,BD99954_ADDRESS,PDOcurrent);//Device Capability IBUS_LIM_SET PDO current
+    if(PDOcurrent == 0)
+    {
+        write_word(0x07,BD99954_ADDRESS,1500);//Device Capability IBUS_LIM_SET PDO current default
+    }
+    else{
+        write_word(0x07,BD99954_ADDRESS,PDOcurrent);//Device Capability IBUS_LIM_SET PDO current
+    }
     unsigned short PDOvoltage = (currentNgtPDO & 0x000FFC00)>>10;
     PDOvoltage = PDOvoltage/20;
     LCD_PDO(PDOvoltage,PDOcurrent);

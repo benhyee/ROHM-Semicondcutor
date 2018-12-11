@@ -15,10 +15,10 @@
 void gpio_init()
 {
 
-    LCDCNTRL ->SEL1 &= ~0x08; //5V Enable
-    LCDCNTRL ->SEL0 &= ~0x08;
-    LCDCNTRL ->DIR |= 0x08;
-    LCDCNTRL -> OUT &= ~0x08;
+//    LCDCNTRL ->SEL1 &= ~0x08; //5V Enable
+//    LCDCNTRL ->SEL0 &= ~0x08;
+//    LCDCNTRL ->DIR |= 0x08;
+//    LCDCNTRL -> OUT &= ~0x08;
 
     CONFIG ->SEL1 &= ~0xF0;  //DIP Switch readback
     CONFIG ->SEL0 &= ~0xF0;
@@ -39,7 +39,7 @@ void gpio_init()
 }
 void LCD_wake(){
     BD22->OUT |= 0x03;  //Turn on BD2242 LCD_VDD and LCD_LEDP
-    LCDCNTRL->DIR |= 0x0F;  //Direction of the LCD_RS,RW,E to output
+    LCDCNTRL->DIR |= 0x07;  //Direction of the LCD_RS,RW,E to output
     LCDPORT->DIR |= 0xFF;   //Data Lines to output
     LCD_init();
 
@@ -48,7 +48,7 @@ void LCD_wake(){
 void LCD_toggle()
 {
     char sw_state = 0x01;
-    LCDCNTRL->DIR ^= 0x0F;
+    LCDCNTRL->DIR ^= 0x07;
     LCDPORT->DIR ^= 0xFF;
     BD22->OUT ^= 0x03;
     sw_state &= LCDCNTRL->DIR;

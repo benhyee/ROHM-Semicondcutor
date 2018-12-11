@@ -21,5 +21,7 @@ void reverseDisable();
 void chgEnable();
 void chgDisable();
 void chargingStatus();
+short VCCInterruptFlag();
+short VBUSInterruptFlag();
 
 #endif /* BD99954_FUNCS_H_ */

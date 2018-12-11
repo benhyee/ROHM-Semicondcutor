@@ -135,14 +135,15 @@ void monitorSnkVoltage(){
     clear_BD_int(); // clear BD interrupt flags
 }
 void monitorVCCSnkVoltage(){
-    chargeState();
-    write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET to enable proper VCC sinking
-    terminal_transmitWord("VCC Delivery \n\r");
     LCD_clearLine();  LCD_command(0x01); // clear screen, move cursor home
     LCD_word("Sink from VCC");LCD_enter();
-    delay_ms(2000,CURRENT_FREQ);
-    LCD_clearLine(); LCD_command(0x01);
+    terminal_transmitWord("VCC Delivery \n\r");
+    chargeState();
+    write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET to enable proper VCC sinking
+
+    delay_ms(3000,CURRENT_FREQ);
     LCD_word("Sinking (DC)");
+    LCD_clearLine(); LCD_command(0x01);
     acpCurrent = 100;   //initial state of the ACP current so that it doesn't exit while loop immediately.
     while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1 &&
             readTwoByte(0x5F,BD99954_ADDRESS)>1500) //While voltage is greater than 1500 or while
@@ -180,14 +181,19 @@ void monitorSrcVoltage()
     pushFlag = 0;
     write_word(0x09,BD99954_ADDRESS,3008);    //IOTG_LIM_SET
     write_word(0x07,BD99954_ADDRESS,3008);    //IBUS_LIM_SET
-
+    clear_BD_int();
+    short BD_rail;
     while(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0)
     {
-        if(AlertFlag){  //Check for renegotiation. Mostly for the PD load tester as it defaults 5V first
+        BD_rail = readTwoByte(0x02,BM92A_ADDRESS) >>13 ;
+        if(AlertFlag && BD_rail){  //Check for renegotiation. Mostly for the PD load tester as it defaults 5V first
             sourceNegotiate();
             LCD_clearLine(); LCD_command(0x01);
             LCD_word("Sourcing (USB-C)");
             AlertFlag = FALSE;
+        }
+        else{
+            clear_BD_int();
         }
         if(sleepWake == 1)  //any joystick action can wake up from LCD sleep
         {
