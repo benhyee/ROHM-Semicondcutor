@@ -63,6 +63,7 @@ int main(void) {
     interruptPinInit();
     __enable_irq();    // Enable global interrupt
     unsigned short alertRead, BD_rail;
+    UARTEnable();
     terminal_transmitWord("Initializing Registers\n\r");
     chargeState();  //Reads DIP Switch and Charge enable or disable
     srcAllPDOMode();    //Writes all the PDO settings for the BM92A

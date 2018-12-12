@@ -7,6 +7,7 @@
 #include "msp432.h"
 #include "BD99954_Funcs.h"
 #include "lcd.h"
+#include "globals.h"
 #define LCDPORT P5
 #define LCDCNTRL P7
 #define CONFIG P4
@@ -88,6 +89,15 @@ void chargeState(){
     }
     else{
         chgDisable();
+    }
+}
+
+void UARTEnable(){
+    if((readSwitchState() &0x08)>>3){
+        uart_en = 1;
+    }
+    else{
+        uart_en = 0;
     }
 }
 

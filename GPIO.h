@@ -15,7 +15,6 @@ void LCD_toggle();
 char readSwitchState();
 void chargeState();
 void LCD_wake();
-
-
+void UARTEnable();
 
 #endif /* GPIO_H_ */
