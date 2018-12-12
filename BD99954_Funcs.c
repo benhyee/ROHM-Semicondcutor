@@ -105,11 +105,12 @@ void BD99954_Startup_Routine()
     write_word(0x3E,BD99954_ADDRESS,0x0000);    //Protect set
     write_word(0x3F,BD99954_ADDRESS,0x0001);
     //Map Set (VERY IMPORTANT IF YOU WANT ACCESS TO EXTENDED COMMANDS)
-    chargeState();
 
+    chargeState();
     BD_INT_INIT();
     for(i=0;i<200;i++);
     default_BDSettings();
+
     if(readTwoByte(0x5F,BD99954_ADDRESS)>1000)  //When no Battery is attached to the terminal
     {
         clear_BD_int();

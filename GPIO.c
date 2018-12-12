@@ -80,6 +80,7 @@ char readSwitchState(){
     return sw_state;
 }
 void chargeState(){
+    reverseDisable();
     if(readSwitchState()&0x01)
     {
         chgDisable();
