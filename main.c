@@ -1,10 +1,22 @@
 /*
  * ROHM SemiConductor USB-C Project
- *  BM92AI2C.h -> All the BM92A code as well as a register read function for testing
- *  BD99954.h -> Not completed
+ *
+ *  BD99954_Funcs.h -> All the BD99954 register setting functions
+ *  BM92A_Funcs.h -> Source mode and sink mode register setting functions
+ *  debugFunctions.h -> Primary UART debug functions that print out registers and their settings
+ *                      to the UART console
  *  delay.h -> Frequency set and delay functions
- *  helper.h -> Functions that are helpful for organization and exception handling
- *  LCD.h -> Functions for the LCD monitor.
+ *  globals.h -> Flag sets and menu navigation registers
+ *  helper.h -> Functions that are helpful for bit reordering. Sinking and source monitoring
+ *              functions are placed in here
+ *  I2C_helper.h -> Functions for I2C including read and write functions for 2 Byte, 4 Byte
+ *                  and multibyte code.
+ *  interruptPins.h -> enables LED and interrupt pins for LCD and system shutdown.
+ *                      Readback of DIP switch state
+ *  lcd.h -> LCD functions that format the display and display negotiation, \
+ *              voltage and current monitoring
+ *  menu.h -> Menu navigation interface for the LCD. Calls various register setting
+ *            for the BM92A and BD99954
  *  UART.h -> Functions for terminal use on the computer COM4 19200
  *
  *  Pin outs:
@@ -14,6 +26,9 @@
  *  P5.1-5.7 -> D0-D7 LCD
  *  P7.0 -> RS;     P7.1 -> RW;     P7.2->EN (LCD)
  *  Joystick Pinouts refer to interruptPins.c
+ *
+ *  PDOcreator.py is a quick and nice python tool for creating and decoding PDOs
+ *  and auto- negotiate PDO settings
  */
 #include "I2C_Helper.h"
 #include "msp432.h"
