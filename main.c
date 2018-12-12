@@ -1,23 +1,23 @@
 /*
  * ROHM SemiConductor USB-C Project
  *
- *  BD99954_Funcs.h -> All the BD99954 register setting functions
- *  BM92A_Funcs.h -> Source mode and sink mode register setting functions
- *  debugFunctions.h -> Primary UART debug functions that print out registers and their settings
+ *  BD99954_Funcs.c -> All the BD99954 register setting functions
+ *  BM92A_Funcs.c -> Source mode and sink mode register setting functions
+ *  debugFunctions.c -> Primary UART debug functions that print out registers and their settings
  *                      to the UART console
- *  delay.h -> Frequency set and delay functions
- *  globals.h -> Flag sets and menu navigation registers
- *  helper.h -> Functions that are helpful for bit reordering. Sinking and source monitoring
+ *  delay.c -> Frequency set and delay functions
+ *  globals.c -> Flag sets and menu navigation registers
+ *  helper.c -> Functions that are helpful for bit reordering. Sinking and source monitoring
  *              functions are placed in here
- *  I2C_helper.h -> Functions for I2C including read and write functions for 2 Byte, 4 Byte
+ *  I2C_helper.c -> Functions for I2C including read and write functions for 2 Byte, 4 Byte
  *                  and multibyte code.
- *  interruptPins.h -> enables LED and interrupt pins for LCD and system shutdown.
+ *  interruptPins.c -> enables LED and interrupt pins for LCD and system shutdown.
  *                      Readback of DIP switch state
- *  lcd.h -> LCD functions that format the display and display negotiation, \
+ *  lcd.c -> LCD functions that format the display and display negotiation, \
  *              voltage and current monitoring
- *  menu.h -> Menu navigation interface for the LCD. Calls various register setting
+ *  menu.c -> Menu navigation interface for the LCD. Calls various register setting
  *            for the BM92A and BD99954
- *  UART.h -> Functions for terminal use on the computer COM4 19200
+ *  UART.c -> Functions for terminal use on the computer COM4 19200
  *
  *  Pin outs:
  *  P1.6 -> SDA;    P1.7->SCL
