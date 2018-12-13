@@ -239,15 +239,16 @@ void sleepMenu()
 void enableMenu(char mode, char enable){
     LCD_clearLine();
     LCD_command(0x01); // clear screen, move cursor home
-    switch(mode){
     /*
+    switch(mode){
+
     case 1:
         LCD_word("100W USB-PD");
         break;
     case 1:
         LCD_word("Battery Charge");
         break;
-    */
+
     case 1:
         LCD_word("UART Debug");
         break;
@@ -255,6 +256,9 @@ void enableMenu(char mode, char enable){
     default:
         break;
     }
+    */
+    LCD_word("UART Debug");
+
     LCD_enter();
 
     if(enable == 0)LCD_word("       Disabled");
@@ -365,9 +369,6 @@ void menuScroll(char temp){
             case 2:
                 standard_menu += value;
                 break;
-            case 3:
-                advanced_menu += value;
-                break;
             default:
                 break;
         }
@@ -395,22 +396,24 @@ void menuScroll(char temp){
         }
         else if(settings_menu == 3)
         {
-            switch(advanced_menu){
             /*
+            switch(advanced_menu){
+
                 case 1:
                     batt_chg ^= 1;
                     break;
                 case 2:
                     battery_sel += value;
                     break;
-            */
+
                 case 1:
                     uart_en ^= 1;
                     break;
                 default:
                     break;
                 }
-
+            */
+            uart_en ^= 1;
         }
     }
     rightFlag = 0;
