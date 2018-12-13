@@ -260,35 +260,42 @@ void enableMenu(char mode, char enable){
     if(enable == 0)LCD_word("       Disabled");
     else if(enable == 1)LCD_word("        Enabled");
     if(select == 2){
+
+//        if(mode == 1 && enable == 0){
+//            sinkAllPDOMode();
+//        }
+//        if(mode == 2 && enable == 1){
+//            if(mode_set == 0)chgEnable();
+//            else if(mode_set ==1)
+//            {
+//                LCD_charge_error();
+//                delay_ms(2000,CURRENT_FREQ);
+//                batt_chg = 0;
+//            }
+//            delay_ms(100,CURRENT_FREQ);
+//            clear_BD_int();
+//            BD99954ReadRegister();
+//        }
+//        else if(mode == 2 && enable == 0){
+//            if(mode_set == 0)chgDisable();
+//            else if(mode_set ==1)reverseDisable();
+//            delay_ms(100,CURRENT_FREQ);
+//            clear_BD_int();
+//            BD99954ReadRegister();
+//
+//        }
+        if(mode == 3 && enable == 1)
+        {
+            uart_en = 1;
+        }
+        else if(mode == 3 && enable == 0)
+        {
+            uart_en = 0;
+        }
         select = 0;
-
-        if(mode == 1 && enable == 0){
-            sinkAllPDOMode();
-        }
-        if(mode == 2 && enable == 1){
-            if(mode_set == 0)chgEnable();
-            else if(mode_set ==1)
-            {
-                LCD_charge_error();
-                delay_ms(2000,CURRENT_FREQ);
-                batt_chg = 0;
-            }
-            delay_ms(100,CURRENT_FREQ);
-            clear_BD_int();
-            BD99954ReadRegister();
-        }
-        else if(mode == 2 && enable == 0){
-            if(mode_set == 0)chgDisable();
-            else if(mode_set ==1)reverseDisable();
-            delay_ms(100,CURRENT_FREQ);
-            clear_BD_int();
-            BD99954ReadRegister();
-
-        }
-        if(mode == 3 && enable == 1){uart_en = 1;}
-        else{uart_en = 0;}
-        displayMode();
         pushFlag = 0;
+        displayMode();
+
     }
 
 }

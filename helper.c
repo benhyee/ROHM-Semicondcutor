@@ -142,8 +142,8 @@ void monitorVCCSnkVoltage(){
     write_word(0x08,BD99954_ADDRESS,3008);    //ICC_LIM_SET to enable proper VCC sinking
 
     delay_ms(3000,CURRENT_FREQ);
-    LCD_word("Sinking (DC)");
     LCD_clearLine(); LCD_command(0x01);
+    LCD_word("Sinking (DC)");
     acpCurrent = 100;   //initial state of the ACP current so that it doesn't exit while loop immediately.
     while((readTwoByte(0x72,BD99954_ADDRESS)&0x0001)!=1 &&
             readTwoByte(0x5F,BD99954_ADDRESS)>1500) //While voltage is greater than 1500 or while
