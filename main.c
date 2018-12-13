@@ -102,11 +102,6 @@ int main(void) {
                     monitorSnkVoltage();
                     write_word(0x71,BD99954_ADDRESS,0x000F);    //All this occurs after exiting of the while loop
                     LCD_wake();
-                    if(readTwoByte(0x5F,BD99954_ADDRESS)>1500){
-                        monitorVCCSnkVoltage();
-                        write_word(0x72,BD99954_ADDRESS,0x000F);//All this occurs after exiting of the while loop
-                        LCD_wake();
-                    }
                     displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
                 }
@@ -114,13 +109,6 @@ int main(void) {
                     monitorVCCSnkVoltage();
                     write_word(0x72,BD99954_ADDRESS,0x000F);//All this occurs after exiting of the while loop
                     LCD_wake();
-                    if(((readTwoByte(0x03,BM92A_ADDRESS)&0x0300)>>8)!=0){//Occurs if the USB_C is plugged in while VCC was plugged in
-                        readTwoByte(0x02,BM92A_ADDRESS);
-                        monitorSnkVoltage();
-                        write_word(0x71,BD99954_ADDRESS,0x000F);    //All this occurs after exiting of the while loop
-                        LCD_wake();
-                        readTwoByte(0x02,BM92A_ADDRESS);
-                    }
                     displayMode();
                     readTwoByte(0x02,BM92A_ADDRESS);
 
