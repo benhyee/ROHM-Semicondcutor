@@ -2,7 +2,7 @@
  * interruptPins.c
  *
  *  Created on: May 10, 2018
- *      Author: User
+ *       Author: Benjamin Yee
  */
 #include "msp.h"
 #include "globals.h"

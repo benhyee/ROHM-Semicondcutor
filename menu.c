@@ -2,7 +2,7 @@
  * menu.c
  *
  *  Created on: Oct 2, 2018
- *      Author: User
+ *       Author: Benjamin Yee
  */
 
 #include "interruptPins.h"

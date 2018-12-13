@@ -1,3 +1,8 @@
+/*  delay.c
+ *  Author: Benjamin Yee
+ *  timing functions
+ */
+
 #include "msp432.h"
 #include "delay.h"
 

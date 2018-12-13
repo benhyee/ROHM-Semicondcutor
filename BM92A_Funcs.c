@@ -1,8 +1,10 @@
 /*
  * BM92A_Funcs.c
+ * Functions for BM92A functionality
  *
  *  Created on: Sep 30, 2018
- *      Author: User
+ *      Author: Benjamin Yee
+ *
  */
 
 #include "msp.h"

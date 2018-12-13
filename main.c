@@ -1,6 +1,6 @@
 /*
- * ROHM SemiConductor USB-C Project
- *
+ *  ROHM SemiConductor USB-C Project
+ *  Author: Benjamin Yee
  *  BD99954_Funcs.c -> All the BD99954 register setting functions
  *  BM92A_Funcs.c -> Source mode and sink mode register setting functions
  *  debugFunctions.c -> Primary UART debug functions that print out registers and their settings

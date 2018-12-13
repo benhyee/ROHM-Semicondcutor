@@ -1,10 +1,8 @@
 /*
  * BD99954_Funcs.c
- *
  *  Created on: Sep 30, 2018
- *      Author: User
- */
-/*
+ *  Author: Benjamin Yee
+ *
  * BD99954 Functions for register reading and writing
  */
 #include "msp.h"

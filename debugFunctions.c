@@ -2,7 +2,7 @@
  * debugFunctions.c
  *
  *  Created on: Oct 23, 2018
- *      Author: User
+ *       Author: Benjamin Yee
  */
 
 #include "msp.h"

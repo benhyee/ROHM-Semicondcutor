@@ -2,7 +2,7 @@
  * GPIO.c
  *
  *  Created on: Nov 12, 2018
- *      Author: User
+ *       Author: Benjamin Yee
  */
 #include "msp432.h"
 #include "BD99954_Funcs.h"
