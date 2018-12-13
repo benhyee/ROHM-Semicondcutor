@@ -52,6 +52,7 @@ void displayMode()  //The highest level of the menus
         default:
             break;
     }
+
     cursorFlag = FALSE;
 }
 void fastSetMenu()
@@ -116,6 +117,8 @@ void standardMenu(){
         default:
             break;
     }
+    pushFlag = 0;
+
 }
 void sinkPDOMenu(){
     LCD_clearLine();

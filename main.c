@@ -113,7 +113,6 @@ int main(void) {
                     readTwoByte(0x02,BM92A_ADDRESS);
 
                 }
-                settings_menu = 1;fast_set = 1;
                 cursorFlag = FALSE;select = 0;
                 BD99954_INT = FALSE;
                 AlertFlag = FALSE;
